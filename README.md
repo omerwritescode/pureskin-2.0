@@ -24,8 +24,8 @@ Full feature list, sitemap, architecture, and NFRs: [`docs/spec.md`](docs/spec.m
 ## Tech stack
 
 - **Frontend:** plain HTML, CSS, and vanilla JavaScript — no framework
-- **Backend:** Python (FastAPI/Flask) or Node.js microservices, one per AI capability
-- **Database:** PostgreSQL (or MongoDB) + encrypted object storage for images
+- **Backend:** Python, FastAPI — one microservice per AI capability
+- **Database:** PostgreSQL, run locally in Docker + encrypted object storage for images
 - **AI/ML:** fine-tuned CV backbone (EfficientNet/ViT) for image analysis, a lightweight
   classifier for the questionnaire, a RAG + LLM pipeline for chat, a generative model for
   the visual preview
@@ -47,8 +47,8 @@ CLAUDE.md    context and conventions for Claude Code sessions in this repo
 ## Getting started
 
 Prerequisites:
-- Node.js or Python (see `/backend` once scaffolded for which)
-- Docker (for a local PostgreSQL/MongoDB instance)
+- Python 3.11+ and FastAPI
+- Docker (runs the local PostgreSQL instance)
 - An Anthropic API key (only needed once the Conversational AI service is built)
 
 ```bash
