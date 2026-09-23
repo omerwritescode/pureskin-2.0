@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+psycopg2-binary
+sqlalchemy
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+# passlib is incompatible with bcrypt>=4.1 (breaks its backend self-test); keep pinned.
+bcrypt==4.0.1
+python-multipart
+python-dotenv
+email-validator

@@ -1,0 +1,157 @@
+/* Shared styles for all authenticated /app pages: palette, typography, layout, nav.
+   Mobile-first; page stylesheets load after this one and only add page-specific rules. */
+
+:root {
+  --bg: #f7f5f2;
+  --surface: #ffffff;
+  --text: #1f2421;
+  --muted: #5f6763;
+  --border: #d6d3cd;
+  --accent: #2f6f5e;
+  --accent-soft: #e3efeb;
+  --radius: 8px;
+  --gutter: 16px;
+  --content-width: 960px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+a {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- Nav ------------------------------------------------------------- */
+
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Phones: brand + logout on the first row, links on a second row. */
+.app-nav__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 10px var(--gutter) 8px;
+  row-gap: 8px;
+}
+
+.app-nav__brand {
+  order: 1;
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-decoration: none;
+}
+
+.app-nav__logout {
+  order: 2;
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* The 7 links scroll sideways inside the nav on narrow screens, never the page. */
+.app-nav__links {
+  order: 3;
+  flex: 0 0 100%;
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.app-nav__link {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-nav__link:hover {
+  color: var(--text);
+}
+
+.app-nav__link[aria-current="page"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* ---- Page layout ----------------------------------------------------- */
+
+.page {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 24px var(--gutter);
+}
+
+.page__title {
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+}
+
+.page__placeholder {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---- Wider screens: brand, links and logout on one row --------------- */
+
+@media (min-width: 900px) {
+  .app-nav__inner {
+    flex-wrap: nowrap;
+    gap: 16px;
+    padding-bottom: 10px;
+  }
+
+  .app-nav__links {
+    order: 2;
+    flex: 1 1 auto;
+  }
+
+  .app-nav__logout {
+    order: 3;
+  }
+
+  .page__title {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in or sign up — PureSkin</title>
+  <link rel="stylesheet" href="/auth/auth.css">
+</head>
+<body>
+  <main class="auth">
+    <h1 class="auth__brand">PureSkin</h1>
+
+    <div class="auth__tabs" role="tablist" aria-label="Account">
+      <button type="button" role="tab" id="tab-login" aria-controls="view-login"
+              aria-selected="true" class="auth__tab" data-view="login">Log in</button>
+      <button type="button" role="tab" id="tab-signup" aria-controls="view-signup"
+              aria-selected="false" class="auth__tab" data-view="signup" tabindex="-1">Sign up</button>
+    </div>
+
+    <section id="view-login" role="tabpanel" aria-labelledby="tab-login">
+      <form id="login-form" class="auth__form" novalidate>
+        <label for="login-email">Email</label>
+        <input id="login-email" name="email" type="email" autocomplete="email" required>
+
+        <label for="login-password">Password</label>
+        <input id="login-password" name="password" type="password"
+               autocomplete="current-password" required>
+
+        <p class="auth__error" role="alert" aria-live="polite"></p>
+        <button type="submit" class="auth__submit">Log in</button>
+      </form>
+      <p class="auth__switch">New to PureSkin? <a href="#signup" data-view="signup">Create an account</a></p>
+    </section>
+
+    <section id="view-signup" role="tabpanel" aria-labelledby="tab-signup" hidden>
+      <form id="signup-form" class="auth__form" novalidate>
+        <label for="signup-name">Full name</label>
+        <input id="signup-name" name="full_name" type="text" autocomplete="name" required>
+
+        <label for="signup-email">Email</label>
+        <input id="signup-email" name="email" type="email" autocomplete="email" required>
+
+        <label for="signup-password">Password</label>
+        <input id="signup-password" name="password" type="password"
+               autocomplete="new-password" minlength="8" required
+               aria-describedby="signup-password-hint">
+        <small id="signup-password-hint" class="auth__hint">At least 8 characters.</small>
+
+        <label for="signup-confirm">Confirm password</label>
+        <input id="signup-confirm" name="confirm_password" type="password"
+               autocomplete="new-password" required>
+
+        <p class="auth__error" role="alert" aria-live="polite"></p>
+        <button type="submit" class="auth__submit">Create account</button>
+      </form>
+      <p class="auth__switch">Already have an account? <a href="#login" data-view="login">Log in</a></p>
+    </section>
+  </main>
+
+  <script src="/auth/auth.js"></script>
+</body>
+</html>
