@@ -9,6 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.sql.elements import conv
 
 
 # revision identifiers, used by Alembic.
@@ -23,7 +24,8 @@ depends_on: Union[str, Sequence[str], None] = None
 # 'alpha hydroxy'. Compare in the "C" collation (code-point order) instead, which matches
 # Python's string ordering and therefore normalize_ingredient_pair().
 
-NAME = op.f("ck_ingredient_conflicts_pair_ordered")
+# conv() is what op.f() returns, but op isn't usable at import time (e.g. `alembic heads`).
+NAME = conv("ck_ingredient_conflicts_pair_ordered")
 
 
 def upgrade() -> None:
