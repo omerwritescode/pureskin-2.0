@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Take a selfie — PureSkin</title>
+  <!-- First step of the funnel: nothing required, loaded for the shared storage helpers. -->
+  <script src="/static/js/scan-guard.js"></script>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/scan/scan.css">
+</head>
+<body>
+  <header class="site-header"><div class="site-header__inner">PureSkin</div></header>
+
+  <main class="page">
+    <p class="scan-step">Step 1 of 3</p>
+    <h1 class="page__title">Take a selfie</h1>
+    <p class="page__placeholder">
+      Face the camera in even, natural light, without makeup if you can.
+    </p>
+
+    <div class="camera">
+      <video id="camera-video" class="camera__view" autoplay playsinline muted hidden></video>
+      <img id="camera-photo" class="camera__view" alt="Your captured photo" hidden>
+      <div id="camera-idle" class="camera__idle">Camera is off</div>
+    </div>
+
+    <p id="scan-error" class="scan-error" role="alert" hidden></p>
+
+    <div class="scan-actions">
+      <button type="button" id="start-camera" class="btn">Start camera</button>
+      <button type="button" id="capture" class="btn" hidden>Capture</button>
+      <button type="button" id="continue" class="btn" hidden>Use this photo</button>
+      <button type="button" id="retake" class="btn btn--secondary" hidden>Retake</button>
+    </div>
+
+    <div id="upload-fallback" class="upload" hidden>
+      <label for="upload-input" class="upload__label">Upload a photo instead</label>
+      <input id="upload-input" type="file" accept="image/*">
+    </div>
+
+    <canvas id="capture-canvas" hidden></canvas>
+  </main>
+
+  <script src="/scan/scan.js"></script>
+</body>
+</html>

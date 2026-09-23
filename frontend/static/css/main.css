@@ -1,4 +1,5 @@
-/* Shared styles for all authenticated /app pages: palette, typography, layout, nav.
+/* Shared styles for /app pages and the public /scan funnel: palette, typography,
+   layout, buttons, nav.
    Mobile-first; page stylesheets load after this one and only add page-specific rules. */
 
 :root {
@@ -16,6 +17,11 @@
 
 * {
   box-sizing: border-box;
+}
+
+/* Make the hidden attribute win over any display rule (JS toggles it on elements like .btn). */
+[hidden] {
+  display: none !important;
 }
 
 body {
@@ -131,6 +137,56 @@ a {
 .page__placeholder {
   margin: 0;
   color: var(--muted);
+}
+
+/* ---- Buttons --------------------------------------------------------- */
+
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn--secondary {
+  background: var(--surface);
+  color: var(--accent);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Minimal header for public pages (scan funnel) — no app nav -------- */
+
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header__inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 12px var(--gutter);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--accent);
+}
+
+/* "Step 1 of 3" label above funnel page titles. */
+.scan-step {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 /* ---- Wider screens: brand, links and logout on one row --------------- */

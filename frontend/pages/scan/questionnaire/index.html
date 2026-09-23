@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A few questions — PureSkin</title>
+  <!-- Must stay first: sends the visitor back to /scan/ if there's no selfie yet. -->
+  <script src="/static/js/scan-guard.js" data-requires="pureskin_scan_image"></script>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/scan/questionnaire/questionnaire.css">
+</head>
+<body>
+  <header class="site-header"><div class="site-header__inner">PureSkin</div></header>
+
+  <main class="page">
+    <p class="scan-step">Step 2 of 3</p>
+    <h1 class="page__title">A few quick questions</h1>
+
+    <div class="q-progress" aria-hidden="true"><div class="q-progress__fill"></div></div>
+    <p class="q-counter" aria-live="polite"></p>
+
+    <form id="questionnaire" class="q-form" novalidate>
+      <fieldset class="q-step" data-step>
+        <legend>How would you describe your skin?</legend>
+        <label><input type="radio" name="skin_type" value="oily" required> Oily — shiny, especially by midday</label>
+        <label><input type="radio" name="skin_type" value="dry"> Dry — tight or flaky</label>
+        <label><input type="radio" name="skin_type" value="combination"> Combination — oily T-zone, dry elsewhere</label>
+        <label><input type="radio" name="skin_type" value="normal"> Normal — rarely oily or dry</label>
+        <label><input type="radio" name="skin_type" value="sensitive"> Sensitive — reacts easily</label>
+        <label><input type="radio" name="skin_type" value="not_sure"> Not sure</label>
+      </fieldset>
+
+      <fieldset class="q-step" data-step hidden>
+        <legend>What's your main skin concern?</legend>
+        <label><input type="radio" name="primary_concern" value="acne" required> Acne or breakouts</label>
+        <label><input type="radio" name="primary_concern" value="redness"> Redness</label>
+        <label><input type="radio" name="primary_concern" value="wrinkles"> Fine lines and wrinkles</label>
+        <label><input type="radio" name="primary_concern" value="pigmentation"> Dark spots or uneven tone</label>
+        <label><input type="radio" name="primary_concern" value="pores"> Visible pores</label>
+        <label><input type="radio" name="primary_concern" value="none"> Nothing in particular</label>
+      </fieldset>
+
+      <fieldset class="q-step" data-step hidden>
+        <legend>Any known allergies or sensitivities?</legend>
+        <p class="q-help">Select all that apply, or skip if none.</p>
+        <label><input type="checkbox" name="sensitivities" value="fragrance"> Fragrance</label>
+        <label><input type="checkbox" name="sensitivities" value="alcohol"> Drying alcohols</label>
+        <label><input type="checkbox" name="sensitivities" value="retinoids"> Retinoids</label>
+        <label><input type="checkbox" name="sensitivities" value="acids"> Exfoliating acids (AHA/BHA)</label>
+        <label><input type="checkbox" name="sensitivities" value="essential_oils"> Essential oils</label>
+        <label class="q-text">Anything else?
+          <input type="text" name="sensitivities_other" maxlength="200" placeholder="e.g. lanolin">
+        </label>
+      </fieldset>
+
+      <fieldset class="q-step" data-step hidden>
+        <legend>What are you using on your skin right now?</legend>
+        <p class="q-help">Select all that apply, or skip if none.</p>
+        <label><input type="checkbox" name="current_products" value="cleanser"> Cleanser</label>
+        <label><input type="checkbox" name="current_products" value="moisturiser"> Moisturiser</label>
+        <label><input type="checkbox" name="current_products" value="sunscreen"> Sunscreen</label>
+        <label><input type="checkbox" name="current_products" value="serum"> Serum</label>
+        <label><input type="checkbox" name="current_products" value="exfoliant"> Exfoliant</label>
+        <label><input type="checkbox" name="current_products" value="retinoid"> Retinoid</label>
+        <label class="q-text">Specific products (optional)
+          <input type="text" name="current_products_other" maxlength="200" placeholder="e.g. CeraVe Hydrating Cleanser">
+        </label>
+      </fieldset>
+
+      <fieldset class="q-step" data-step hidden>
+        <legend>Sleep and stress</legend>
+        <fieldset class="q-group">
+          <legend>How much do you usually sleep?</legend>
+          <label><input type="radio" name="sleep" value="under_6" required> Under 6 hours</label>
+          <label><input type="radio" name="sleep" value="6_to_8"> 6–8 hours</label>
+          <label><input type="radio" name="sleep" value="over_8"> Over 8 hours</label>
+        </fieldset>
+        <fieldset class="q-group">
+          <legend>How stressed do you feel day to day?</legend>
+          <label><input type="radio" name="stress" value="low" required> Low</label>
+          <label><input type="radio" name="stress" value="medium"> Medium</label>
+          <label><input type="radio" name="stress" value="high"> High</label>
+        </fieldset>
+      </fieldset>
+
+      <p id="q-error" class="q-error" role="alert" hidden></p>
+      <p id="q-loading" class="q-loading" role="status" hidden>Analysing your skin…</p>
+
+      <div class="q-actions">
+        <button type="button" id="q-back" class="btn btn--secondary">Back</button>
+        <button type="button" id="q-next" class="btn">Next</button>
+        <button type="submit" id="q-submit" class="btn" hidden>See my results</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="/scan/questionnaire/questionnaire.js"></script>
+</body>
+</html>

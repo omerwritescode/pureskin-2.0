@@ -1,0 +1,119 @@
+/* Questionnaire — supplements /static/css/main.css. */
+
+.q-progress {
+  max-width: 560px;
+  height: 6px;
+  margin-top: 16px;
+  overflow: hidden;
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.q-progress__fill {
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.q-counter {
+  margin: 8px 0 16px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.q-form {
+  max-width: 560px;
+}
+
+.q-step,
+.q-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.q-step > legend {
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.q-group {
+  margin-bottom: 16px;
+}
+
+.q-group > legend {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.q-help {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+/* Big, tappable option rows. */
+.q-step label:not(.q-text) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.q-step label:not(.q-text):has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.q-step input[type="radio"],
+.q-step input[type="checkbox"] {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.q-text {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+.q-text input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 400;
+}
+
+.q-error {
+  margin: 12px 0 0;
+  color: #8c1d18;
+}
+
+.q-loading {
+  margin: 12px 0 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.q-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.q-actions .btn {
+  flex: 1;
+}

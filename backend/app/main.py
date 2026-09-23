@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.api import auth
+from app.api import auth, scan
 from app.core.config import settings
 
 # Absolute, so it works whatever directory uvicorn is started from.
@@ -22,6 +22,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(scan.router)
 
 
 @app.get("/health")
@@ -30,6 +31,6 @@ def health() -> dict[str, str]:
 
 
 # Serve the frontend from the same origin so pages live at their sitemap URLs
-# (/auth/, /app/, ...). Mounted last so API routes above take precedence.
+# (/auth/, /app/, /scan/, ...). Mounted last so API routes above take precedence.
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR / "static"), name="static")
 app.mount("/", StaticFiles(directory=FRONTEND_DIR / "pages", html=True), name="pages")
