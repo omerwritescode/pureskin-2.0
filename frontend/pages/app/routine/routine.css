@@ -1,1 +1,90 @@
-/* Routine page styles — supplements /static/css/main.css. Nothing page-specific yet. */
+/* Routine page styles — supplements /static/css/main.css. */
+
+.routine-intro {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.routine-intro strong {
+  color: var(--text);
+}
+
+/* Stacked on phones, side by side on wider screens. */
+.routine-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.routine-steps {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.routine-step {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.routine-step:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.routine-step__number {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--accent-soft);
+  border-radius: 50%;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.routine-step__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.routine-step__category {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.routine-step__name {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.routine-step__name:hover {
+  text-decoration: underline;
+}
+
+.routine-step__brand {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.routine-step__note {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+@media (min-width: 720px) {
+  .routine-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

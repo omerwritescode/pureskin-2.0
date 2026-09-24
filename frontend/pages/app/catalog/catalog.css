@@ -1,1 +1,126 @@
-/* Product Catalog page styles — supplements /static/css/main.css. Nothing page-specific yet. */
+/* Product Catalog page styles — supplements /static/css/main.css. */
+
+.catalog-filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+
+.catalog-filters__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.catalog-filters input,
+.catalog-filters select {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.catalog-count {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalog-grid[aria-busy="true"] {
+  opacity: 0.6;
+}
+
+.catalog-empty {
+  grid-column: 1 / -1;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.product-card:hover {
+  border-color: var(--accent);
+}
+
+.product-card__category {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.product-card__name {
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.product-card__brand {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Short description: at most two lines. */
+.product-card__description {
+  display: -webkit-box;
+  margin-top: 8px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.9rem;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.pagination__info {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (min-width: 600px) {
+  .catalog-filters {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

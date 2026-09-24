@@ -14,10 +14,32 @@
 
   <main class="page">
     <h1 class="page__title">Product Catalog</h1>
-    <p class="page__placeholder">Coming soon — search products and check ingredients.</p>
+    <form id="catalog-filters" class="catalog-filters" role="search">
+      <label class="catalog-filters__field">
+        <span>Search</span>
+        <input id="catalog-search" type="search" name="search" placeholder="Product or brand" autocomplete="off">
+      </label>
+      <label class="catalog-filters__field">
+        <span>Category</span>
+        <select id="catalog-category" name="category">
+          <option value="">All categories</option>
+        </select>
+      </label>
+    </form>
+
+    <p id="catalog-count" class="catalog-count" aria-live="polite"></p>
+    <ul id="catalog-grid" class="catalog-grid"></ul>
+
+    <nav class="pagination" aria-label="Catalog pages">
+      <button type="button" id="page-prev" class="btn btn--secondary" disabled>Previous</button>
+      <span id="page-info" class="pagination__info"></span>
+      <button type="button" id="page-next" class="btn btn--secondary" disabled>Next</button>
+    </nav>
   </main>
 
   <script src="/static/js/nav.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/ui.js"></script>
   <script src="/app/catalog/catalog.js"></script>
 </body>
 </html>

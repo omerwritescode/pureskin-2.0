@@ -14,10 +14,39 @@
 
   <main class="page">
     <h1 class="page__title">Dashboard</h1>
-    <p class="page__placeholder">Coming soon — your skin at a glance.</p>
+
+    <section id="summary" class="dashboard__summary" aria-live="polite">
+      <p class="status">Loading your skin summary…</p>
+    </section>
+
+    <h2 class="dashboard__heading">Quick links</h2>
+    <ul class="quick-links">
+      <li>
+        <a class="quick-link" href="/app/routine/">
+          <span class="quick-link__title">Your routine</span>
+          <span class="quick-link__text">AM and PM steps matched to your Skin Profile</span>
+        </a>
+      </li>
+      <li>
+        <a class="quick-link" href="/app/catalog/">
+          <span class="quick-link__title">Product catalog</span>
+          <span class="quick-link__text">Search products and check their ingredients</span>
+        </a>
+      </li>
+      <li>
+        <a class="quick-link" href="/app/chat/">
+          <span class="quick-link__title">Ask the advisor</span>
+          <span class="quick-link__text">Skincare questions answered for your skin</span>
+        </a>
+      </li>
+    </ul>
   </main>
 
   <script src="/static/js/nav.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/ui.js"></script>
+  <!-- No data-requires: loaded only for the scan result's sessionStorage keys/helpers. -->
+  <script src="/static/js/scan-guard.js"></script>
   <script src="/app/dashboard.js"></script>
 </body>
 </html>
