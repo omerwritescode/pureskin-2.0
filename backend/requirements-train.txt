@@ -1,0 +1,12 @@
+# Training-only dependencies for the skin-type classifier
+# (app/services/image_analysis/train_skin_type.py). Not needed to run the app:
+# requirements.txt stays CPU-only and has no CUDA index.
+#
+# CUDA 12.8 build of PyTorch, required for RTX 50-series (Blackwell) GPUs. ~2.5 GB.
+#   pip install -r requirements-train.txt
+# The "+cu128" versions exist only on PyTorch's index, so pip can't fall back to a
+# CPU build from PyPI by accident.
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128
+openpyxl  # reads the dataset's 0-5 rating spreadsheets

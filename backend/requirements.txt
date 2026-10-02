@@ -10,3 +10,17 @@ bcrypt==4.0.1
 python-multipart
 python-dotenv
 email-validator
+# --- Image Analysis service (step 7a) ---
+# mediapipe 1.x has only the Tasks API (FaceLandmarker); the legacy mp.solutions API is
+# gone. It depends on opencv-contrib-python: don't also add opencv-python(-headless),
+# because two cv2 builds in one environment overwrite each other's files.
+mediapipe>=1.0,<2
+opencv-contrib-python
+numpy
+pillow
+# Skin-type classifier inference (optional at runtime: without torch or the trained
+# weights, skin_type_prediction is null). Plain PyPI wheels: CPU-only on Windows/macOS.
+# The CUDA build for training is in requirements-train.txt, not here. For a CPU-only
+# Linux/Docker image, install torch from https://download.pytorch.org/whl/cpu instead.
+torch==2.11.0
+torchvision==0.26.0
