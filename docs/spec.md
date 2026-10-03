@@ -154,3 +154,29 @@ drift-monitoring alerts.
 - **Product/User:** usability testing sessions; trust score target >4/5; engagement metrics (WAU, check-in frequency, churn).
 - **Business:** free-to-premium conversion, affiliate click-through, NPS at launch and after iterations.
 - Reviewed together at each milestone (MVP, pilot, expanded feature set) — an accurate-but-unusable or delightful-but-unreliable model both fail the product's trust-first promise.
+
+---
+
+## Addendum (October 2026, after roadmap step 7b-i): deviations from this spec
+
+The sections above are the original specification and are left unchanged. As built:
+
+1. **Image analysis is classical computer vision.** It uses MediaPipe face landmarks plus
+   documented, hand-designed measurements (OpenCV, NumPy), not a fine-tuned
+   EfficientNet/ViT backbone (§7). The five scores are unvalidated heuristics, so the
+   ">85% agreement with dermatologist-labeled data" target (§6, §9) cannot be claimed
+   for them.
+2. **The EfficientNet-B0 skin-type classifier is gated off.** It was trained on two public
+   datasets but scored at chance on a leak-free split (test accuracy 0.309 against 0.25
+   chance), so it is not served.
+3. **The questionnaire is rule-based:** documented rules and a small lexicon for the
+   free-text answers, with no ML classifier.
+4. **Skin type and sensitivity come from the questionnaire only.** Sensitivity is its own
+   flag (`is_sensitive`) rather than a skin type.
+5. **No object storage.** Photos are analysed server-side in memory and discarded.
+   Nothing is stored, so the encrypted object storage for images (§3, §4 item 15) is not
+   built.
+
+Details: `backend/app/services/image_analysis/README.md`,
+`backend/app/services/questionnaire/README.md` and
+`backend/app/services/skin_profile/README.md`.

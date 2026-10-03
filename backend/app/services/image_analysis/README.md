@@ -13,8 +13,9 @@ cloud APIs.
 **Status:** All parts done. The five heuristic scores and the quality checks are live
 at the standalone endpoint. The skin-type classifier (Part 3) was trained and
 evaluated, but it performs at chance on a leak-free split, so it is not served and
-`skin_type_prediction` is `null` (see [Part 3](#skin-type-classifier-part-3)). Not yet
-wired into the frontend (step 7b).
+`skin_type_prediction` is `null` (see [Part 3](#skin-type-classifier-part-3)). Since
+7b-i it also runs inside `POST /api/scan/analyze` (the skin_profile service merges it
+with the questionnaire). The funnel switches to that endpoint in 7b-ii.
 
 ---
 
@@ -963,6 +964,49 @@ Docker image, install torch from `https://download.pytorch.org/whl/cpu`.
 
 ---
 
+## Funnel resolution (step 7b-i)
+
+`check_funnel_resolution.py` analyses each photo in `samples/` and `samples/lighting/`
+in two forms: as uploaded, and as the selfie page sends it (`scan.js`: longest side
+≤ 720 px, JPEG quality 0.85). It also tries a few candidate settings, and runs
+everything through the public `analyze_image()` with the gate on. The browser's resize
+and JPEG encoder are approximated with Pillow (bilinear, same nominal quality).
+
+```bash
+python -m app.services.image_analysis.check_funnel_resolution
+```
+
+Results on the project's 6 photos (all 960×1280 originals, so "full size" is only
+1.78× the funnel's resolution). Each cell is the largest |difference| from full size
+over the photos both versions scored:
+
+| Variant | Base64 payload | Decision changed | acne | redness | wrinkle | pigment | pore |
+|---|---|---|---|---|---|---|---|
+| **funnel today: 720 px, q85** | 41-80 KB | 0 of 6 | **38** | 1 | 4 | 2 | 1 |
+| 720 px, q92 | 60-111 KB | 0 of 6 | 7 | 1 | 2 | 1 | 1 |
+| 960 px, q85 | 68-128 KB | **1 of 6** | 3 | 1 | 1 | 3 | 3 |
+| 1080 px, q90 | 114-199 KB | **1 of 6** | 6 | 2 | 2 | 2 | 3 |
+
+- **The four image-primary scores barely move** at the funnel's size (≤ 4 points), and
+  no accept/reject decision changes.
+- **Acne moves a lot on one photo.** `lighting/4.jpeg` (reference L\* 43, the dim
+  photo whose acne already looked like colour noise in
+  [Lighting consistency](#lighting-consistency)) goes from 58 to 20. The other photos
+  move by ≤ 7. This is the known acne instability. The merge caps and down-weights the
+  image acne score for exactly this reason, so it can't trigger routine changes on its
+  own.
+- **Larger isn't safer.** At 960 and 1080 px the same `lighting/4.jpeg` is *rejected*
+  as too dim. Its reference L\* is close to the threshold, and the dim threshold was
+  calibrated on 720 px, q85 photos.
+- **Proposal for 7b-ii:** keep 720 px. Optionally raise the JPEG quality from 0.85 to
+  0.92. On these photos that cut the largest acne change from 38 to 7, for about 40%
+  more payload (at most ~111 KB here, far below the 5 MB request limit and
+  sessionStorage's few-MB quota). Six photos (four of them of one face, under different light) are too few to be sure, so
+  treat this as a cheap improvement, not a validated one. The scores are most
+  comparable when every photo uses the same setting, whichever is chosen.
+
+---
+
 ## Performance
 
 Measured on the development machine (Intel i7-13620H, CPU only; MediaPipe runs on CPU
@@ -1117,6 +1161,7 @@ samples/
 | `download_models.py` | fetches the pinned, checksum-verified MediaPipe model |
 | `visualize_regions.py` | dev tool: region and detection overlays |
 | `check_lighting_consistency.py` | lighting-sensitivity report (real + synthetic) |
+| `check_funnel_resolution.py` | full-size vs the funnel's 720 px / q85 downsizing (step 7b-i) |
 | `skin_type.py` | skin-type classifier inference + the preprocessing shared with training |
 | `skin_type_data.py` | dataset discovery, duplicate grouping (pHash + ORB), leak-free split |
 | `train_skin_type.py` | training/evaluation pipeline for the classifier (GPU) |

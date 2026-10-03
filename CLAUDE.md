@@ -41,9 +41,19 @@ before auth, the DB schema, and the static frontend shell are working. Currently
         `POST /api/services/image/analyze`): photo-quality checks + five heuristic
         scores, live. Skin-type classifier trained, but at chance on a leak-free split,
         so it is not served (`skin_type_prediction` is null; see the service README).
-        Not wired into the frontend yet: the funnel keeps /api/scan/mock-analyze until 7b.
-  - [ ] 7b. Questionnaire/NLP
-        acne_score from the image is unreliable; corroborate with the questionnaire before it triggers routine changes.
+        Not wired into the frontend yet: the funnel keeps /api/scan/mock-analyze until 7b-ii.
+  - [x] 7b-i. Questionnaire/NLP scorer + Skin Profile merge + schema (backend only).
+        `services/questionnaire/` (rules + free-text lexicon, standalone at
+        `POST /api/services/questionnaire/score`), `services/skin_profile/` (merge, score
+        bands, `score_sources`), `POST /api/scan/analyze` (image + answers, in memory),
+        migration db1f2fceaf09 (`is_sensitive`, `score_sources`; skin_type 'sensitive' is
+        gone). The image acne score is unreliable, so acne is questionnaire-led: capped at
+        60 without corroboration, floored at 61 with it. The step 5 questionnaire has no
+        score evidence, so until 7b-ii every score is the image score (acne capped).
+  - [ ] 7b-ii. Funnel changes (frontend): new questions (questionnaire README), switch the
+        funnel to /api/scan/analyze, send is_sensitive + score_sources to /api/profile,
+        show sensitivity and bands (same cutoffs as skin_profile_config.SCORE_BANDS), then
+        remove /api/scan/mock-analyze and the legacy "sensitive" mapping in api/profile.py.
   - [ ] 7c. Recommendation Engine
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
@@ -69,6 +79,11 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   Conversational AI, Generative Visualizer) should be buildable and testable on its own
   before being wired into the frontend, per `docs/spec.md` §8 step 7.
 - Secrets (API keys, DB credentials) are never committed — `.env` is gitignored.
+- A 422 never echoes submitted input (passwords, emails, free text, photos): the global
+  RequestValidationError handler in `main.py` strips it, and endpoints that parse their
+  own body use `app/api/request_body.py`. Never log request bodies or `exc.errors()`.
+- Rules, thresholds and weights live in each service's versioned config file
+  (`*_config.py`), never as numbers in code. Bump the version string when a result can change.
 
 ## Commands
 
@@ -85,7 +100,13 @@ alembic upgrade head                         # apply migrations
 python seed.py                               # load/refresh product catalog + ingredient conflicts (idempotent)
 pip install -r requirements-dev.txt          # + pytest, httpx2 (tests)
 python -m app.services.image_analysis.download_models   # MediaPipe face model (gitignored, once)
+python -m pytest                             # everything (DB tests need Docker; they use throwaway DBs)
 python -m pytest app/services/image_analysis # image analysis tests
+python -m pytest app/services/questionnaire app/services/skin_profile   # 7b-i services
+python -m app.services.skin_profile.merge_cases          # merge-case table (report)
+python -m app.services.skin_profile.time_analyze         # /api/scan/analyze timing (needs samples/)
+python -m app.services.image_analysis.check_funnel_resolution   # full size vs funnel's 720 px
+UPDATE_SNAPSHOTS=1 python -m pytest app/tests # re-record routine behaviour snapshots (check the diff!)
 pip install -r requirements-train.txt        # GPU training only: CUDA 12.8 torch (~2.5 GB)
 python -m app.services.image_analysis.train_skin_type   # train the skin-type classifier
 ```

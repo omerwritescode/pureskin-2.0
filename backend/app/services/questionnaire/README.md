@@ -9,8 +9,10 @@ no model, no LLM, no new dependencies.
 > what the user *says* into a number. It doesn't measure their skin, and it can't
 > correct a user who misjudges or misreports their own skin.
 
-**Status:** live at the standalone endpoint and tested on its own. The funnel doesn't
-call it yet: until 7b-ii the questionnaire still posts to `/api/scan/mock-analyze`.
+**Status:** live at the standalone endpoint and tested on its own. It also runs inside
+`POST /api/scan/analyze`, where the skin_profile service merges its output with the
+image scores. The funnel doesn't call either yet: until 7b-ii the questionnaire still
+posts to `/api/scan/mock-analyze`.
 
 ---
 
