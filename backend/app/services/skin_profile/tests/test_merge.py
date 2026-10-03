@@ -2,7 +2,7 @@ import itertools
 
 import pytest
 
-from app.api.routine import SCORE_THRESHOLD
+from app.services.recommendation.routine_config import SCORE_THRESHOLD
 from app.services.questionnaire import questionnaire_config as qcfg
 from app.services.skin_profile import band, merge_score, reproduce_final
 from app.services.skin_profile import skin_profile_config as cfg

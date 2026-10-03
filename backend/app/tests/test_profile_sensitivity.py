@@ -13,7 +13,7 @@ from alembic.migration import MigrationContext
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
-from app.api.routine import build_requirements
+from app.services.recommendation.rules import build_requirements
 from app.models import Base
 from app.models.skin_profile import SKIN_TYPES
 from app.services.questionnaire import questionnaire_config as qcfg

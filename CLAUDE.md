@@ -115,6 +115,7 @@ python -m pytest app/services/questionnaire app/services/skin_profile   # 7b-i s
 python -m app.services.skin_profile.merge_cases          # merge-case table (report)
 python -m app.services.skin_profile.time_analyze         # /api/scan/analyze timing (needs samples/)
 python -m app.services.image_analysis.check_funnel_resolution   # one photo at several upload sizes
+python -m app.services.ingredients.review    # ingredient review: unknown tokens, cutoff dismissals
 UPDATE_SNAPSHOTS=1 python -m pytest app/tests # re-record routine behaviour snapshots (check the diff!)
 pip install -r requirements-train.txt        # GPU training only: CUDA 12.8 torch (~2.5 GB)
 python -m app.services.image_analysis.train_skin_type   # train the skin-type classifier

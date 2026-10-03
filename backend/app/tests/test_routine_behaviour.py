@@ -1,4 +1,4 @@
-"""Behaviour records for the step 6 rule-based routine (app/api/routine.py).
+"""Behaviour records for the step 6 rule-based routine (app/services/recommendation/).
 
 Recorded on the unchanged step 6 code before 7b-i touched routine.py, so they show
 that the 7b-i compatibility change (sensitivity read from is_sensitive) left the
@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from app.api.routine import build_requirements
+from app.services.recommendation.rules import build_requirements
 from app.tests.snapshot import check_snapshot
 
 SCORES = ("acne_score", "redness_score", "wrinkle_score", "pigmentation_score", "pore_score")

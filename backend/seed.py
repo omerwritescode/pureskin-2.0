@@ -7,7 +7,8 @@ ingredient pair, so re-running updates existing rows instead of duplicating them
 Ingredient names are lowercase and shared between product ingredient lists and the
 conflict table (e.g. vitamin C appears as "ascorbic acid" in both), so the routine
 builder's conflict lookup matches. Descriptions deliberately contain the keywords the
-routine rules search for (app/api/routine.py) — keep them in sync when editing.
+routine rules search for (app/services/recommendation/routine_config.py) — keep them in
+sync when editing.
 """
 
 from sqlalchemy import select

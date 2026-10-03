@@ -2,7 +2,8 @@
 
 Each profile stores the questionnaire and merge config versions it was scored with
 (score_sources.version), so a changed value under an old version string would make
-stored provenance lie. When this test fails:
+stored provenance lie. The ingredient and routine configs follow the same rule.
+When this test fails:
   1. bump the version string in the config file (e.g. merge-1.0.0 -> merge-1.1.0);
   2. add the new version with the fingerprint from the failure message to RECORDED.
 Never edit a recorded fingerprint.
@@ -14,17 +15,23 @@ from types import ModuleType
 
 import pytest
 
+from app.services.ingredients import ingredient_config
 from app.services.questionnaire import questionnaire_config
+from app.services.recommendation import routine_config
 from app.services.skin_profile import skin_profile_config
 
 RECORDED = {
     "questionnaire-1.0.0": "a228f50bd2e32cca",
     "merge-1.0.0": "7485d277d8b2e553",
+    "ingredients-1.0.0": "4a94921f822ddff6",
+    "routine-1.0.0": "08209916f5c2a19f",
 }
 
 CONFIGS = [
     (questionnaire_config, "CONFIG_VERSION"),
     (skin_profile_config, "MERGE_CONFIG_VERSION"),
+    (ingredient_config, "INGREDIENT_CONFIG_VERSION"),
+    (routine_config, "ROUTINE_CONFIG_VERSION"),
 ]
 
 
