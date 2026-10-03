@@ -2,12 +2,23 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.api import auth, catalog, image_analysis, profile, questionnaire, routine, scan
+from app.api import (
+    auth,
+    catalog,
+    image_analysis,
+    profile,
+    questionnaire,
+    routine,
+    scan,
+    scan_analyze,
+)
+from app.api.validation_errors import public_errors
 from app.core.config import settings
 from app.services import image_analysis as image_analysis_service
 
@@ -32,6 +43,19 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="PureSkin API", lifespan=lifespan)
 
+
+# Every endpoint's 422: same {"detail": [{loc, msg, type}]} shape as FastAPI's default,
+# but never the submitted input (the default echoes it: passwords, emails, free text).
+# ctx is kept only for numeric limits (min_length, max_length, ge, le, gt, lt).
+# Nothing about the request or its errors is logged.
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content={"detail": public_errors(exc.errors())},
+    )
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -42,6 +66,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(scan.router)
+app.include_router(scan_analyze.router)
 app.include_router(profile.router)
 app.include_router(routine.router)
 app.include_router(catalog.router)

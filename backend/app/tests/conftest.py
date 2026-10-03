@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
 
 import seed
-from app.api import auth, profile, routine
+from app.api import auth, profile, routine, scan_analyze
 from app.api.deps import get_db
 from app.tests.db import throwaway_database, upgrade
 
@@ -26,7 +26,7 @@ def migrated_db():
 
 @pytest.fixture(scope="session")
 def api(migrated_db):
-    """Auth, profile and routine endpoints wired to the throwaway database."""
+    """Auth, scan analysis, profile and routine endpoints wired to the throwaway database."""
     Session = sessionmaker(bind=migrated_db, autoflush=False, expire_on_commit=False)
 
     def override_get_db():
@@ -37,7 +37,7 @@ def api(migrated_db):
             db.close()
 
     app = FastAPI()
-    for module in (auth, profile, routine):
+    for module in (auth, scan_analyze, profile, routine):
         app.include_router(module.router)
     app.dependency_overrides[get_db] = override_get_db
     return TestClient(app)

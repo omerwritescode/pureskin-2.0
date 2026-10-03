@@ -10,7 +10,8 @@ from app.api.deps import get_current_user, get_db
 from app.models import ScanHistory, SkinProfile, User
 from app.models.skin_profile import SKIN_TYPES
 from app.services.questionnaire.questionnaire_config import DEFAULT_SKIN_TYPE
-from app.services.skin_profile import ScoreSources
+from app.services.skin_profile import ScoreSources, reproduce_final
+from app.services.skin_profile.skin_profile_config import MERGE_CONFIG_VERSION
 
 router = APIRouter(prefix="/api/profile", tags=["profile"])
 
@@ -43,6 +44,21 @@ class ProfileIn(BaseModel):
         if self.skin_type == LEGACY_SENSITIVE:
             self.skin_type = DEFAULT_SKIN_TYPE
             self.is_sensitive = True
+        return self
+
+    @model_validator(mode="after")
+    def scores_match_their_sources(self):
+        """score_sources must describe the scores actually stored: each one reproduces.
+
+        Only checked for scans merged under the current merge config: reproduce_final()
+        applies today's rules, so a scan made under an older config (taken before an
+        update, saved at signup after it) is stored as sent rather than rejected.
+        """
+        sources = self.score_sources
+        if sources is not None and sources.version.merge_config == MERGE_CONFIG_VERSION:
+            for name, entry in sources.scores.model_dump().items():
+                if reproduce_final(name, entry) != getattr(self, name):
+                    raise ValueError(f"{name} doesn't match its score_sources entry")
         return self
 
 

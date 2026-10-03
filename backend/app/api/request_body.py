@@ -3,15 +3,15 @@
 They read and parse their body by hand, rather than through FastAPI's Pydantic body
 parameters, for two reasons:
 - an oversized upload is refused before it is buffered (413);
-- an error never echoes the input. FastAPI's default 422 includes each offending value
-  under "input", which here would be the user's photo or free text.
+- they control their own errors: the 422s here go through
+  app/api/validation_errors.py, so the user's photo or free text never comes back.
 """
 
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-MAX_LOC_PART_CHARS = 64  # an unknown key is echoed in "loc"; keep it short
+from app.api.validation_errors import public_errors
 
 
 class PayloadTooLarge(Exception):
@@ -44,25 +44,18 @@ def too_large_response(detail: str) -> JSONResponse:
     return JSONResponse(status_code=status.HTTP_413_CONTENT_TOO_LARGE, content={"detail": detail})
 
 
-def _error(loc: tuple, msg: str, type_: str) -> dict:
-    return {
-        "loc": [p[:MAX_LOC_PART_CHARS] if isinstance(p, str) else p for p in loc],
-        "msg": msg,
-        "type": type_,
-    }
-
-
 def validation_error_response(exc: ValidationError, prefix: tuple = ("body",)) -> JSONResponse:
     """FastAPI's 422 shape ({"detail": [{loc, msg, type}]}) without the input values."""
-    errors = exc.errors(include_url=False, include_context=False, include_input=False)
+    errors = [{**e, "loc": prefix + tuple(e["loc"])} for e in exc.errors(include_url=False)]
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-        content={"detail": [_error(prefix + tuple(e["loc"]), e["msg"], e["type"]) for e in errors]},
+        content={"detail": public_errors(errors, include_ctx=False)},
     )
 
 
 def invalid_json_response(message: str) -> JSONResponse:
+    error = {"loc": ("body",), "msg": message, "type": "json_invalid"}
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-        content={"detail": [_error(("body",), message, "json_invalid")]},
+        content={"detail": public_errors([error], include_ctx=False)},
     )
