@@ -1,0 +1,32 @@
+# Folder rules are anchored (leading /) to where the folders really are, so they can't
+# hide source code elsewhere: an unanchored "models/" would also match backend/app/models/
+# (the SQLAlchemy models). Only build/cache folders and file types are left unanchored.
+
+# Environment / secrets. The template, .env.example, IS tracked.
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv*/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+
+# Image Analysis service: downloaded/trained models, training data and local test photos.
+# Never commit model weights, datasets or anyone's face photos.
+/backend/app/services/image_analysis/models/
+/backend/app/services/image_analysis/weights/
+/backend/app/services/image_analysis/datasets/
+/backend/app/services/image_analysis/samples/
+*.task
+*.pt
+*.pth
+*.onnx
+
+# Local database dumps (pg_dump). Never commit: they contain emails and password hashes.
+/backups/
+*.dump
