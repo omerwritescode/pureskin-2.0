@@ -25,7 +25,16 @@ MAX_REQUEST_BYTES = 5_000_000  # whole HTTP body; funnel JPEGs (<=720px) are ~10
 # then report a network error instead of the 413. Bigger uploads are cut off at once.
 MAX_DRAINED_BYTES = 20_000_000
 MAX_IMAGE_PIXELS = 25_000_000  # declared width*height, checked before decoding (bomb guard)
-WORKING_MAX_SIDE = 1600  # larger photos are downscaled before any analysis
+# Canonical resolution: before ANY quality check or measurement, the decoded photo is
+# downscaled in memory so its longest side is at most this (never enlarged), with
+# cv2.INTER_AREA (deterministic). Every threshold here was calibrated on 720 px photos,
+# and without this the client's resize became part of the model: the same photo passed
+# at 720 px but was rejected as too dim at 960 and 1080 px (README, "Canonical resolution").
+CANONICAL_MAX_SIDE = 720
+CANONICAL_INTERPOLATION = "INTER_AREA"
+# Training pipeline only (train_skin_type.py pre-shrinks dataset images with it before
+# calling the analyzer, which then applies CANONICAL_MAX_SIDE as above).
+WORKING_MAX_SIDE = 1600
 ALLOWED_FORMATS = ("JPEG", "PNG", "WEBP")
 
 # --------------------------------------------------------------------------------------

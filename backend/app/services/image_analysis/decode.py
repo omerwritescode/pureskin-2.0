@@ -21,8 +21,23 @@ TOO_LARGE = (
 _DATA_URL_PREFIX = re.compile(r"data:image/[\w.+-]+;base64,", re.ASCII)
 
 
+def to_canonical_resolution(bgr: np.ndarray) -> np.ndarray:
+    """Downscale so the longest side is at most CANONICAL_MAX_SIDE; never enlarge.
+
+    Deterministic (cv2.INTER_AREA, exact target size), and a no-op on an image that is
+    already small enough, so calling it twice changes nothing.
+    """
+    height, width = bgr.shape[:2]
+    longest = max(height, width)
+    if longest <= cfg.CANONICAL_MAX_SIDE:
+        return bgr
+    scale = cfg.CANONICAL_MAX_SIDE / longest
+    size = (max(1, round(width * scale)), max(1, round(height * scale)))
+    return cv2.resize(bgr, size, interpolation=getattr(cv2, cfg.CANONICAL_INTERPOLATION))
+
+
 def decode_image(image_b64: str) -> np.ndarray:
-    """Base64 string or data URL -> BGR uint8 array, at most WORKING_MAX_SIDE px."""
+    """Base64 string or data URL -> BGR uint8 array at the canonical resolution."""
     if not isinstance(image_b64, str):
         raise ImageRejected([UNREADABLE])
     text = image_b64.strip()
@@ -52,8 +67,4 @@ def decode_image(image_b64: str) -> np.ndarray:
     if bgr is None:
         raise ImageRejected([UNREADABLE])
 
-    longest = max(bgr.shape[:2])
-    if longest > cfg.WORKING_MAX_SIDE:
-        scale = cfg.WORKING_MAX_SIDE / longest
-        bgr = cv2.resize(bgr, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
-    return bgr
+    return to_canonical_resolution(bgr)  # early, so a big photo's pixels are freed at once

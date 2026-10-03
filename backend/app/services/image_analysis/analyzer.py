@@ -13,14 +13,14 @@ import numpy as np
 
 from . import quality, scoring
 from . import scoring_config as cfg
-from .decode import decode_image
+from .decode import decode_image, to_canonical_resolution
 from .errors import ImageRejected, ModelUnavailable
 from .face import FaceDetector, align_face
 from .lighting import Lighting
 from .lighting import measure as measure_lighting
 from .skin_type import WEIGHTS_PATH, load_skin_type_classifier
 
-SERVICE_VERSION = "1.0.0"
+SERVICE_VERSION = "1.1.0"  # 1.1.0: canonical 720 px resolution before any check (7b-ii)
 
 SERVICE_DIR = Path(__file__).resolve().parent
 MODELS_DIR = SERVICE_DIR / "models"
@@ -102,6 +102,9 @@ class ImageAnalyzer:
         photos the gate rejects. The public analyze_image() never turns the gate off.
         """
         timer = _Timer()
+        # Every caller (the API, the dev and evaluation scripts) gets the same canonical
+        # resolution before any check or measurement.
+        bgr = to_canonical_resolution(bgr)
         hard = quality.check_whole_image(bgr)
         if hard:
             raise ImageRejected(hard)

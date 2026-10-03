@@ -15,7 +15,10 @@ at the standalone endpoint. The skin-type classifier (Part 3) was trained and
 evaluated, but it performs at chance on a leak-free split, so it is not served and
 `skin_type_prediction` is `null` (see [Part 3](#skin-type-classifier-part-3)). Since
 7b-i it also runs inside `POST /api/scan/analyze` (the skin_profile service merges it
-with the questionnaire). The funnel switches to that endpoint in 7b-ii.
+with the questionnaire). Since 7b-ii the scan funnel uses both endpoints: the selfie page
+checks each photo with this endpoint right after capture or upload, and the
+questionnaire calls `/api/scan/analyze` at the end. Every photo is analysed at a
+[canonical 720 px](#canonical-resolution-step-7b-ii).
 
 ---
 
@@ -131,7 +134,7 @@ here would be the photo. The CPU-bound work runs in a threadpool.
 ## Pipeline
 
 ```
-base64 ──► decode in memory (header-only size check first) ──► downscale to ≤1600 px
+base64 ──► decode in memory (header-only size check first) ──► downscale to ≤720 px (canonical)
        ──► whole-image checks (black / white / smeared frame)
        ──► MediaPipe FaceLandmarker: 478 landmarks, head pose, smile blendshape
        ──► framing checks (no face, >1 face, too small, cut off, turned)
@@ -477,67 +480,72 @@ gitignored). Run with:
 python -m app.services.image_analysis.check_lighting_consistency --synthetic --markdown
 ```
 
-Scores are from the analysis-only mode, so the two rejected photos still show what
-they would have scored:
+Scores are from the analysis-only mode, so the rejected photos still show what they
+would have scored. Re-run in 7b-ii at the
+[canonical resolution](#canonical-resolution-step-7b-ii) (720 px; these originals are
+960×1280):
 
 | photo | API decision | acne | redness | wrinkle | pigmentation | pore | exposure L\* (reference) | cheek ratio |
 |---|---|---|---|---|---|---|---|---|
-| 1 | **rejected: uneven light** | 11 | 48 | 49 | 49 | 26 | 71 (eye whites) | 3.12 |
-| 2 | pass | 1 | 29 | 5 | 41 | 13 | 75 (eye whites) | 1.24 |
-| 3 | **rejected: uneven light** | 16 | 37 | 19 | 62 | 20 | 65 (scene highlights) | 3.12 |
-| 4 | pass | 58 | 27 | 21 | 66 | 28 | 43 (eye whites) | 1.64 |
+| 1 | **rejected: uneven light** | 11 | 47 | 47 | 49 | 25 | 72 (eye whites) | 3.13 |
+| 2 | pass | 1 | 29 | 4 | 40 | 13 | 74 (eye whites) | 1.24 |
+| 3 | **rejected: uneven light** | 16 | 37 | 20 | 52 | 20 | 65 (scene highlights) | 3.12 |
+| 4 | **rejected: too dim** | 61 | 27 | 21 | 65 | 28 | 35 (scene highlights) | 1.64 |
 
-| score | spread, all 4 photos (gate off) | spread, the 2 photos that pass the gate |
-|---|---|---|
-| acne | **57** (1–58) | **57** (1–58) |
-| redness | 21 (27–48) | 2 (27–29) |
-| wrinkle | **44** (5–49) | 16 (5–21) |
-| pigmentation | 25 (41–66) | 25 (41–66) |
-| pore | 15 (13–28) | 15 (13–28) |
+| score | spread, all 4 photos (gate off) |
+|---|---|
+| acne | **60** (1–61) |
+| redness | 20 (27–47) |
+| wrinkle | **43** (4–47) |
+| pigmentation | 25 (40–65) |
+| pore | 15 (13–28) |
 
 Raw features behind those scores:
 
 | photo | redness (EI excess) | acne (per 10k px) | spot fraction | unevenness | pore darkness | wrinkle line density |
 |---|---|---|---|---|---|---|
-| 1 | 0.126 | 1.47 | 0.022 | 0.084 | 0.0066 | 0.118 |
-| 2 | 0.081 | 0.00 | 0.005 | 0.105 | 0.0032 | 0.006 |
-| 3 | 0.101 | 2.09 | 0.024 | 0.115 | 0.0050 | 0.028 |
-| 4 | 0.078 | 6.98 | 0.031 | 0.112 | 0.0073 | 0.033 |
+| 1 | 0.125 | 1.46 | 0.021 | 0.084 | 0.0065 | 0.111 |
+| 2 | 0.081 | 0.00 | 0.004 | 0.104 | 0.0032 | 0.005 |
+| 3 | 0.101 | 2.10 | 0.012 | 0.116 | 0.0049 | 0.030 |
+| 4 | 0.078 | 7.38 | 0.030 | 0.112 | 0.0073 | 0.032 |
 
 What this shows:
 
 - **Real lighting moves the scores a lot, with the gate off.** Redness and pigmentation
-  shift 21–25 points across the four photos, and wrinkles 44. That is far more than the
+  shift 20–25 points across the four photos, and wrinkles 43. That is far more than the
   ≤ 2.5 points the synthetic tests suggested.
-- **The gate removes the two side-lit photos** (cheek ratio 3.1, over the 2:1 limit).
-  Those were the wrinkle outlier (photo 1: raking light, line density 4–20× the others)
-  and a redness/pigmentation high. Across the two photos that remain, redness differs
-  by 2 points and wrinkles by 16.
-- **Pores, pigmentation and acne don't improve.**
-  - Pores and pigmentation still differ by 15 and 25 points.
-  - Acne still swings 1 → 58. Photo 4 passes (reference L\* 43 is above the dim limit,
-    cheek ratio 1.64 under 2:1), but its 7 acne-like spots per 10k px against 0
-    elsewhere look like low-light colour noise read as lesions.
-- **Two passing photos are too few to call the remaining scores stable.** They show
-  that gating helps with redness and wrinkles, not that it makes the scores
-  lighting-invariant.
+- **The gate removes the two side-lit photos** (cheek ratio 3.1, over the 2:1 limit):
+  the wrinkle outlier (photo 1: raking light, line density 4–20× the others) and a
+  redness/pigmentation high.
+- **Photo 4 is now rejected as too dim.** In 7a, at full 960×1280, it passed: its eye
+  whites gave a reference L\* of 43. At 720 px, the eye-white reference is no longer
+  accepted, so the scene highlights are used instead (L\* 35, below the 38 limit). Its
+  7 acne-like spots per 10k px against 0 elsewhere had already looked like low-light
+  colour noise. Whether this photo passes depends on which white reference is chosen;
+  see [Canonical resolution](#canonical-resolution-step-7b-ii).
+- **Only one photo passes the gate, so no "stable under good light" spread can be
+  shown.** The 7a figures (two passing photos: redness 2 points apart, wrinkles 16) were
+  measured at the old resolution. Either way, the scores are not lighting-invariant.
 
 ### Synthetic changes on the same four photos
 
-Mean absolute score change vs. the unmodified photo, gate off. The last column counts how
-many of the 4 the gate would reject; 2 of the originals are already rejected for uneven
-light.
+Mean absolute score change vs. the unmodified photo, gate off, re-run at the canonical
+720 px in 7b-ii. The last column counts how many of the 4 the gate would reject; 3 of
+the originals are already rejected (2 for uneven light, photo 4 as too dim).
 
 | Change | acne | redness | wrinkle | pigmentation | pore | gate rejects |
 |---|---|---|---|---|---|---|
-| exposure ×0.5 | 5.0 | 1.2 | 2.0 | 3.2 | 0.8 | 3 of 4 |
-| exposure ×0.7 | 4.5 | 1.2 | 1.2 | 2.8 | 0.8 | 3 of 4 |
-| warm white balance | 4.2 | 0.5 | 1.8 | 4.5 | 1.2 | 3 of 4 |
-| cool white balance | 4.0 | 2.0 | 1.2 | 4.8 | 0.5 | 2 of 4 |
-| tone curve γ 0.8 | 6.5 | 7.0 | 8.0 | 11.2 | 3.5 | 2 of 4 |
-| tone curve γ 1.25 | 16.5 | 14.8 | 4.8 | 15.5 | 5.2 | 3 of 4 |
-| side light (50% → 100%) | 6.2 | 1.5 | 3.2 | 6.2 | 1.2 | 3 of 4 |
-| darken every pixel (×0.21 / 0.24 / 0.30) | 17.8 | 1.8 | 3.2 | 6.0 | 1.0 | 4 of 4 |
+| exposure ×0.5 | 8.8 | 1.5 | 2.0 | 1.2 | 1.0 | 3 of 4 |
+| exposure ×0.7 | 9.5 | 1.2 | 0.8 | 0.8 | 1.2 | 3 of 4 |
+| warm white balance | 13.5 | 0.8 | 1.8 | 1.2 | 0.2 | 3 of 4 |
+| cool white balance | 7.8 | 2.2 | 0.8 | 4.0 | 1.2 | 2 of 4 |
+| tone curve γ 0.8 | 12.2 | 7.0 | 8.0 | 10.5 | 2.8 | 2 of 4 |
+| tone curve γ 1.25 | 20.8 | 14.2 | 6.2 | 15.2 | 6.5 | 3 of 4 |
+| side light (50% → 100%) | 6.5 | 2.0 | 4.0 | 3.2 | 1.5 | 3 of 4 |
+| darken every pixel (×0.21 / 0.24 / 0.30) | 14.2 | 2.0 | 1.2 | 3.8 | 1.0 | 4 of 4 |
+
+At 720 px acne moves more under these changes than it did at full resolution (e.g.
+warm white balance 13.5 vs 4.2). The other four scores move about as much as before.
 
 - **These synthetic numbers understate real-world variation and should not be cited as
   evidence of stability.** Re-rendering one photo can't reproduce what different real
@@ -964,46 +972,72 @@ Docker image, install torch from `https://download.pytorch.org/whl/cpu`.
 
 ---
 
-## Funnel resolution (step 7b-i)
+## Canonical resolution (step 7b-ii)
 
-`check_funnel_resolution.py` analyses each photo in `samples/` and `samples/lighting/`
-in two forms: as uploaded, and as the selfie page sends it (`scan.js`: longest side
-≤ 720 px, JPEG quality 0.85). It also tries a few candidate settings, and runs
-everything through the public `analyze_image()` with the gate on. The browser's resize
-and JPEG encoder are approximated with Pillow (bilinear, same nominal quality).
+**Every photo is analysed at a longest side of at most 720 px.** Before any quality
+check or measurement, `ImageAnalyzer.analyze()` shrinks the decoded image in memory
+(`decode.to_canonical_resolution`: `cv2.INTER_AREA`, exact target size, never
+enlarges). Every caller goes through it, including the API, the dev scripts and the
+evaluation scripts. The setting is `CANONICAL_MAX_SIDE` in `scoring_config.py`, and the
+service version went from 1.0.0 to 1.1.0.
+
+**Why.** Every threshold here was calibrated on 720 px photos, but the service used to
+analyse up to 1600 px. That made the client's resize part of the model: in 7b-i the
+same photo (`lighting/4.jpeg`) passed at 720 px but was rejected as too dim at 960 and
+1080 px.
+
+**Effect.** `check_funnel_resolution.py` compares each photo as uploaded with what the
+selfie page sends, plus some candidate settings, all through the public
+`analyze_image()` with the gate on. The browser's resize and JPEG encoder are
+approximated with Pillow (bilinear, same nominal quality). On the project's 6 photos
+(960×1280 originals), each cell is the largest |difference| from the full-size photo:
 
 ```bash
 python -m app.services.image_analysis.check_funnel_resolution
 ```
 
-Results on the project's 6 photos (all 960×1280 originals, so "full size" is only
-1.78× the funnel's resolution). Each cell is the largest |difference| from full size
-over the photos both versions scored:
-
 | Variant | Base64 payload | Decision changed | acne | redness | wrinkle | pigment | pore |
 |---|---|---|---|---|---|---|---|
-| **funnel today: 720 px, q85** | 41-80 KB | 0 of 6 | **38** | 1 | 4 | 2 | 1 |
-| 720 px, q92 | 60-111 KB | 0 of 6 | 7 | 1 | 2 | 1 | 1 |
-| 960 px, q85 | 68-128 KB | **1 of 6** | 3 | 1 | 1 | 3 | 3 |
-| 1080 px, q90 | 114-199 KB | **1 of 6** | 6 | 2 | 2 | 2 | 3 |
+| 720 px, q85 (the selfie page until 7b-ii) | 41-80 KB | 1 of 6 | 6 | 1 | 3 | 2 | 1 |
+| **720 px, q92 (the selfie page from 7b-ii)** | 60-111 KB | 1 of 6 | 15 | 1 | 1 | 1 | 1 |
+| 960 px, q85 | 68-128 KB | 0 of 6 | 3 | 1 | 1 | 3 | 0 |
+| 1080 px, q90 | 114-199 KB | 1 of 6 | 3 | 1 | 2 | 2 | 0 |
 
-- **The four image-primary scores barely move** at the funnel's size (≤ 4 points), and
-  no accept/reject decision changes.
-- **Acne moves a lot on one photo.** `lighting/4.jpeg` (reference L\* 43, the dim
-  photo whose acne already looked like colour noise in
-  [Lighting consistency](#lighting-consistency)) goes from 58 to 20. The other photos
-  move by ≤ 7. This is the known acne instability. The merge caps and down-weights the
-  image acne score for exactly this reason, so it can't trigger routine changes on its
-  own.
-- **Larger isn't safer.** At 960 and 1080 px the same `lighting/4.jpeg` is *rejected*
-  as too dim. Its reference L\* is close to the threshold, and the dim threshold was
-  calibrated on 720 px, q85 photos.
-- **Proposal for 7b-ii:** keep 720 px. Optionally raise the JPEG quality from 0.85 to
-  0.92. On these photos that cut the largest acne change from 38 to 7, for about 40%
-  more payload (at most ~111 KB here, far below the 5 MB request limit and
-  sessionStorage's few-MB quota). Six photos (four of them of one face, under different light) are too few to be sure, so
-  treat this as a cheap improvement, not a validated one. The scores are most
-  comparable when every photo uses the same setting, whichever is chosen.
+The same photo sent at 720, 960 and 1080 px (bilinear, JPEG q92, as a browser would
+send it) is checked by `tests/test_canonical_resolution.py`:
+
+| Photo | Decision at 720 / 960 / 1080 px | Largest change from 720 px: redness, wrinkle, pigment, pore | acne |
+|---|---|---|---|
+| 1.jpeg | pass / pass / pass | 0, 1, 4, 1 | 14 |
+| 2.jpeg | pass / pass / pass | 0, 1, 2, 2 | 0 |
+| lighting/1.jpeg, lighting/3.jpeg | uneven light (all three) | — | — |
+| lighting/2.jpeg | pass / pass / pass | 1, 1, 1, 0 | 0 |
+| **lighting/4.jpeg** | **pass / too dim / pass** | 0, 0, 3, 1 (1080 vs 720) | 4 |
+
+- **The four image-primary scores now agree within 4 points** across sizes, and every
+  decision but one is the same. The test asserts ≤ 4 for those scores and ≤ 20 for acne,
+  which is documented as unstable. An exact 2× upscale gives an identical result.
+- **The one remaining flip is not about resolution.** Every variant of
+  `lighting/4.jpeg` is now analysed at 720 px. On this dim, noisy photo, the dim check's
+  white reference switches between two sources:
+
+  | Variant | Reference used | L\* |
+  |---|---|---|
+  | 720 px, q92 | eye whites | 41.4 |
+  | 1080 px, q92 | eye whites | 42.5 |
+  | 960 px, q92 | scene highlights | 35.3 |
+  | full size | scene highlights | 35.3 |
+
+  Which one wins depends on resampling and JPEG noise. That's a robustness issue in
+  the 7a lighting gate's reference selection, and it is **not fixed here**: fixing it
+  would mean re-validating the gate, not changing the resolution. The test marks this
+  photo `xfail`, with the measured references in the reason.
+- **Well-lit photos are stable:** their reference L\* varies by at most 2.6 across all
+  the variants.
+- **Not affected:** the 199 rated dataset images used for the Spearman correlations are
+  640 px, and the dim-threshold calibration used 720 px photos. The canonical step
+  doesn't change either of them.
+- **Selfie page (7b-ii):** still at most 720 px, with the JPEG quality raised to 0.92.
 
 ---
 
@@ -1079,10 +1113,10 @@ GPU). The service falls back to the CPU automatically when no GPU is present.
    widely with lighting (1–58 across four photos of one face, one of which passes the
    gate). Don't let it trigger routine changes unless the questionnaire corroborates it.
 9. **Scores are not lighting-invariant.** Across four real photos of one face, redness
-   and pigmentation moved 21–25 points and wrinkles 44 (synthetic re-renderings
-   suggested ≤ 2.5 and understate this). The gate now rejects dim and uneven light,
-   which removed the worst cases (two side-lit photos), but pores and pigmentation still
-   differed by 15 and 25 points across the two photos that pass.
+   and pigmentation moved 20–25 points and wrinkles 43 (synthetic re-renderings
+   suggested ≤ 2.5 and understate this). The gate rejects dim and uneven light, which
+   removes the worst cases. At the canonical 720 px, only one of those four photos
+   passes, so how stable the scores are under good light can't be measured from them.
 10. **Pigmentation mappings were calibrated on studio portraits; phone selfies read
     high.** The anchors were set on studio-lit portraits. On the project's selfies,
     pigmentation reads 41–66, with raw unevenness about 1.5× the studio portraits',
@@ -1098,6 +1132,19 @@ GPU). The service falls back to the CPU automatically when no GPU is present.
     about 6% of those images, and only 17 of the 259 test images, so per-tone validation
     was not achieved. A useful classifier would need better-labelled, more diverse data.
     Until then, skin type comes from the questionnaire.
+13. **The dim decision can flip on a borderline photo.** On a dim, noisy photo, the dim
+    check's white reference can switch between the eye whites and the scene highlights
+    because of resampling or JPEG noise alone. Example: `lighting/4.jpeg` reads L\*
+    41.4 (eye whites, 720 px) and 42.5 (eye whites, 1080 px) but 35.3 (scene highlights,
+    960 px and full size), either side of the 38 limit (see
+    [Canonical resolution](#canonical-resolution-step-7b-ii)). Not fixed: it needs the
+    gate re-validated.
+14. **The lighting-consistency result now rests on a single accepted photo.** At the
+    canonical 720 px, only `lighting/2.jpeg` of the four same-face photos passes the gate:
+    photos 1 and 3 are rejected for uneven light, and photo 4 as too dim (limitation 13).
+    So the real-photo evidence shows how much lighting moves the scores with the gate off
+    (redness and pigmentation 20-25 points, wrinkles 43). It can't show how stable they
+    are across photos that pass. That needs more photos of one face in good, varied light.
 
 ---
 
@@ -1129,6 +1176,13 @@ python -m pytest app/services/image_analysis        # from backend/
   light; the analysis-only mode still scores it (with the issue as a warning); and the
   endpoint still rejects it even when the request asks for `"lighting_gate": false`.
   **All 9 pass on the project's two selfies**, so both are accepted by the new gate.
+- **Canonical resolution** (`tests/test_canonical_resolution.py`):
+  - **Always runs:** large images shrink to a 720 px longest side with the aspect ratio
+    kept; small ones are never enlarged; the step is deterministic and idempotent; decode
+    returns 720 px.
+  - **With photos:** an exact 2× upscale gives an identical result. Each photo at 720 /
+    960 / 1080 px (JPEG q92) gets the same decision, with the image-primary scores within
+    4 and acne within 20. A photo whose white reference switches is reported as `xfail`.
 
 **Adding your photos** (gitignored, never committed):
 
@@ -1161,7 +1215,7 @@ samples/
 | `download_models.py` | fetches the pinned, checksum-verified MediaPipe model |
 | `visualize_regions.py` | dev tool: region and detection overlays |
 | `check_lighting_consistency.py` | lighting-sensitivity report (real + synthetic) |
-| `check_funnel_resolution.py` | full-size vs the funnel's 720 px / q85 downsizing (step 7b-i) |
+| `check_funnel_resolution.py` | full-size vs the selfie page's downsizing, plus candidate settings (7b-i, 7b-ii) |
 | `skin_type.py` | skin-type classifier inference + the preprocessing shared with training |
 | `skin_type_data.py` | dataset discovery, duplicate grouping (pHash + ORB), leak-free split |
 | `train_skin_type.py` | training/evaluation pipeline for the classifier (GPU) |
