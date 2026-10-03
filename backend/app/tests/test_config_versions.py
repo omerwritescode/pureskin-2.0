@@ -26,6 +26,8 @@ RECORDED = {
     "ingredients-1.0.0": "4a94921f822ddff6",
     "routine-1.0.0": "08209916f5c2a19f",
     "routine-2.0.0": "cbf3b7f0e9dd5ac6",
+    "ingredients-1.1.0": "dd1efb09be4f6242",
+    "routine-2.1.0": "02df1ea245514a25",
 }
 
 CONFIGS = [

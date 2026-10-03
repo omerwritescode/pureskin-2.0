@@ -9,6 +9,12 @@
   color: var(--text);
 }
 
+.routine-note {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 /* Stacked on phones, side by side on wider screens. */
 .routine-grid {
   display: grid;

@@ -56,6 +56,11 @@ function intro(routine) {
 function renderRoutine(routine) {
   const parts = [intro(routine)];
   if (routine.is_sensitive) parts.push(sensitiveIndicator());
+  // The profile has no questionnaire tags (saved before they existed, or dropped at signup).
+  if (!routine.current_products_considered) {
+    parts.push(el("p", { className: "routine-note", role: "note",
+      text: "This routine doesn't take your current products into account." }));
+  }
   if (routine.warnings.length) {
     parts.push(el("div", { className: "warning-box", role: "note" },
       el("h2", { className: "warning-box__title", text: "Heads up" }),

@@ -10,7 +10,7 @@ ASCII, brackets, percentages and footnote marks removed). This file holds vocabu
 only, never a product's ingredient list.
 """
 
-INGREDIENT_CONFIG_VERSION = "ingredients-1.0.0"
+INGREDIENT_CONFIG_VERSION = "ingredients-1.1.0"  # 1.1.0 (7c-i c): avoid-list classes
 
 # ======================================================================================
 # Normalisation
@@ -85,6 +85,11 @@ SYNONYMS = {
     "bisdisulizole disodium": "disodium phenyl dibenzimidazole tetrasulfonate",
     "padimate o": "ethylhexyl dimethyl paba",
     "meradimate": "menthyl anthranilate",
+    # Drying alcohols and sulfates (7c-i c)
+    "ethanol": "alcohol",
+    "ethyl alcohol": "alcohol",
+    "denatured alcohol": "alcohol denat",
+    "sodium lauryl ether sulfate": "sodium laureth sulfate",
 }
 
 # ======================================================================================
@@ -239,6 +244,43 @@ CLASSES = {
         "ethylhexyl dimethyl paba",
         "menthyl anthranilate",
     ),
+    # --- Avoid-list families (7c-i c): what "alcohol", "lanolin", "sulfates" and
+    # "parabens" mean when a user avoids them ---
+    # Drying (short-chain) alcohols only. Fatty alcohols (cetyl, cetearyl, stearyl,
+    # behenyl, lanolin alcohol) and benzyl alcohol are not drying alcohols.
+    "drying_alcohol": ("alcohol", "alcohol denat", "sd alcohol 40", "sd alcohol 40-b", "isopropyl alcohol"),
+    "lanolin": (
+        "lanolin",
+        "lanolin alcohol",
+        "lanolin oil",
+        "lanolin acid",
+        "hydrogenated lanolin",
+        "acetylated lanolin",
+        "acetylated lanolin alcohol",
+        "peg-75 lanolin",
+    ),
+    # Sulfate surfactants. Not: sodium lauroyl sarcosinate, sodium cocoyl isethionate,
+    # olefin sulfonates, or mineral salts such as magnesium sulfate.
+    "sulfate": (
+        "sodium lauryl sulfate",
+        "sodium laureth sulfate",
+        "ammonium lauryl sulfate",
+        "ammonium laureth sulfate",
+        "sodium coco-sulfate",
+        "sodium myreth sulfate",
+        "tea-lauryl sulfate",
+        "sodium cetearyl sulfate",
+    ),
+    "paraben": (
+        "methylparaben",
+        "ethylparaben",
+        "propylparaben",
+        "butylparaben",
+        "isobutylparaben",
+        "sodium methylparaben",
+        "sodium ethylparaben",
+        "sodium propylparaben",
+    ),
     # --- Phases, for "no water and an oil first" (a facial oil) ---
     "water_phase": (
         "water",
@@ -328,6 +370,10 @@ NEUTRAL = (
     "alpha arbutin",
     "tranexamic acid",
     "cetearyl alcohol",
+    # Fatty alcohols (reviewed: not drying alcohols)
+    "cetyl alcohol",
+    "stearyl alcohol",
+    "behenyl alcohol",
     "cholesterol",
     "linoleic acid",
     "dimethicone",

@@ -68,6 +68,43 @@ normaliser, `app/services/ingredients/` (see its README).
    product lists a retinoid carries a fixed caution: *"If you're pregnant, trying to get
    pregnant or breastfeeding, ask a doctor before using a retinoid."*
 
+## The user's current products and avoid list (7c-i c)
+
+The questionnaire's fixed-vocabulary tags are saved with the Skin Profile
+(`skin_profiles.questionnaire_tags`: actives and product types in use, the avoid list,
+the stated goal). **NULL tags mean no information**: none of the rules below apply, the
+routine is exactly what it would be without them, and the routine page says "This
+routine doesn't take your current products into account". Empty tag lists (the user
+answered "none") are information, and show no notice.
+
+- **Actives in use count as present in both sessions** (we don't know when they're
+  used). A product with a **high- or medium-severity** conflict with one is a **hard
+  exclusion**, core steps included (the core fallback keeps it); the reason names the
+  active. A **low-severity** conflict is not: the product stays, with a note ("You already
+  use ascorbic acid; combining it with … is generally fine for most people, but note: …",
+  the pair's reason). Conflicts between two products in the routine are unchanged (every
+  severity is resolved).
+- **Duplicates are not added.** A step whose own active the user already uses is not
+  added, with a note ("No serum with retinol was added because you already use a
+  prescription retinoid."). A product containing a member of a family the user already
+  uses (retinoids, benzoyl peroxide, AHAs, BHAs: `DUPLICATE_CLASSES`) is left out.
+- **A prescription retinoid**, and the ticked "Retinoid" product type, count as the
+  retinoid class for duplicates and conflicts, exactly like a retinoid named in the free
+  text. So no benzoyl peroxide is added, and a fixed note says the prescriber's
+  instructions come first.
+- **A ticked "Exfoliant"** means no new exfoliant step.
+- **The avoid list** is a hard exclusion, with strict membership (a trace counts):
+
+| Avoid tag | Leaves out a product listing |
+|---|---|
+| fragrance | declared fragrance, a declared fragrance allergen, or an essential oil |
+| alcohol | a drying alcohol only (not fatty alcohols) |
+| acids | an AHA or a BHA only (not hyaluronic, tranexamic, azelaic acid…) |
+| retinoids, essential_oils, lanolin, sulfates, parabens | a member of that class |
+| retinol, prescription_retinoid | any retinoid |
+| salicylic acid / glycolic acid / ascorbic acid | any BHA / any AHA / any vitamin C (the lexicon folds "bha", "aha", "vitamin c" into these tags) |
+| any other named active | that ingredient |
+
 ## Keywords
 
 A keyword is a set of conditions that must all hold (`MATCHERS`). **Descriptions are
@@ -116,8 +153,9 @@ loader refuses a sunscreen without a labelled SPF of at least 30.
    skin. The avoid list (7c-i c) will use strict membership.
 7. **"Fragrance-free" means "no declared fragrance"**: an undeclared fragrance component
    can't be seen in an ingredient list. The declared allergens are the EU 26.
-8. **The user's current products are not considered yet** (7c-i c stores the
-   questionnaire's tags).
+8. **Current products come from the questionnaire's tags only**: a product named by
+   brand ("CeraVe Hydrating Cleanser") gives no actives unless its active is named too.
+   Profiles saved before 7c-i (c), or whose tags were dropped at signup, have none.
 
 ## Testing
 

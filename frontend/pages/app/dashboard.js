@@ -11,6 +11,9 @@ const RETRY_DELAY_MS = 2000;
 const SAVE_LATER =
   "We couldn't save your latest scan yet. We'll try again next time you visit this page.";
 const RESCAN = "We couldn't save your latest scan. Please scan again.";
+const TAGS_DROPPED =
+  "Your scan was saved, but not your current products and the ingredients you avoid, " +
+  "so your routine won't take them into account.";
 
 function showSaveNotice(text, { rescan = false } = {}) {
   saveNotice.replaceChildren(
@@ -44,11 +47,13 @@ async function savePendingScan() {
   }
 
   // Exactly the fields POST /api/profile stores. Never the photo, and not the
-  // display-only "sources" / "quality".
+  // display-only "sources" / "quality". questionnaire_tags is a fixed vocabulary (never
+  // free text); the server saves the scan without it if it's missing or invalid.
   const body = {
     skin_type: result.skin_type,
     is_sensitive: result.is_sensitive,
     score_sources: result.score_sources,
+    questionnaire_tags: result.questionnaire_tags,
   };
   for (const [key] of SCORE_FIELDS) body[key] = result[key];
 
@@ -64,7 +69,8 @@ async function savePendingScan() {
     // Cleared before each request, so a refresh mid-request can't save it twice.
     remove(RESULT_KEY);
     try {
-      await apiFetch("/api/profile", { method: "POST", body });
+      const saved = await apiFetch("/api/profile", { method: "POST", body });
+      if (saved && saved.questionnaire_tags_dropped) showSaveNotice(TAGS_DROPPED);
       return;
     } catch (error) {
       const action = window.PureSkinScanApi.saveFailureAction(error.status);

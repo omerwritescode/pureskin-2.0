@@ -10,9 +10,11 @@ actives, L-ascorbic acid and fragrance left out, mineral sunscreen first, a cent
 morning serum, substitutions); a fixed concern priority for conflicts; evening-only
 actives; core steps fall back to any eligible product; keywords match ingredients and
 labelled format fields, never descriptions.
+routine-2.1.0 (7c-i c): the user's current products and avoid list (questionnaire tags):
+duplicates, conflicts with actives in use, the avoid list. Without tags, as 2.0.0.
 """
 
-ROUTINE_CONFIG_VERSION = "routine-2.0.0"
+ROUTINE_CONFIG_VERSION = "routine-2.1.0"
 
 AM, PM = "am", "pm"
 BOTH = (AM, PM)
@@ -141,9 +143,85 @@ SESSION_RULES = (
 )
 RINSE_OFF_CATEGORIES = ("cleanser",)
 SESSION_NAMES = {AM: "morning", PM: "evening"}
-# (singular, plural) for the session-rule reasons: "Not used in the morning routine
-# because it contains lactic acid (an AHA); AHAs are evening-only."
-SESSION_CLASS_NAMES = {"retinoid": ("a retinoid", "retinoids"), "aha": ("an AHA", "AHAs")}
+# (singular, plural) for short reasons: "Not used in the morning routine because it
+# contains lactic acid (an AHA); AHAs are evening-only."
+SHORT_CLASS_NAMES = {
+    "retinoid": ("a retinoid", "retinoids"),
+    "aha": ("an AHA", "AHAs"),
+    "bha": ("a BHA", "BHAs"),
+    "benzoyl_peroxide": ("benzoyl peroxide", "benzoyl peroxide"),
+}
+
+# ======================================================================================
+# The user's current products and avoid list (skin_profiles.questionnaire_tags, 7c-i c)
+# ======================================================================================
+# NULL tags mean no information: none of these rules apply (the routine page says the
+# routine doesn't take the user's current products into account).
+#
+# Actives in use count as present in BOTH sessions (we don't know when they're used):
+# a product with a high or medium conflict with one is left out, core steps included (a
+# low one only adds a note: EXISTING_CONFLICT_HARD_SEVERITIES). Lexicon tags are
+# canonical tokens and count with their classes. These tags have no token of their own:
+PRESCRIPTION_RETINOID = "prescription_retinoid"
+IN_USE_TAGS = {PRESCRIPTION_RETINOID: "class:retinoid"}  # actives_in_use -> a class
+IN_USE_PRODUCT_TYPES = {"retinoid": "class:retinoid"}  # a ticked product type -> a class
+# A ticked product type that means "no new step of this category is added".
+IN_USE_SKIP_CATEGORIES = {"exfoliant": "exfoliant"}
+IN_USE_NAMES = {
+    PRESCRIPTION_RETINOID: "a prescription retinoid",
+    "retinoid": "a retinoid",
+    "exfoliant": "an exfoliant",
+}
+# Never doubled up: a product with a member of one of these families is left out when
+# the user already uses one (hard). A step whose own active the user already uses (any
+# active, e.g. niacinamide) is not added, with a note.
+DUPLICATE_CLASSES = ("retinoid", "benzoyl_peroxide", "aha", "bha")
+# A conflict with an active in use of one of these severities leaves the product out
+# (hard, core steps too). A LOW one doesn't: the product stays, with this note (the
+# pair's reason appended). Conflicts between two products in a routine are unaffected.
+EXISTING_CONFLICT_HARD_SEVERITIES = ("high", "medium")
+EXISTING_LOW_CONFLICT_NOTE = (
+    "You already use {active}; combining it with {product} is generally fine for most "
+    "people, but note: {reason}"
+)
+PRESCRIPTION_RETINOID_NOTE = (
+    "You use a prescription retinoid, so products that commonly clash with retinoids are "
+    "left out. Your prescriber's instructions come first."
+)
+
+# The avoid list -> what a product must not contain: an ingredient token or a whole class
+# ("class:<name>"). Strict membership: a trace counts (it is the user's own preference).
+AVOID = {
+    "fragrance": ("class:fragrance", "class:fragrance_allergen", "class:essential_oil"),
+    "alcohol": ("class:drying_alcohol",),
+    "retinoids": ("class:retinoid",),
+    "acids": ("class:aha", "class:bha"),
+    "essential_oils": ("class:essential_oil",),
+    "lanolin": ("class:lanolin",),
+    "sulfates": ("class:sulfate",),
+    "parabens": ("class:paraben",),
+    # Actives named as reactions. A family where the questionnaire lexicon already folds
+    # the family's names into the tag: "retinol" (retinal, retinyl palmitate...), "salicylic
+    # acid" ("bha"), "glycolic acid" ("aha"), "ascorbic acid" ("vitamin c").
+    "retinol": ("class:retinoid",),
+    PRESCRIPTION_RETINOID: ("class:retinoid",),
+    "salicylic acid": ("class:bha",),
+    "glycolic acid": ("class:aha",),
+    "ascorbic acid": ("class:vitamin_c",),
+    "benzoyl peroxide": ("benzoyl peroxide",),
+    "lactic acid": ("lactic acid",),
+    "niacinamide": ("niacinamide",),
+    "azelaic acid": ("azelaic acid",),
+    "alpha arbutin": ("alpha arbutin",),
+    "tranexamic acid": ("tranexamic acid",),
+    "hyaluronic acid": ("hyaluronic acid",),
+}
+AVOID_NAMES = {  # "You asked to avoid <name>, and it lists <ingredient>."
+    "alcohol": "drying alcohols",
+    "acids": "exfoliating acids (AHAs and BHAs)",
+    "essential_oils": "essential oils",
+    PRESCRIPTION_RETINOID: "retinoids",
+}
 
 # Shown on every step whose product lists a retinoid (any trace: strict membership).
 RETINOID_CAUTION = (

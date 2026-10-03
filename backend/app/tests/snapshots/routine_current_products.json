@@ -1,0 +1,666 @@
+{
+  "avoid_acids_acne_and_pores_high": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Vitamin C 15% Brightening Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": true,
+    "is_sensitive": false,
+    "left_out": [
+      [
+        "Blemish Control Cleanser",
+        [
+          "am"
+        ],
+        "You asked to avoid exfoliating acids (AHAs and BHAs), and it lists salicylic acid."
+      ],
+      [
+        "2% BHA Liquid Exfoliant",
+        [
+          "pm"
+        ],
+        "You asked to avoid exfoliating acids (AHAs and BHAs), and it lists salicylic acid."
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Benzoyl Peroxide 5% Spot Gel",
+        "benzoyl peroxide",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "normal",
+    "warnings": [
+      "No suitable cleanser with salicylic acid for this step \u2014 using a standard one instead",
+      "No suitable exfoliant with bha for this step"
+    ]
+  },
+  "exfoliant_checkbox_pores_high": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Vitamin C 15% Brightening Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": true,
+    "is_sensitive": false,
+    "left_out": [],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "normal",
+    "warnings": [
+      "No exfoliant with bha was added because you already use an exfoliant."
+    ]
+  },
+  "prescription_retinoid_acne_high": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Green Tea Antioxidant Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": true,
+    "is_sensitive": false,
+    "left_out": [
+      [
+        "Blemish Control Cleanser",
+        [
+          "am"
+        ],
+        "It clashes with a prescription retinoid, which you already use: Combining retinoids with BHAs increases irritation risk."
+      ],
+      [
+        "Vitamin C 15% Brightening Serum",
+        [
+          "am"
+        ],
+        "It clashes with a prescription retinoid, which you already use: Vitamin C and retinoids can irritate when layered; use vitamin C in the morning and the retinoid at night."
+      ],
+      [
+        "Benzoyl Peroxide 5% Spot Gel",
+        [
+          "pm"
+        ],
+        "It clashes with a prescription retinoid, which you already use: Benzoyl peroxide can deactivate retinoids such as retinol, and using both together greatly increases irritation."
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "normal",
+    "warnings": [
+      "You use a prescription retinoid, so products that commonly clash with retinoids are left out. Your prescriber's instructions come first.",
+      "No suitable cleanser with salicylic acid for this step \u2014 using a standard one instead",
+      "No suitable treatment with benzoyl peroxide for this step"
+    ]
+  },
+  "retinoid_checkbox_wrinkles_high": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Green Tea Antioxidant Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Peptide Firming Moisturiser",
+        "peptide",
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": true,
+    "is_sensitive": false,
+    "left_out": [
+      [
+        "Vitamin C 15% Brightening Serum",
+        [
+          "am"
+        ],
+        "It clashes with a retinoid, which you already use: Vitamin C and retinoids can irritate when layered; use vitamin C in the morning and the retinoid at night."
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "normal",
+    "warnings": [
+      "No serum with retinol was added because you already use a retinoid."
+    ]
+  },
+  "salicylic_acid_in_use_acne_high": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Vitamin C 15% Brightening Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": true,
+    "is_sensitive": false,
+    "left_out": [
+      [
+        "Benzoyl Peroxide 5% Spot Gel",
+        [
+          "pm"
+        ],
+        "It clashes with salicylic acid, which you already use: Two strong acne actives together can cause excessive dryness and peeling."
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "normal",
+    "warnings": [
+      "No cleanser with salicylic acid was added because you already use salicylic acid.",
+      "No suitable treatment with benzoyl peroxide for this step"
+    ]
+  },
+  "sensitive_oily_retinol_in_use_redness_high": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        "foaming",
+        null,
+        null
+      ],
+      [
+        2,
+        "Niacinamide 10% + Zinc Serum",
+        "niacinamide",
+        null,
+        null
+      ],
+      [
+        3,
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null,
+        null
+      ],
+      [
+        4,
+        "Oil-Free Gel Moisturiser",
+        "lightweight",
+        null,
+        null
+      ],
+      [
+        5,
+        "Mineral Shield SPF 30",
+        "mineral",
+        null,
+        null
+      ]
+    ],
+    "base_set": "oily",
+    "current_products_considered": true,
+    "is_sensitive": true,
+    "left_out": [],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        "foaming",
+        null,
+        null
+      ],
+      [
+        2,
+        "Niacinamide 10% + Zinc Serum",
+        "niacinamide",
+        null,
+        null
+      ],
+      [
+        3,
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null,
+        null
+      ],
+      [
+        4,
+        "Oil-Free Gel Moisturiser",
+        "lightweight",
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "oily",
+    "warnings": []
+  },
+  "tags_dropped_unknown_version": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Vitamin C 15% Brightening Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": false,
+    "is_sensitive": false,
+    "left_out": [],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": true,
+    "skin_type": "normal",
+    "warnings": []
+  },
+  "tags_missing": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Vitamin C 15% Brightening Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": false,
+    "is_sensitive": false,
+    "left_out": [],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": true,
+    "skin_type": "normal",
+    "warnings": []
+  },
+  "tags_none_answered": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Vitamin C 15% Brightening Serum",
+        "antioxidant",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null,
+        null
+      ]
+    ],
+    "base_set": "normal",
+    "current_products_considered": true,
+    "is_sensitive": false,
+    "left_out": [],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "normal",
+    "warnings": []
+  },
+  "vitamin_c_in_use_oily": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        "foaming",
+        null,
+        null
+      ],
+      [
+        2,
+        "Niacinamide 10% + Zinc Serum",
+        "niacinamide",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        "lightweight",
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        "spf 50",
+        null,
+        null
+      ]
+    ],
+    "base_set": "oily",
+    "current_products_considered": true,
+    "is_sensitive": false,
+    "left_out": [],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        "foaming",
+        null,
+        null
+      ],
+      [
+        2,
+        "Niacinamide 10% + Zinc Serum",
+        "niacinamide",
+        null,
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        "lightweight",
+        null,
+        null
+      ]
+    ],
+    "questionnaire_tags_dropped": false,
+    "skin_type": "oily",
+    "warnings": [
+      "You already use ascorbic acid; combining it with Niacinamide 10% + Zinc Serum is generally fine for most people, but note: The vitamin C and niacinamide clash is generally overstated, but some people experience flushing."
+    ]
+  }
+}

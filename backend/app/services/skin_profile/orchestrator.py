@@ -5,6 +5,7 @@ stored here, and no raw answers, free text or images go into the result.
 """
 
 from app.models.skin_profile import SCORE_COLUMNS
+from app.services.questionnaire import questionnaire_tags
 
 from . import skin_profile_config as cfg
 from .merge import merge_score
@@ -41,6 +42,8 @@ def build_skin_profile(image_result: dict, questionnaire_result: dict) -> dict:
         "skin_type": questionnaire_result["skin_type"],
         "is_sensitive": questionnaire_result["is_sensitive"],
         "score_sources": score_sources,
+        # Fixed-vocabulary tags for the routine (7c-i c): never raw text or conditions.
+        "questionnaire_tags": questionnaire_tags(questionnaire_result),
         "sources": summarise(score_sources),
         "quality": image_result["quality"],  # soft warnings only: hard ones never get here
     }

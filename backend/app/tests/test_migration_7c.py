@@ -3,6 +3,7 @@
 - 047c98cb091a: conflict rows may name a class ("class:<name>"); CHECKs keep class
   references and ingredient names apart.
 - 99aa1b05ae54: products.spf, texture, foaming, with controlled-vocabulary CHECKs.
+- 440d5393300d (7c-i c): skin_profiles.questionnaire_tags (a JSON object or NULL).
 
 Also: Python's sort and the database's COLLATE "C" order agree on every name the
 vocabulary can produce, so normalize_ingredient_pair() always satisfies pair_ordered.
@@ -21,7 +22,7 @@ from app.services.ingredients import CLASS_PREFIX, ingredient_config as icfg
 from app.services.ingredients.normalise import KNOWN
 from app.tests.db import downgrade, throwaway_database, upgrade
 
-BEFORE, CLASS_NAMES, PRODUCT_FIELDS = "db1f2fceaf09", "047c98cb091a", "99aa1b05ae54"
+BEFORE, CLASS_NAMES, PRODUCT_FIELDS, TAGS = "db1f2fceaf09", "047c98cb091a", "99aa1b05ae54", "440d5393300d"
 
 INSERT_CONFLICT = text(
     "INSERT INTO ingredient_conflicts (ingredient_a, ingredient_b, severity) VALUES (:a, :b, 'low')"
@@ -202,3 +203,51 @@ def test_normalized_pairs_always_satisfy_pair_ordered(db):
             with pytest.raises(IntegrityError, match="pair_ordered"), conn.begin_nested():
                 conn.execute(INSERT_CONFLICT, {"a": b, "b": a})
         conn.rollback()
+
+
+# --------------------------------------------------------------------------------------
+# 440d5393300d: skin_profiles.questionnaire_tags
+# --------------------------------------------------------------------------------------
+
+
+def profile_columns(engine: Engine) -> set[str]:
+    return {c["name"] for c in inspect(engine).get_columns("skin_profiles")}
+
+
+INSERT_PROFILE = text(
+    "INSERT INTO skin_profiles (user_id, acne_score, redness_score, wrinkle_score, pigmentation_score, "
+    "pore_score, skin_type) VALUES (:u, 30, 40, 50, 60, 70, 'oily') RETURNING id"
+)
+
+
+def test_questionnaire_tags_upgrade_downgrade_upgrade():
+    with throwaway_database() as engine:
+        upgrade(engine, PRODUCT_FIELDS)
+        with engine.begin() as conn:
+            user = conn.execute(text(
+                "INSERT INTO users (email, hashed_password) VALUES ('t@example.com', 'x') RETURNING id"
+            )).scalar_one()
+            old_row = conn.execute(INSERT_PROFILE, {"u": user}).scalar_one()
+
+        # Up: the column exists, existing rows are NULL (no information), untouched otherwise.
+        upgrade(engine, TAGS)
+        assert "questionnaire_tags" in profile_columns(engine)
+        assert "ck_skin_profiles_questionnaire_tags_object" in check_names(engine, "skin_profiles")
+        with engine.begin() as conn:
+            row = conn.execute(text("SELECT questionnaire_tags IS NULL, acne_score, skin_type FROM skin_profiles "
+                                    "WHERE id = :i"), {"i": old_row}).one()
+            assert tuple(row) == (True, 30, "oily")
+            conn.execute(text("UPDATE skin_profiles SET questionnaire_tags = CAST(:t AS jsonb)"),
+                         {"t": '{"version": "questionnaire-1.0.0", "avoid": ["fragrance"]}'})
+
+        # Down: the column (and the tags in it) is dropped; the profile stays.
+        downgrade(engine, PRODUCT_FIELDS)
+        assert "questionnaire_tags" not in profile_columns(engine)
+        with engine.connect() as conn:
+            assert conn.execute(text("SELECT count(*) FROM skin_profiles")).scalar_one() == 1
+
+        # Up again: clean, the old row is NULL again, and an object can be stored.
+        upgrade(engine, TAGS)
+        with engine.begin() as conn:
+            assert conn.execute(text("SELECT questionnaire_tags IS NULL FROM skin_profiles")).scalar_one()
+            conn.execute(text("UPDATE skin_profiles SET questionnaire_tags = CAST('{}' AS jsonb)"))

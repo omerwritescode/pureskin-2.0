@@ -41,6 +41,10 @@ class SkinProfile(Base):
             "skin_type IS NULL OR skin_type IN ({})".format(", ".join(f"'{t}'" for t in SKIN_TYPES)),
             name="skin_type_valid",
         ),
+        CheckConstraint(
+            "questionnaire_tags IS NULL OR jsonb_typeof(questionnaire_tags) = 'object'",
+            name="questionnaire_tags_object",
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -59,6 +63,13 @@ class SkinProfile(Base):
     # Where each value came from (image / questionnaire / blend, weights, versions).
     # Never raw answers, free text or images. Null for profiles saved before 7b-i.
     score_sources: Mapped[dict | None] = mapped_column(JSONB)
+    # The questionnaire's fixed-vocabulary tags (current products, avoid list, goal), as
+    # app.services.questionnaire.QuestionnaireTags (7c-i c). NULL = no information: saved
+    # before 7c-i (c), or the tags were missing or invalid at signup. Never raw text, skin
+    # conditions or lifestyle tags. Deleted with the user (cascade); the step 8 data
+    # export must include them.
+    # none_as_null: a Python None is stored as SQL NULL (not a JSON null), as the CHECK expects.
+    questionnaire_tags: Mapped[dict | None] = mapped_column(JSONB(none_as_null=True))
     # Null when inference ran on-device and the image never left the browser (spec §3).
     raw_image_path: Mapped[str | None] = mapped_column(String(1024))
     created_at: Mapped[datetime] = mapped_column(

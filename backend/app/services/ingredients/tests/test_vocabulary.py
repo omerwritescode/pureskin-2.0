@@ -69,6 +69,21 @@ def test_reviewed_decisions():
     assert not set(cfg.CLASSES["essential_oil"]) & set(cfg.CLASSES["oil"])
 
 
+def test_avoid_list_classes():
+    """7c-i (c): what "alcohol", "sulfates", "lanolin" and "parabens" mean."""
+    drying = set(cfg.CLASSES["drying_alcohol"])
+    assert canonical("Alcohol Denat.") in drying and canonical("Ethanol") in drying
+    for fatty in ("Cetearyl Alcohol", "Cetyl Alcohol", "Stearyl Alcohol", "Behenyl Alcohol",
+                  "Lanolin Alcohol", "Benzyl Alcohol"):
+        assert canonical(fatty) not in drying, fatty
+    sulfates = set(cfg.CLASSES["sulfate"])
+    assert canonical("Sodium Lauryl Ether Sulfate") == "sodium laureth sulfate" in sulfates
+    for not_sulfate in ("Sodium Lauroyl Sarcosinate", "Magnesium Sulfate", "Sodium Cocoyl Isethionate"):
+        assert canonical(not_sulfate) not in sulfates, not_sulfate
+    assert "lanolin alcohol" in cfg.CLASSES["lanolin"]
+    assert {"methylparaben", "propylparaben"} <= set(cfg.CLASSES["paraben"])
+
+
 @pytest.mark.parametrize("active", sorted(qcfg.ACTIVE_TERMS))
 def test_questionnaire_actives_are_known_canonical_tokens(active):
     """The lexicon's actives_in_use tags use the same names as ingredient lists."""

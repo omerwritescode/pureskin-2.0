@@ -6,7 +6,7 @@ Unknown keys and unknown values are rejected (HTTP 422 at the endpoints).
 
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from . import questionnaire_config as cfg
 
@@ -57,6 +57,51 @@ class Estimates(BaseModel):
     wrinkle_score: Estimate
     pigmentation_score: Estimate
     pore_score: Estimate
+
+
+TAG_ACTIVES = (*cfg.ACTIVE_TERMS, cfg.PRESCRIPTION_RETINOID)
+TAG_AVOID = (*cfg.SENSITIVITY_CATEGORIES, *cfg.ALLERGEN_TERMS, *TAG_ACTIVES)
+
+
+def _tag_list(values) -> type:
+    return Annotated[list[_options(values)], Field(max_length=len(tuple(values)))]
+
+
+class QuestionnaireTags(BaseModel):
+    """The questionnaire tags a Skin Profile keeps (skin_profiles.questionnaire_tags).
+
+    A fixed vocabulary only: never raw text, skin conditions (health data) or lifestyle
+    tags. `version` is the questionnaire config that produced them; only the current one
+    is accepted. Strict: unknown keys, unknown values, wrong types and repeated values are
+    all rejected (and POST /api/profile then saves the profile without tags).
+    """
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    version: Literal[cfg.CONFIG_VERSION]
+    actives_in_use: _tag_list(TAG_ACTIVES)  # named in "specific products", + prescription_retinoid
+    products_in_use: _tag_list(cfg.PRODUCT_TYPES)  # the ticked product types
+    avoid: _tag_list(TAG_AVOID)  # ticked sensitivities, allergens and actives named as reactions
+    stated_concern: _options(cfg.PRIMARY_CONCERNS) | None  # a goal (used by the 7c-ii ranker)
+
+    @model_validator(mode="after")
+    def no_repeats(self):
+        for name in ("actives_in_use", "products_in_use", "avoid"):
+            values = getattr(self, name)
+            if len(values) != len(set(values)):
+                raise ValueError(f"{name} repeats a value")
+        return self
+
+
+def questionnaire_tags(result: dict) -> dict:
+    """The tags to keep, from score_questionnaire()'s result (validated)."""
+    return QuestionnaireTags.model_validate({
+        "version": result["config_version"],
+        "actives_in_use": list(result["actives_in_use"]),
+        "products_in_use": list(result["products_in_use"]),
+        "avoid": list(result["avoid"]),
+        "stated_concern": result["stated_concern"],
+    }).model_dump(mode="json")
 
 
 class QuestionnaireScore(BaseModel):

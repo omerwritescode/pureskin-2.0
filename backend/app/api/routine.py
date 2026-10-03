@@ -49,6 +49,9 @@ class RoutineOut(BaseModel):
     left_out: list[LeftOut] = []
     warnings: list[str]
     message: str | None = None  # set when there's no Skin Profile yet
+    # False when the profile has no questionnaire tags (NULL): the routine page then says
+    # it doesn't take the user's current products into account.
+    current_products_considered: bool = False
     config_versions: dict[str, str] | None = None
 
 
@@ -98,5 +101,6 @@ def get_routine(user: User = Depends(get_current_user), db: Session = Depends(ge
             for lo in routine.left_out
         ],
         warnings=routine.warnings,
+        current_products_considered=routine.current_products_considered,
         config_versions={"routine": ROUTINE_CONFIG_VERSION, "ingredients": INGREDIENT_CONFIG_VERSION},
     )

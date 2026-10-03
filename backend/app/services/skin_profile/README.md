@@ -229,10 +229,13 @@ The contract is in `schemas.py`, stored in `skin_profiles.score_sources` (JSONB)
 3. **The weights, limits, cap and floor are judgement calls, not fitted values.** There
    is no ground truth to fit them to. The cap and floor sit on the band edges by
    design; the 0.3 / ±15 and 0.25 / ±10 are chosen, not estimated.
-4. **Only scores, skin type and sensitivity are merged.** The questionnaire's tags
-   (`avoid`, `actives_in_use`, `concern_tags`) are neither returned by
-   `/api/scan/analyze` nor stored, because `skin_profiles` has no column for them. 7c
-   (recommendations) will need to decide where they live.
+4. **Only scores, skin type and sensitivity are merged.** Since 7c-i (c) the
+   questionnaire's fixed-vocabulary tags (`actives_in_use`, `products_in_use`, `avoid`,
+   `stated_concern`) are passed through unmerged as `questionnaire_tags`: returned by
+   `/api/scan/analyze` and stored with the profile (`skin_profiles.questionnaire_tags`)
+   for the routine. `concern_tags` (skin conditions such as eczema: health data) and
+   `context_tags` (lifestyle) are never returned or stored. Missing or invalid tags never
+   fail a save: the profile is saved with NULL tags and the response says so.
 5. **Oily + sensitive** (resolved in 7c-i b). Until then the routine *replaced* the skin
    type's base steps with a separate sensitive set. Since 7c-i (b) sensitivity is a
    modifier: an oily, sensitive user keeps the oily steps, and sensitivity adds hard

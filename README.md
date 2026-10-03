@@ -32,14 +32,17 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
 
 **Planned, not implemented yet:**
 
-- Recommendations that take the user's existing products into account (7c).
+- Ranked recommendations within each routine step (7c-ii). (Since 7c-i the routine
+  already takes the user's current products and the ingredients they avoid into account.)
 - A conflict check for a single scanned or looked-up product. The product page says
   "coming soon".
 - Conversational guidance: a chatbot grounded in the user's Skin Profile, using a local
   LLM + RAG (7d).
 - A generative "4 weeks from now" preview (7e).
 - Progress tracking, a privacy dashboard, notifications and subscriptions (step 8). The
-  chat, progress and settings pages exist only as empty shells.
+  chat, progress and settings pages exist only as empty shells. **The step 8 data export
+  must include each Skin Profile's `questionnaire_tags`** (the current products, avoid
+  list and goal saved since 7c-i c); they are already deleted with the user.
 
 Full feature list, sitemap, architecture and NFRs (the original target):
 [`docs/spec.md`](docs/spec.md).
@@ -165,6 +168,11 @@ Tracking against the roadmap in [`docs/spec.md`](docs/spec.md) §8:
     - [x] 7b-i. Questionnaire scorer, Skin Profile merge, schema (backend)
     - [x] 7b-ii. Funnel: new questions, photo check, real analysis, bands (frontend)
   - [ ] 7c. Recommendation Engine
+    - [x] 7c-i (a). Shared ingredient normaliser; routine matching on whole tokens
+    - [x] 7c-i (b). Rule fixes, product format fields, class-level conflicts, visible reasons
+    - [x] 7c-i (c). The user's current products and avoid list (questionnaire tags)
+    - [ ] 7c-ii. Content-based ranker, explanations, evaluation
+    - [ ] 7c-iii. Verified catalog expansion
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy

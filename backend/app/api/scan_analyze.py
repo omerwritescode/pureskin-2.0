@@ -7,7 +7,7 @@ questionnaire (since 7b-ii).
 
 | Status | Body |
 |---|---|
-| 200 | the five scores, skin_type, is_sensitive, score_sources, sources, quality |
+| 200 | the five scores, skin_type, is_sensitive, score_sources, questionnaire_tags, sources, quality |
 | 422 | {"detail": [{loc, msg, type}]}: malformed body or answers (input never echoed) |
 | 422 | {"quality": {"ok": false, "issues": [...]}}: photo unusable (as the image endpoint) |
 | 413 | {"detail": "..."}: body over the image endpoint's limit |
@@ -36,7 +36,7 @@ from app.services.image_analysis.scoring_config import (
     MAX_DRAINED_BYTES,
     MAX_REQUEST_BYTES,
 )
-from app.services.questionnaire import QuestionnaireAnswers, score_questionnaire
+from app.services.questionnaire import QuestionnaireAnswers, QuestionnaireTags, score_questionnaire
 from app.services.skin_profile import ScoreSources, build_skin_profile
 
 router = APIRouter(prefix="/api/scan", tags=["scan"])
@@ -61,6 +61,7 @@ class AnalyzeResponse(BaseModel):
     skin_type: Literal[SKIN_TYPES]  # from the questionnaire only, never the image
     is_sensitive: bool
     score_sources: ScoreSources
+    questionnaire_tags: QuestionnaireTags  # saved with the profile at signup (7c-i c)
     sources: dict[str, str]
     quality: Quality  # soft warnings only
 

@@ -57,6 +57,13 @@ result = score_questionnaire(answers)  # dict; raises pydantic.ValidationError i
 | `products_in_use` | the ticked product types |
 | `context_tags` | lifestyle context (`short_sleep`, `high_stress`). Never used in an estimate |
 
+**What a Skin Profile keeps (since 7c-i c).** `questionnaire_tags(result)` picks
+`actives_in_use`, `products_in_use`, `avoid` and `stated_concern`, plus `version` (this
+config's `CONFIG_VERSION`), and validates them with the strict `QuestionnaireTags` model
+(fixed vocabulary, unknown keys or values rejected). `/api/scan/analyze` returns them and
+the profile stores them for the routine. `concern_tags` (skin conditions are health data)
+and `context_tags` (lifestyle) are never kept.
+
 ### HTTP: `POST /api/services/questionnaire/score`
 
 No auth (the funnel runs before signup). The body is the answers object itself.

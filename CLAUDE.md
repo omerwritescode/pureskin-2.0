@@ -56,7 +56,22 @@ before auth, the DB schema, and the static frontend shell are working. Currently
           `frontend/static/js/bands.js`, a Sensitive indicator and "(assumed)" skin type on
           the Skin Profile. `/api/scan/mock-analyze` removed. The legacy "sensitive"
           skin_type mapping in `api/profile.py` is kept on purpose (harmless).
-  - [ ] 7c. Recommendation Engine
+  - [ ] 7c. Recommendation Engine (rules first, ranker second)
+    - [x] 7c-i (a). Shared ingredient normaliser and vocabulary (`services/ingredients/`);
+          step 6 rules moved unchanged into `services/recommendation/` (pure functions);
+          whole-token matching, proven behaviour-unchanged.
+    - [x] 7c-i (b). Rule fixes (routine-2.0.0): High-band triggers; sensitivity as a
+          modifier (strong actives, L-ascorbic acid and fragrance left out, mineral
+          sunscreen first, substitutions); fixed concern priority; evening-only
+          retinoids/AHAs; core fallbacks; class-level conflict rows; product `spf`,
+          `texture`, `foaming`; every left-out product has a visible reason. The 24 seeded
+          products are synthetic placeholders (the catalog and routine pages say so).
+    - [x] 7c-i (c). `skin_profiles.questionnaire_tags` (migration 440d5393300d): the user's
+          current products and avoid list (duplicates, conflicts with actives in use, the
+          avoid list; routine-2.1.0); tag-drop notices.
+    - [ ] 7c-ii. Content-based ranker (ingredient TF-IDF) within rule-eligible sets,
+          explanations, evaluation.
+    - [ ] 7c-iii. Verified catalog expansion for thin slots; retire the placeholders.
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
@@ -86,10 +101,29 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   own body use `app/api/request_body.py`. Never log request bodies or `exc.errors()`.
 - Rules, thresholds and weights live in each service's versioned config file
   (`*_config.py`), never as numbers in code. Bump the version string when a result can change.
-- Bump `CONFIG_VERSION` (questionnaire_config.py) or `MERGE_CONFIG_VERSION`
-  (skin_profile_config.py) whenever a weight, threshold or rule there changes: profiles
-  store these versions. `app/tests/test_config_versions.py` fingerprints the values and
-  fails on any change without a bump; record the new version's fingerprint there.
+- Bump `CONFIG_VERSION` (questionnaire_config.py), `MERGE_CONFIG_VERSION`
+  (skin_profile_config.py), `INGREDIENT_CONFIG_VERSION` (ingredient_config.py, now
+  ingredients-1.1.0) or `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.1.0)
+  whenever a value there changes. `app/tests/test_config_versions.py` fingerprints the
+  values and fails on any change without a bump; record the new version's fingerprint
+  there (a version not yet committed may have its fingerprint updated in place).
+- Ingredients (7c): every ingredient decision goes through `services/ingredients/` (one
+  canonical token per ingredient, never substrings) and the one membership function,
+  `memberships(items, strict=...)`. AMBIGUOUS_MEMBERS (lactic/malic/tartaric acid, sodium
+  salicylate, retinyl esters) count toward their class only at or before the first
+  PRESERVATIVES entry (a proxy for the ~1% line); NEUTRAL tokens are known and class-less,
+  never a cutoff. The avoid list uses strict membership; conflicts, strong actives and
+  session rules use the cutoff. Unknown or invalid ingredient names fail closed (never
+  recommended); review them with `python -m app.services.ingredients.review`, and never
+  write a product's ingredient list from memory.
+- Conflict rows may name a whole class as `class:<name>` (e.g. `class:retinoid`).
+  Ingredient names can never contain `:` (the normaliser rejects it; DB CHECKs keep the
+  two apart). `seed.py` makes the conflict table exactly `CONFLICTS`, printing what it
+  inserts and prunes.
+- `skin_profiles.questionnaire_tags` holds a fixed vocabulary only (never raw text, skin
+  conditions or lifestyle tags), validated by `QuestionnaireTags`. Missing or invalid tags
+  never fail a save: the profile is stored with NULL tags and the response says so. Never
+  log tags. The step 8 data export must include them.
 - The questionnaire page's input names/values ARE the scorer's field names/values, and the
   score-band cutoffs exist only in `skin_profile_config.py` and `frontend/static/js/bands.js`.
   `app/tests/test_frontend_contract.py` checks both, so keep them in sync.

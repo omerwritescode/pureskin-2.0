@@ -113,3 +113,65 @@ def test_routine_endpoint_matches_recorded_behaviour(api, auth_headers):
         assert response.status_code == 200
         actual[name] = summarise(response.json())
     check_snapshot("routine_endpoint", actual)
+
+
+# --------------------------------------------------------------------------------------
+# The user's current products and avoid list (questionnaire_tags, 7c-i c): new cases in
+# their own snapshot, so the cases above (no tags) are untouched.
+# --------------------------------------------------------------------------------------
+
+
+def tags(**fields) -> dict:
+    return {"version": "questionnaire-1.0.0", "actives_in_use": [], "products_in_use": [],
+            "avoid": [], "stated_concern": None, **fields}
+
+
+LOW = dict.fromkeys(SCORES, 30)
+CURRENT_PRODUCT_CASES = {
+    "tags_missing": {"skin_type": "normal", **LOW},
+    "tags_dropped_unknown_version": {
+        "skin_type": "normal", **LOW, "questionnaire_tags": tags(version="questionnaire-0.9.0"),
+    },
+    "tags_none_answered": {"skin_type": "normal", **LOW, "questionnaire_tags": tags()},
+    "prescription_retinoid_acne_high": {
+        "skin_type": "normal", **LOW, "acne_score": 75,
+        "questionnaire_tags": tags(actives_in_use=["prescription_retinoid"]),
+    },
+    "retinoid_checkbox_wrinkles_high": {
+        "skin_type": "normal", **LOW, "wrinkle_score": 75,
+        "questionnaire_tags": tags(products_in_use=["retinoid"]),
+    },
+    "salicylic_acid_in_use_acne_high": {
+        "skin_type": "normal", **LOW, "acne_score": 75,
+        "questionnaire_tags": tags(actives_in_use=["salicylic acid"]),
+    },
+    "vitamin_c_in_use_oily": {
+        "skin_type": "oily", **LOW, "questionnaire_tags": tags(actives_in_use=["ascorbic acid"]),
+    },
+    "exfoliant_checkbox_pores_high": {
+        "skin_type": "normal", **LOW, "pore_score": 75,
+        "questionnaire_tags": tags(products_in_use=["exfoliant"]),
+    },
+    "avoid_acids_acne_and_pores_high": {
+        "skin_type": "normal", **LOW, "acne_score": 75, "pore_score": 75,
+        "questionnaire_tags": tags(avoid=["acids"]),
+    },
+    "sensitive_oily_retinol_in_use_redness_high": {
+        "skin_type": "oily", "is_sensitive": True, **LOW, "redness_score": 75,
+        "questionnaire_tags": tags(actives_in_use=["retinol"], avoid=["fragrance"]),
+    },
+}
+
+
+def test_current_products_match_recorded_behaviour(api, auth_headers):
+    actual = {}
+    for name, body in CURRENT_PRODUCT_CASES.items():
+        created = api.post("/api/profile", json=body, headers=auth_headers)
+        assert created.status_code == 201, created.text
+        routine = api.get("/api/routine", headers=auth_headers).json()
+        actual[name] = {
+            **summarise(routine),
+            "questionnaire_tags_dropped": created.json()["questionnaire_tags_dropped"],
+            "current_products_considered": routine["current_products_considered"],
+        }
+    check_snapshot("routine_current_products", actual)

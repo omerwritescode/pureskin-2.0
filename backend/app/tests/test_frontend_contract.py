@@ -246,6 +246,18 @@ def test_routine_page_shows_reasons_and_detects_no_profile_by_message():
     assert "routine.left_out" in source and "step.caution" in source
 
 
+def test_dashboard_saves_the_tags_and_tells_the_user_when_they_were_dropped():
+    source = page("pages/app/dashboard.js")
+    assert "questionnaire_tags: result.questionnaire_tags" in source
+    assert "saved.questionnaire_tags_dropped" in source and "showSaveNotice(TAGS_DROPPED)" in source
+
+
+def test_routine_page_says_when_current_products_are_not_considered():
+    source = page("pages/app/routine/routine.js")
+    assert "routine.current_products_considered" in source
+    assert "This routine doesn't take your current products into account." in source
+
+
 def test_storage_keys_are_defined_only_in_scan_guard():
     keys = re.findall(r'"(pureskin_scan_\w+)"', page("static/js/scan-guard.js"))
     assert set(keys) == {

@@ -94,6 +94,13 @@ A token can be in several classes (ascorbic acid is `vitamin_c` and `antioxidant
 | `uv_mineral` / `uv_organic` | zinc oxide, titanium dioxide / 22 organic filters |
 | `water_phase` | water, aloe barbadensis leaf juice, two floral/plant waters |
 | `oil` | oils, butters and ester emollients (not silicones) |
+| `drying_alcohol` | alcohol (ethanol), alcohol denat., SD alcohol 40 / 40-B, isopropyl alcohol (7c-i c) |
+| `lanolin` | lanolin and 7 lanolin derivatives (7c-i c) |
+| `sulfate` | 8 sulfate surfactants (sodium lauryl / laureth sulfate, …) (7c-i c) |
+| `paraben` | methyl-, ethyl-, propyl-, butyl-, isobutylparaben and 3 sodium salts (7c-i c) |
+
+The last four give the avoid list its meaning ("alcohol", "lanolin", "sulfates",
+"parabens"; see the recommendation README).
 
 Deliberate exclusions (each one tested):
 - **Not BHAs:** salicylate esters (ethylhexyl salicylate and homosalate are UV filters;
@@ -102,6 +109,10 @@ Deliberate exclusions (each one tested):
 - **Not AHAs:** citric acid, sodium citrate and sodium lactate, usually pH adjusters or
   buffers.
 - **Not PHAs:** sodium and calcium gluconate (chelators).
+- **Not drying alcohols:** fatty alcohols (cetyl, cetearyl, stearyl, behenyl, lanolin
+  alcohol) and benzyl alcohol.
+- **Not sulfates:** sodium lauroyl sarcosinate, sodium cocoyl isethionate, olefin
+  sulfonates, and mineral salts such as magnesium sulfate.
 - **Not antioxidants:** tocopherol (and ascorbyl palmitate, which isn't in the vocabulary
   yet). Most formulas carry them in trace amounts to protect the formula itself.
 - **Not essential oils:** carrier oils such as `rosa canina seed oil`. There is no

@@ -19,6 +19,7 @@ from app.services.image_analysis.tests.conftest import (
     shapes_image,
     to_data_url,
 )
+from app.services.questionnaire import QuestionnaireTags
 from app.services.skin_profile import ScoreSources, reproduce_final
 
 URL = "/api/scan/analyze"
@@ -90,7 +91,8 @@ def test_returns_the_profile_keys_plus_the_extras(client, fake_image):
     assert response.status_code == 200
     body = response.json()
     assert PROFILE_KEYS <= set(body)
-    assert set(body) == PROFILE_KEYS | {"is_sensitive", "score_sources", "sources", "quality"}
+    assert set(body) == PROFILE_KEYS | {"is_sensitive", "score_sources", "questionnaire_tags", "sources", "quality"}
+    QuestionnaireTags.model_validate(body["questionnaire_tags"])
     for name in PROFILE_KEYS - {"skin_type"}:
         assert isinstance(body[name], int) and 1 <= body[name] <= 100
     ScoreSources.model_validate(body["score_sources"])
@@ -128,8 +130,12 @@ def test_skin_type_and_sensitivity_come_from_the_questionnaire_only(client, fake
 def test_primary_concern_never_nudges_a_score(client, fake_image):
     """The stated concern is a goal, not a measurement: it never moves a score."""
     fake_image()
-    bodies = [post(client, {**CURRENT_ANSWERS, "primary_concern": c}).json()
-              for c in ("acne", "redness", "wrinkles", "pigmentation", "pores", "none")]
+    concerns = ("acne", "redness", "wrinkles", "pigmentation", "pores", "none")
+    bodies = [post(client, {**CURRENT_ANSWERS, "primary_concern": c}).json() for c in concerns]
+    # The goal is kept only as a tag (questionnaire_tags.stated_concern, for the routine).
+    assert [b["questionnaire_tags"]["stated_concern"] for b in bodies] == list(concerns)
+    for b in bodies:
+        b["questionnaire_tags"].pop("stated_concern")
     assert all(b == bodies[0] for b in bodies)
 
 
