@@ -22,8 +22,8 @@ PRODUCT_TYPES = ("cleanser", "moisturiser", "sunscreen", "serum", "exfoliant", "
 SLEEP_OPTIONS = ("under_6", "6_to_8", "over_8")
 STRESS_OPTIONS = ("low", "medium", "high")
 
-MAX_LIST_ITEMS = 20  # same cap as the step 5 mock
-MAX_FREE_TEXT_CHARS = 500  # the form allows 200; the step 5 mock accepted 500
+MAX_LIST_ITEMS = 20  # generous: the form's lists have at most 6 options
+MAX_FREE_TEXT_CHARS = 500  # generous: the form allows 200
 
 # --- Added for 7b-ii: optional until the funnel sends them ---
 ZONE_OPTIONS = ("oily", "normal", "dry", NOT_SURE)  # oil_tzone, oil_cheeks

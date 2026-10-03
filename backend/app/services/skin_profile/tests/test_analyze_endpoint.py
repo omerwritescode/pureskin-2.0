@@ -22,8 +22,8 @@ from app.services.image_analysis.tests.conftest import (
 from app.services.skin_profile import ScoreSources, reproduce_final
 
 URL = "/api/scan/analyze"
-MOCK_KEYS = {"acne_score", "redness_score", "wrinkle_score", "pigmentation_score", "pore_score",
-             "skin_type"}
+PROFILE_KEYS = {"acne_score", "redness_score", "wrinkle_score", "pigmentation_score", "pore_score",
+                "skin_type"}
 SECRET = "zzqx-private-free-text-marker"
 IMAGE = "data:image/jpeg;base64," + base64.b64encode(b"\xff\xd8 not really a jpeg " * 50).decode()
 FINGERPRINT = IMAGE[40:90]
@@ -84,14 +84,14 @@ def post(client, answers=None, **extra):
 # --------------------------------------------------------------------------------------
 
 
-def test_returns_the_mock_keys_plus_the_new_ones(client, fake_image):
+def test_returns_the_profile_keys_plus_the_extras(client, fake_image):
     fake_image()
     response = post(client, CURRENT_ANSWERS)
     assert response.status_code == 200
     body = response.json()
-    assert MOCK_KEYS <= set(body)
-    assert set(body) == MOCK_KEYS | {"is_sensitive", "score_sources", "sources", "quality"}
-    for name in MOCK_KEYS - {"skin_type"}:
+    assert PROFILE_KEYS <= set(body)
+    assert set(body) == PROFILE_KEYS | {"is_sensitive", "score_sources", "sources", "quality"}
+    for name in PROFILE_KEYS - {"skin_type"}:
         assert isinstance(body[name], int) and 1 <= body[name] <= 100
     ScoreSources.model_validate(body["score_sources"])
     assert body["quality"] == {"ok": True, "issues": ["Smiling deepens the lines around your eyes."]}
@@ -126,7 +126,7 @@ def test_skin_type_and_sensitivity_come_from_the_questionnaire_only(client, fake
 
 
 def test_primary_concern_never_nudges_a_score(client, fake_image):
-    """The mock pushed the stated concern's score up; the real merge must not."""
+    """The stated concern is a goal, not a measurement: it never moves a score."""
     fake_image()
     bodies = [post(client, {**CURRENT_ANSWERS, "primary_concern": c}).json()
               for c in ("acne", "redness", "wrinkles", "pigmentation", "pores", "none")]

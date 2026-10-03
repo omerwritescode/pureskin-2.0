@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/profile", tags=["profile"])
 SkinType = Literal[SKIN_TYPES]  # matches the skin_profiles CHECK constraints
 Score = Annotated[int, Field(ge=1, le=100)]  # matches the skin_profiles CHECK constraints
 
-# The step 5 funnel (/api/scan/mock-analyze) still reports sensitivity as a skin type.
+# Before 7b-i, sensitivity was a skin type. Still accepted on input; see map_legacy_sensitive.
 LEGACY_SENSITIVE = "sensitive"
 
 
@@ -39,7 +39,8 @@ class ProfileIn(BaseModel):
         """skin_type "sensitive" -> is_sensitive + the questionnaire's default skin type.
 
         The old answer said nothing about oil or dryness, hence the default (rule T3).
-        TODO(7b-ii): remove once the funnel sends is_sensitive instead.
+        Kept on purpose, and harmless: the funnel sends is_sensitive since 7b-ii, but a
+        result saved in a browser before that can still arrive at signup with "sensitive".
         """
         if self.skin_type == LEGACY_SENSITIVE:
             self.skin_type = DEFAULT_SKIN_TYPE

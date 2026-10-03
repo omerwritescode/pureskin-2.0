@@ -63,7 +63,7 @@ def test_payload_without_new_fields_still_works(api, auth_headers):
 
 
 def test_legacy_sensitive_maps_to_default_type_plus_flag(api, auth_headers):
-    """What the live mock funnel's Dashboard save sends today."""
+    """What a result saved in a browser before 7b-ii still sends at signup."""
     created = post(api, auth_headers, skin_type="sensitive")
     assert created.status_code == 201
     fetched = api.get("/api/profile", headers=auth_headers).json()

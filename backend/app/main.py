@@ -15,7 +15,6 @@ from app.api import (
     profile,
     questionnaire,
     routine,
-    scan,
     scan_analyze,
 )
 from app.api.validation_errors import public_errors
@@ -65,7 +64,6 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-app.include_router(scan.router)
 app.include_router(scan_analyze.router)
 app.include_router(profile.router)
 app.include_router(routine.router)

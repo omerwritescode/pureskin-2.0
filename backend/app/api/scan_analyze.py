@@ -2,8 +2,8 @@
 
 No auth (the funnel runs before signup) and no database writes: the photo is decoded,
 scored and discarded in memory, and nothing is logged. The visitor saves the result
-with POST /api/profile after signing up. The funnel switches to this endpoint in 7b-ii;
-until then it keeps using /api/scan/mock-analyze, which is untouched.
+with POST /api/profile after signing up. The scan funnel calls it at the end of the
+questionnaire (since 7b-ii).
 
 | Status | Body |
 |---|---|

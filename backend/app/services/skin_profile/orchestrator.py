@@ -37,7 +37,7 @@ def build_skin_profile(image_result: dict, questionnaire_result: dict) -> dict:
     }).to_db()
 
     return {
-        **scores,  # the keys /api/scan/mock-analyze returned, plus the ones below
+        **scores,
         "skin_type": questionnaire_result["skin_type"],
         "is_sensitive": questionnaire_result["is_sensitive"],
         "score_sources": score_sources,
