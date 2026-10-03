@@ -14,8 +14,9 @@ rules; no model, no new dependencies.
 > estimates are self-reports mapped by hand-set rules. The merge is a set of documented
 > judgement calls on top. Nothing here was validated against dermatologists.
 
-**Status:** live at `POST /api/scan/analyze`, tested on its own. The funnel still uses
-`/api/scan/mock-analyze` until 7b-ii switches it over.
+**Status:** live at `POST /api/scan/analyze`, which the scan funnel calls at the end of
+the questionnaire (since 7b-ii). The result is shown on the Skin Report and saved at
+signup with `POST /api/profile`.
 
 ---
 
@@ -49,7 +50,7 @@ Any other key is rejected: there is no lighting-gate bypass or any other switch.
 | 413 | `{"detail": "..."}` | body over the image endpoint's 5 MB limit (chunked uploads too) |
 | 503 | `{"detail": "..."}` | face model missing. **No fallback scores, ever** |
 
-The 200 body has the keys `/api/scan/mock-analyze` returned, plus four more:
+The 200 body has the profile's keys (five scores and the skin type), plus four more:
 
 ```json
 {
@@ -91,7 +92,8 @@ The one definition of the bands, in `skin_profile_config.py`:
 | Moderate | 31-60 |
 | High | 61-100 |
 
-- **The frontend band module (7b-ii) must use the same cutoffs.**
+- **The frontend band module, `frontend/static/js/bands.js`, uses the same cutoffs.**
+  `app/tests/test_frontend_contract.py` parses it and fails if they drift.
 - The step 6 routine adds a score's targeted steps when the score is > 60, which is
   exactly the High band (a test checks this).
 
@@ -153,11 +155,11 @@ service's skin-type classifier is not served (chance-level on a leak-free split)
 even a non-null `skin_type_prediction` would be ignored here. `score_sources.skin_type`
 is `"default"` when the questionnaire had no oil/dry evidence (its rule T3).
 
-### Not carried over from the mock
+### The primary concern never moves a score
 
-The mock pushed the score for the stated primary concern up to 55-100 "so the report
-feels plausible". **The real merge never does this.** The primary concern is a goal,
-not a measurement, so it never touches a score (tested).
+The primary concern is a goal, not a measurement, so it never touches a score. (The
+step 5 placeholder pushed the stated concern's score up; that endpoint was removed in
+7b-ii, and the real merge never does this. Tested.)
 
 ### Representative cases
 
@@ -172,7 +174,7 @@ the same cases.
 | acne | 95 | 45 | **55** | Moderate | blend | 0.2 | no | no | no | high image acne, 'most weeks' only: not corroborated, stays Moderate |
 | acne | 1 | 65 | **61** | High | blend | 0.156 | yes | no | yes | corroborated but image says 1: floor raises 55 to 61 |
 | acne | 95 | 55 | **60** | Moderate | blend | 0.25 | no | yes | no | 'most weeks' + 'sometimes': 65 capped to 60 |
-| acne | 80 | — | **60** | Moderate | image | 1.0 | no | yes | no | no acne answers (today's funnel): image capped at 60 |
+| acne | 80 | — | **60** | Moderate | image | 1.0 | no | yes | no | no acne answers (or 'Not sure'): image capped at 60 |
 | acne | 40 | — | **40** | Moderate | image | 1.0 | no | no | no | no acne answers, image under the cap: unchanged |
 | pigmentation | 66 | 30 | **55** | Moderate | blend | 0.7 | — | — | — | phone selfie reads high, 'a few spots': pulled down |
 | redness | 20 | 75 | **35** | Moderate | blend | 0.727 | — | — | — | 'almost always' flushed: +15 limit applies |
@@ -222,9 +224,8 @@ The contract is in `schemas.py`, stored in `skin_profiles.score_sources` (JSONB)
    That's acceptable for this project (users can only mislead their own routine), and
    documented here rather than solved. A fix would need a server-side session or a
    signed result.
-2. **Today's funnel gives the merge no questionnaire evidence.** The step 5 questions
-   carry no score evidence (see the questionnaire README). Until 7b-ii adds them, every
-   score is the image score and acne is capped at 60.
+2. **"Not sure" leaves a score to the image.** A score whose question was answered "Not
+   sure" has no questionnaire evidence, so it is the image score (acne capped at 60).
 3. **The weights, limits, cap and floor are judgement calls, not fitted values.** There
    is no ground truth to fit them to. The cap and floor sit on the band edges by
    design; the 0.3 / ±15 and 0.25 / ±10 are chosen, not estimated.
@@ -236,35 +237,32 @@ The contract is in `schemas.py`, stored in `skin_profiles.score_sources` (JSONB)
    with the sensitive set when `is_sensitive` is true (minimal 7b-i compatibility,
    TODO(7c) in `routine.py`).
 
-## Checks run for 7b-i
+## Checks run for 7b-i and 7b-ii
 
-**Funnel resolution.** The selfie page sends at most 720 px, JPEG quality 0.85. The 6
-sample photos (960×1280 originals) were re-run full size and downsized
-(`python -m app.services.image_analysis.check_funnel_resolution`):
-- **Decisions:** no accept/reject decision changed.
-- **Image-primary scores:** redness, wrinkle, pigmentation and pore moved by at most 4
-  points.
-- **Acne:** moved by up to **38** (58 → 20 on the dim, noisy `lighting/4.jpeg`),
-  consistent with its known instability. The merge already guards against this: the
-  image has at most 25% weight on acne, the shift is limited to ±10, and the cap and
-  floor apply.
+**Resolution.** Since 7b-ii the image service analyses every photo at a canonical
+720 px, whatever size the client sends. The selfie page sends 720 px at JPEG quality
+0.92. See the image_analysis README, "Canonical resolution", for the results:
+- the four image-primary scores agree within 4 points across 720/960/1080 px uploads;
+- acne moves more (it is documented as unstable), which the merge already guards
+  against: at most 25% image weight, a ±10 limit, and the cap and floor;
+- one dim photo can still flip between accepted and "too dim", because the dim check's
+  white reference is sensitive to resampling noise.
 
-See the image_analysis README for the full table and the size/quality proposal for
-7b-ii.
-
-**Timing.** Measured with `python -m app.services.skin_profile.time_analyze`, on an
-i7-13620H on battery (power-saving clocks), 20 runs per photo, in-process:
+**Timing (7b-ii).** Measured with `python -m app.services.skin_profile.time_analyze`
+on an i7-13620H on AC power, 20 runs per photo, in-process, with 720 px JPEG q92
+uploads:
 
 | Part | Time |
 |---|---|
-| Whole request | median 0.60-0.91 s, worst 1.10 s |
-| Image analysis | almost all of it |
-| Questionnaire scorer | 0.3-0.5 ms |
-| Merge | 0.3-0.4 ms |
+| `POST /api/scan/analyze`, whole request | median 0.20-0.22 s, worst 0.28 s |
+| Image analysis | almost all of it (median 0.19-0.20 s) |
+| Questionnaire scorer | 0.1 ms |
+| Merge | 0.1 ms |
+| The photo check (`POST /api/services/image/analyze`) | median 0.22 s, worst 0.27 s |
 
-That's within the spec's 3-5 s target. The image README's earlier measurements on the
-same machine were 3-5× faster (96-174 ms), which matches the CPU being throttled
-on battery.
+The funnel makes both calls, so a scan spends about 0.45 s on the server: far inside
+the spec's 3-5 s target. Network time comes on top. The 7b-i measurement (0.60-0.91 s)
+was taken on battery with a throttled CPU, before the canonical resolution.
 
 **The step 6 routine on merged profiles** (`app/tests/test_scan_to_routine.py`):
 - **High image acne without corroboration** (image 92, today's answers): acne becomes
@@ -296,7 +294,7 @@ python -m pytest app/tests                      # profile / routine / migration 
   - Inconsistent entries are rejected.
   - The final acne score reproduces from the stored JSON.
 - **Endpoint** (`tests/test_analyze_endpoint.py`):
-  - **Response:** the mock's keys plus the new ones; skin type and sensitivity come
+  - **Response:** the profile's keys plus the extras; skin type and sensitivity come
     from the questionnaire only (the image's "prediction" is ignored); changing only the
     primary concern changes nothing.
   - **Errors:** the image rejection passes through as a 422 in the image endpoint's

@@ -157,7 +157,7 @@ drift-monitoring alerts.
 
 ---
 
-## Addendum (October 2026, after roadmap step 7b-i): deviations from this spec
+## Addendum (October 2026, after roadmap steps 7b-i and 7b-ii): deviations from this spec
 
 The sections above are the original specification and are left unchanged. As built:
 
@@ -176,6 +176,9 @@ The sections above are the original specification and are left unchanged. As bui
 5. **No object storage.** Photos are analysed server-side in memory and discarded.
    Nothing is stored, so the encrypted object storage for images (§3, §4 item 15) is not
    built.
+6. **No on-device inference option** (added after 7b-ii). The scan funnel sends the photo
+   to the server for analysis (in memory, never stored). The user's choice of
+   on-device/in-browser inference (§3, §6) is not built.
 
 Details: `backend/app/services/image_analysis/README.md`,
 `backend/app/services/questionnaire/README.md` and

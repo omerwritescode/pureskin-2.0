@@ -41,19 +41,21 @@ before auth, the DB schema, and the static frontend shell are working. Currently
         `POST /api/services/image/analyze`): photo-quality checks + five heuristic
         scores, live. Skin-type classifier trained, but at chance on a leak-free split,
         so it is not served (`skin_type_prediction` is null; see the service README).
-        Not wired into the frontend yet: the funnel keeps /api/scan/mock-analyze until 7b-ii.
-  - [x] 7b-i. Questionnaire/NLP scorer + Skin Profile merge + schema (backend only).
-        `services/questionnaire/` (rules + free-text lexicon, standalone at
-        `POST /api/services/questionnaire/score`), `services/skin_profile/` (merge, score
-        bands, `score_sources`), `POST /api/scan/analyze` (image + answers, in memory),
-        migration db1f2fceaf09 (`is_sensitive`, `score_sources`; skin_type 'sensitive' is
-        gone). The image acne score is unreliable, so acne is questionnaire-led: capped at
-        60 without corroboration, floored at 61 with it. The step 5 questionnaire has no
-        score evidence, so until 7b-ii every score is the image score (acne capped).
-  - [ ] 7b-ii. Funnel changes (frontend): new questions (questionnaire README), switch the
-        funnel to /api/scan/analyze, send is_sensitive + score_sources to /api/profile,
-        show sensitivity and bands (same cutoffs as skin_profile_config.SCORE_BANDS), then
-        remove /api/scan/mock-analyze and the legacy "sensitive" mapping in api/profile.py.
+        Every photo is analysed at a canonical 720 px (since 7b-ii).
+  - [x] 7b. Questionnaire/NLP + Skin Profile, wired into the scan funnel.
+    - [x] 7b-i (backend). `services/questionnaire/` (rules + free-text lexicon, standalone
+          at `POST /api/services/questionnaire/score`), `services/skin_profile/` (merge,
+          score bands, `score_sources`), `POST /api/scan/analyze` (image + answers, in
+          memory), migration db1f2fceaf09 (`is_sensitive`, `score_sources`; skin_type
+          'sensitive' is gone). The image acne score is unreliable, so acne is
+          questionnaire-led: capped at 60 without corroboration, floored at 61 with it.
+    - [x] 7b-ii (funnel). 8-step questionnaire whose input names/values are the scorer's;
+          each photo checked right after capture/upload (retake screen on a hard
+          rejection); `/api/scan/analyze` at the end; the full result (scores, skin_type,
+          is_sensitive, score_sources) saved at signup. Shared bands in
+          `frontend/static/js/bands.js`, a Sensitive indicator and "(assumed)" skin type on
+          the Skin Profile. `/api/scan/mock-analyze` removed. The legacy "sensitive"
+          skin_type mapping in `api/profile.py` is kept on purpose (harmless).
   - [ ] 7c. Recommendation Engine
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
@@ -84,6 +86,13 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   own body use `app/api/request_body.py`. Never log request bodies or `exc.errors()`.
 - Rules, thresholds and weights live in each service's versioned config file
   (`*_config.py`), never as numbers in code. Bump the version string when a result can change.
+- Bump `CONFIG_VERSION` (questionnaire_config.py) or `MERGE_CONFIG_VERSION`
+  (skin_profile_config.py) whenever a weight, threshold or rule there changes: profiles
+  store these versions. `app/tests/test_config_versions.py` fingerprints the values and
+  fails on any change without a bump; record the new version's fingerprint there.
+- The questionnaire page's input names/values ARE the scorer's field names/values, and the
+  score-band cutoffs exist only in `skin_profile_config.py` and `frontend/static/js/bands.js`.
+  `app/tests/test_frontend_contract.py` checks both, so keep them in sync.
 
 ## Commands
 
@@ -105,7 +114,7 @@ python -m pytest app/services/image_analysis # image analysis tests
 python -m pytest app/services/questionnaire app/services/skin_profile   # 7b-i services
 python -m app.services.skin_profile.merge_cases          # merge-case table (report)
 python -m app.services.skin_profile.time_analyze         # /api/scan/analyze timing (needs samples/)
-python -m app.services.image_analysis.check_funnel_resolution   # full size vs funnel's 720 px
+python -m app.services.image_analysis.check_funnel_resolution   # one photo at several upload sizes
 UPDATE_SNAPSHOTS=1 python -m pytest app/tests # re-record routine behaviour snapshots (check the diff!)
 pip install -r requirements-train.txt        # GPU training only: CUDA 12.8 torch (~2.5 GB)
 python -m app.services.image_analysis.train_skin_type   # train the skin-type classifier

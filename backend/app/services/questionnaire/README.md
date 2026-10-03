@@ -9,10 +9,10 @@ no model, no LLM, no new dependencies.
 > what the user *says* into a number. It doesn't measure their skin, and it can't
 > correct a user who misjudges or misreports their own skin.
 
-**Status:** live at the standalone endpoint and tested on its own. It also runs inside
-`POST /api/scan/analyze`, where the skin_profile service merges its output with the
-image scores. The funnel doesn't call either yet: until 7b-ii the questionnaire still
-posts to `/api/scan/mock-analyze`.
+**Status:** live. The scan funnel's questionnaire (since 7b-ii) asks the questions
+below and posts its answers to `POST /api/scan/analyze`, where the skin_profile service
+merges this scorer's output with the image scores. It is also available on its own at
+the standalone endpoint.
 
 ---
 
@@ -80,7 +80,8 @@ Every field is optional. A missing answer, `null`, or `"not_sure"` means **no
 evidence**. It is never replaced with a middle value. Unknown keys and values are
 rejected.
 
-**The step 5 questionnaire** (what the funnel sends today):
+**The step 5 questionnaire** (still accepted; since 7b-ii the funnel no longer sends
+`skin_type`):
 
 | Field | Values |
 |---|---|
@@ -92,7 +93,8 @@ rejected.
 | `current_products_other` | free text, ≤ 500 chars |
 | `sleep` / `stress` | under_6, 6_to_8, over_8 / low, medium, high |
 
-**Added for 7b-ii** (accepted now, sent by the funnel once 7b-ii ships):
+**Added for 7b-ii** (the funnel asks all of these; a "Not sure" answer is left out of
+the request, which the scorer treats as no evidence):
 
 | Field | Question | Values |
 |---|---|---|
@@ -197,10 +199,11 @@ it describes (Low 1-30, Moderate 31-60, High 61-100):
   "most weeks" + "often" deep bumps (65) are both High, and so both corroborate a high
   image acne score in the merge.
 
-**The step 5 questionnaire has no evidence for any score.** Its questions ask about
-skin type, a goal, sensitivities, products and lifestyle, not about how much acne,
-redness, wrinkling, pigmentation or pore visibility the user has. So with today's
-funnel every estimate is `null`. The questions above are what 7b-ii adds to fix that.
+**The step 5 questions alone carry no evidence for any score.** They ask about skin
+type, a goal, sensitivities, products and lifestyle, not about how much acne, redness,
+wrinkling, pigmentation or pore visibility the user has. A step 5-only payload therefore
+gives every estimate `null`. The questions added in 7b-ii are what provide the
+evidence, and the funnel asks them since 7b-ii.
 
 **Deliberately not evidence for any score:**
 
@@ -251,9 +254,9 @@ free" or "eczema relief" says nothing about the user's skin.
 2. **The estimates are coarse.** Each score comes from one 4-option question, so there
    are only 4 possible values per score, plus null (acne: 11). They place a user in a band;
    they don't grade within it.
-3. **Today's funnel gives no estimates.** Until 7b-ii adds the questions above, every
-   estimate is `null`, and the Skin Profile's scores come from the image alone (with the
-   acne cap).
+3. **"Not sure" gives no estimate.** A user who answers "Not sure" to a score's question
+   gets a `null` estimate for it, and that Skin Profile score comes from the image alone
+   (for acne, with the cap).
 4. **"Normal" may be a default.** With no oil/dry answer, the skin type is `normal` by
    default. Check `skin_type_basis` before treating it as a finding.
 5. **The lexicon is small and literal.**
@@ -289,8 +292,12 @@ python -m pytest app/services/questionnaire        # from backend/
   breakouts × deep_bumps orderings.
 - **Invariance:** changing only `primary_concern` changes nothing but
   `stated_concern`; free text, products, sleep and stress never change an estimate.
-- **Input:** today's funnel payload is accepted; unknown keys and values, wrong types,
-  over-long text and over-long lists are rejected.
+- **Input:** the step 5 payload is still accepted; unknown keys and values, wrong
+  types, over-long text and over-long lists are rejected.
+- **Frontend contract** (`app/tests/test_frontend_contract.py`): every input name and
+  value on the questionnaire page is accepted by `QuestionnaireAnswers`, and every
+  answer the scorer defines is offered, so a typo in the HTML can't silently break
+  scoring.
 - **Lexicon:** catalog naming (checked against `seed.py`), synonyms, prescription
   retinoids, longest match, negation and clause boundaries, plurals.
 - **Endpoint and privacy:** 200, 422 (several malformed shapes), 413. Free text never

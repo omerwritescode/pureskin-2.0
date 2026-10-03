@@ -15,10 +15,10 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
 **Implemented:**
 
 - **Skin Profile from a selfie + questionnaire.** Five 1-100 scores (acne, redness,
-  wrinkles, pigmentation, pore visibility), plus skin type and sensitivity. The backend
-  merge is live at `POST /api/scan/analyze`, but the onboarding funnel still shows mocked
-  scores until step 7b-ii switches it over. The scores are unvalidated heuristics and
-  self-reports, not clinical assessments.
+  wrinkles, pigmentation, pore visibility) shown as Low / Moderate / High, plus skin type
+  and sensitivity. The photo is checked right after it's taken; an unusable one (too dim,
+  uneven light, no face...) gets a retake screen with tips. The scores are unvalidated
+  heuristics and self-reports, not clinical assessments.
 - **Routine.** A rule-based AM/PM routine built from the latest Skin Profile, using
   products in the catalog. It checks for conflicting ingredients (e.g. retinol + benzoyl
   peroxide) between the products in each session.
@@ -157,8 +157,9 @@ Tracking against the roadmap in [`docs/spec.md`](docs/spec.md) §8:
 - [x] 6. Core pages on real, rule-based data
 - [ ] 7. AI services (one at a time)
   - [x] 7a. Image Analysis: photo-quality checks + five heuristic scores (backend)
-  - [x] 7b-i. Questionnaire/NLP scorer + Skin Profile merge + schema (backend)
-  - [ ] 7b-ii. Funnel changes: new questions, switch the funnel to the real analysis (frontend)
+  - [x] 7b. Questionnaire/NLP + Skin Profile, wired into the scan funnel
+    - [x] 7b-i. Questionnaire scorer, Skin Profile merge, schema (backend)
+    - [x] 7b-ii. Funnel: new questions, photo check, real analysis, bands (frontend)
   - [ ] 7c. Recommendation Engine
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
@@ -181,6 +182,9 @@ an addendum at its end records these deviations:
 - **Skin type and sensitivity come from the questionnaire only.** Sensitivity is its own
   flag (`is_sensitive`), not a skin type.
 - **No object storage.** Photos are analysed in memory and discarded; nothing is stored.
+- **No on-device inference option.** Since 7b-ii the funnel sends the photo to the server
+  for analysis (in memory, never stored); the on-device/in-browser choice in the spec is
+  not built.
 
 ## Documentation
 
