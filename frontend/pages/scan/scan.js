@@ -1,26 +1,45 @@
-// Selfie Capture: live camera preview -> capture -> confirm -> /scan/questionnaire/.
+// Selfie Capture: live camera preview -> capture -> photo check -> /scan/questionnaire/.
 // Falls back to a file upload if the camera is unavailable or permission is denied.
+//
+// Every photo (camera or upload) is checked right away with POST
+// /api/services/image/analyze, so an unusable photo gets a retake screen here instead
+// of failing after the questionnaire. Nothing is logged; the photo is never stored on
+// the server.
+//
+// /scan/?retake=1 is the retake screen after a photo was rejected at the questionnaire's
+// final submit: the answers it kept stay, and the new photo goes straight back there.
 
 const NEXT_URL = "/scan/questionnaire/";
-const MAX_SIDE = 720;       // px; keeps the base64 image small enough for sessionStorage
-const JPEG_QUALITY = 0.85;
+const CHECK_URL = "/api/services/image/analyze";
+const MAX_SIDE = 720;       // px; the analyzer works at this resolution anyway
+const JPEG_QUALITY = 0.92;  // 7b-ii: up from 0.85 (see the image analysis README)
 
 const video = document.getElementById("camera-video");
 const photo = document.getElementById("camera-photo");
 const idle = document.getElementById("camera-idle");
 const canvas = document.getElementById("capture-canvas");
 const errorBox = document.getElementById("scan-error");
+const checking = document.getElementById("photo-checking");
+const retakeScreen = document.getElementById("retake-screen");
+const retakeHeading = document.getElementById("retake-heading");
+const retakeIssues = document.getElementById("retake-issues");
+const retakeTips = document.getElementById("retake-tips");
+const retakeKept = document.getElementById("retake-kept");
+const photoTip = document.getElementById("photo-tip");
+const photoTipList = document.getElementById("photo-tip-list");
 const fallback = document.getElementById("upload-fallback");
 const uploadInput = document.getElementById("upload-input");
 const buttons = {
   start: document.getElementById("start-camera"),
   capture: document.getElementById("capture"),
   continue: document.getElementById("continue"),
+  checkAgain: document.getElementById("check-again"),
   retake: document.getElementById("retake"),
 };
 
 let stream = null;
 let capturedImage = null; // base64 data URL of the photo awaiting confirmation
+let photoApproved = false; // set only by a successful photo check
 
 function show(...visible) {
   for (const [name, button] of Object.entries(buttons)) button.hidden = !visible.includes(name);
@@ -32,8 +51,20 @@ function showError(message, { offerUpload = true } = {}) {
   if (offerUpload) fallback.hidden = false;
 }
 
-function clearError() {
+function fillList(list, items) {
+  list.replaceChildren(...items.map((text) => {
+    const item = document.createElement("li");
+    item.textContent = text;
+    return item;
+  }));
+}
+
+// Back to a clean slate: no error, no retake screen, no tip.
+function clearMessages() {
   errorBox.hidden = true;
+  checking.hidden = true;
+  retakeScreen.hidden = true;
+  photoTip.hidden = true;
 }
 
 function stopCamera() {
@@ -57,8 +88,9 @@ function cameraErrorMessage(error) {
 }
 
 async function startCamera() {
-  clearError();
+  clearMessages();
   capturedImage = null;
+  photoApproved = false;
   photo.hidden = true;
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -99,11 +131,42 @@ function toDataUrl(source, width, height) {
 
 function showCaptured(dataUrl) {
   capturedImage = dataUrl;
+  photoApproved = false;
   photo.src = dataUrl;
   photo.hidden = false;
   video.hidden = true;
   idle.hidden = true;
-  show("continue", "retake");
+  checkPhoto();
+}
+
+// Ask the Image Analysis service whether this photo is usable, before the questionnaire.
+async function checkPhoto() {
+  const image = capturedImage;
+  clearMessages();
+  show();
+  checking.hidden = false;
+  const result = await window.PureSkinScanApi.post(CHECK_URL, { image });
+  if (image !== capturedImage) return; // a newer photo replaced this one meanwhile
+  checking.hidden = true;
+
+  if (result.kind === "ok") {
+    photoApproved = true;
+    const tips = (result.data.quality && result.data.quality.issues) || [];
+    if (tips.length) {
+      fillList(photoTipList, tips.map(String));
+      photoTip.hidden = false;
+    }
+    show("continue", "retake");
+    buttons.continue.focus();
+  } else if (result.kind === "retake") {
+    fillList(retakeIssues, result.issues);
+    retakeScreen.hidden = false;
+    show("retake");
+    retakeHeading.focus();
+  } else {
+    showError(result.message, { offerUpload: false });
+    show("checkAgain", "retake");
+  }
 }
 
 function capture() {
@@ -122,7 +185,7 @@ function useUploadedFile(file) {
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.onload = () => {
-    clearError();
+    clearMessages();
     stopCamera();
     showCaptured(toDataUrl(img, img.naturalWidth, img.naturalHeight));
     URL.revokeObjectURL(url);
@@ -135,6 +198,7 @@ function useUploadedFile(file) {
 }
 
 function continueToQuestionnaire() {
+  if (!photoApproved) return; // only a photo that passed the check goes forward
   const { IMAGE_KEY, RESULT_KEY, write, remove } = window.PureSkinScan;
   try {
     write(IMAGE_KEY, capturedImage);
@@ -146,20 +210,58 @@ function continueToQuestionnaire() {
   location.href = NEXT_URL;
 }
 
-buttons.start.addEventListener("click", startCamera);
-buttons.capture.addEventListener("click", capture);
-buttons.retake.addEventListener("click", () => {
+function retake() {
+  clearMessages();
+  capturedImage = null;
+  photoApproved = false;
   if (fallback.hidden) {
     startCamera();
   } else {
     // Came from the upload path — let them pick another file.
-    capturedImage = null;
     photo.hidden = true;
     idle.hidden = false;
     uploadInput.value = "";
     show("start");
   }
-});
+}
+
+// A new scan discards any earlier photo, result and kept answers. A retake after the
+// final submit keeps the answers (the questionnaire restores them) and shows why the
+// photo was rejected. Returns those issues, or null for a new scan.
+function startScan() {
+  const { IMAGE_KEY, RESULT_KEY, ANSWERS_KEY, RETAKE_KEY, read, remove, discardPhotoAndAnswers } =
+    window.PureSkinScan;
+  remove(RESULT_KEY);
+  const isRetake = new URLSearchParams(location.search).get("retake") === "1" && Boolean(read(ANSWERS_KEY));
+  if (!isRetake) {
+    discardPhotoAndAnswers();
+    return null;
+  }
+  remove(IMAGE_KEY);
+  let issues = [];
+  try {
+    issues = JSON.parse(read(RETAKE_KEY)) || [];
+  } catch {
+    issues = [];
+  }
+  remove(RETAKE_KEY);
+  return Array.isArray(issues) ? issues.map(String) : [];
+}
+
+fillList(retakeTips, window.PureSkinScanApi.LIGHTING_TIPS);
+const retakeIssuesFromSubmit = startScan();
+if (retakeIssuesFromSubmit) {
+  fillList(retakeIssues, retakeIssuesFromSubmit);
+  retakeScreen.hidden = false;
+  retakeKept.hidden = false;
+  fallback.hidden = false; // camera or upload, whichever they used before
+  show("start");
+  retakeHeading.focus();
+}
+buttons.start.addEventListener("click", startCamera);
+buttons.capture.addEventListener("click", capture);
+buttons.retake.addEventListener("click", retake);
+buttons.checkAgain.addEventListener("click", checkPhoto);
 buttons.continue.addEventListener("click", continueToQuestionnaire);
 uploadInput.addEventListener("change", () => useUploadedFile(uploadInput.files[0]));
 

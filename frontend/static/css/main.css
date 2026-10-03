@@ -259,7 +259,7 @@ a {
   margin-top: 4px;
 }
 
-/* ---- Score bars (same look as the /scan/report/ page) ---------------- */
+/* ---- Score bars (/scan/report/, Dashboard, Skin Profile) --------------- */
 
 .scores {
   max-width: 560px;
@@ -302,6 +302,36 @@ a {
 
 .scores--compact .score__track {
   height: 6px;
+}
+
+/* Band name as text (never colour alone), the 1–100 number smaller. */
+.score__band {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.score__value {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.sensitive-indicator {
+  display: inline-block;
+  margin: 8px 0;
+  padding: 6px 12px;
+  background: #fff6e5;
+  border: 1px solid #f0d9a8;
+  border-radius: var(--radius);
+  color: #5c4100;
+}
+
+.skin-type-note {
+  max-width: 560px;
+  margin: 4px 0 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 /* ---- Wider screens: brand, links and logout on one row --------------- */

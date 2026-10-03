@@ -69,3 +69,72 @@
 .upload input {
   max-width: 100%;
 }
+
+/* Photo check (7b-ii): "checking", the retake screen and the gentle tip. */
+.photo-checking {
+  max-width: 480px;
+  margin: 0 0 16px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.retake {
+  max-width: 480px;
+  margin: 0 0 16px;
+  padding: 16px;
+  background: #fbeceb;
+  border-radius: var(--radius);
+  color: #5c1612;
+}
+
+.retake__title {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+}
+
+.retake__title:focus {
+  outline: none;
+}
+
+.retake__issues,
+.retake__tips {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.retake__kept {
+  margin: 8px 0;
+  font-weight: 600;
+}
+
+.retake__tips-title {
+  margin: 12px 0 4px;
+  font-weight: 600;
+}
+
+.photo-tip {
+  max-width: 480px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  background: #fff6e5;
+  border: 1px solid #f0d9a8;
+  border-radius: var(--radius);
+  color: #5c4100;
+}
+
+.photo-tip__title {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.photo-tip ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.privacy-note {
+  max-width: 480px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}

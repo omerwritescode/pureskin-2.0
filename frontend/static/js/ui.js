@@ -1,5 +1,5 @@
-// Small DOM helpers shared by the /app pages. Everything user- or DB-provided is set
-// via textContent, never innerHTML.
+// Small DOM helpers shared by the /app pages and /scan/report/. Everything user- or
+// DB-provided is set via textContent, never innerHTML.
 
 const PureSkinUI = (() => {
   const SCORE_FIELDS = [
@@ -24,20 +24,51 @@ const PureSkinUI = (() => {
     return node;
   }
 
-  // Labelled 1–100 bars, same markup/style as the Skin Report page.
+  // Labelled score bars, shared by /scan/report/, the Dashboard and the Skin Profile.
+  // The band name is the main label (as text, never colour alone); the 1–100 number is
+  // smaller. Needs /static/js/bands.js loaded first.
   function scoreBars(profile, { compact = false } = {}) {
     return el("ul", { className: compact ? "scores scores--compact" : "scores" },
       ...SCORE_FIELDS.map(([key, label]) => {
         const score = profile[key];
+        const band = window.PureSkinBands.bandFor(score);
+        const bandName = band ? band.name : "Unknown";
         const fill = el("div", { className: "score__fill" });
         fill.style.width = `${score}%`;
         return el("li", { className: "score" },
-          el("div", { className: "score__label" }, el("span", { text: label }), el("span", { text: String(score) })),
+          el("div", { className: "score__label" },
+            el("span", { text: label }),
+            el("span", { className: "score__band" },
+              el("span", { className: "score__band-name", text: bandName }),
+              el("span", { className: "score__value", text: `${score}/100` }))),
           el("div", {
             className: "score__track", role: "meter", "aria-label": label,
             "aria-valuemin": "1", "aria-valuemax": "100", "aria-valuenow": String(score),
+            "aria-valuetext": `${bandName}, ${score} out of 100`,
           }, fill));
       }));
+  }
+
+  // The skin type as shown to the user. A default (the questionnaire had no oil/dry
+  // answer: score_sources.skin_type "default") is never presented as a finding.
+  function skinTypeText(profile) {
+    const name = capitalize(profile.skin_type) || "Unknown";
+    const assumed = Boolean(profile.score_sources && profile.score_sources.skin_type === "default");
+    return { text: assumed ? `${name} (assumed)` : name, assumed, name };
+  }
+
+  function assumedSkinTypeNote(name) {
+    return el("p", {
+      className: "skin-type-note",
+      text: `We couldn't tell your skin type from your answers, so we assumed ${name.toLowerCase()} skin. ` +
+        "Answering the questions about how your skin feels by midday in a new scan gives a better result.",
+    });
+  }
+
+  function sensitiveIndicator() {
+    return el("p", { className: "sensitive-indicator" },
+      el("strong", { text: "Sensitive skin" }),
+      el("span", { text: " · based on your answers about how your skin reacts" }));
   }
 
   function formatDate(iso) {
@@ -60,5 +91,8 @@ const PureSkinUI = (() => {
     return text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
   }
 
-  return { SCORE_FIELDS, el, scoreBars, formatDate, scanCta, statusMessage, capitalize };
+  return {
+    SCORE_FIELDS, el, scoreBars, skinTypeText, assumedSkinTypeNote, sensitiveIndicator,
+    formatDate, scanCta, statusMessage, capitalize,
+  };
 })();

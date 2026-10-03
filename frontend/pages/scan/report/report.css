@@ -1,63 +1,44 @@
-/* Skin Report — supplements /static/css/main.css. */
+/* Skin Report — supplements /static/css/main.css (score bars and bands live there). */
 
 .report-type {
-  margin: 0 0 12px;
+  margin: 0 0 4px;
   font-size: 1.05rem;
 }
 
-.report-type strong {
-  text-transform: capitalize;
+.report-tips {
+  max-width: 560px;
+  margin-top: 12px;
 }
 
-.report-note {
+.report-heading {
+  margin: 16px 0 0;
+  font-size: 1.2rem;
+}
+
+.report-help {
   max-width: 560px;
-  margin: 0 0 20px;
+  margin: 4px 0 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-method {
+  max-width: 560px;
+  margin: 8px 0 0;
   padding: 10px 12px;
   background: var(--accent-soft);
   border-radius: var(--radius);
   font-size: 0.9rem;
 }
 
-.report-heading {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.report-help {
-  margin: 4px 0 12px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.scores {
-  max-width: 560px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.score {
-  margin-bottom: 14px;
-}
-
-.score__label {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
+.report-method summary {
+  cursor: pointer;
   font-weight: 600;
 }
 
-.score__track {
-  height: 10px;
-  overflow: hidden;
-  background: var(--border);
-  border-radius: 5px;
-}
-
-.score__fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 5px;
+.report-method ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
 }
 
 .report-cta {

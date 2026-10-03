@@ -1,5 +1,14 @@
 /* Dashboard page styles — supplements /static/css/main.css. */
 
+.dashboard__notice {
+  max-width: 560px;
+  margin: 16px 0 0;
+}
+
+.dashboard__notice p {
+  margin: 0 0 6px;
+}
+
 .dashboard__summary {
   max-width: 560px;
   margin-top: 16px;

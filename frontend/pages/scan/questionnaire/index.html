@@ -15,46 +15,131 @@
   <main class="page">
     <p class="scan-step">Step 2 of 3</p>
     <h1 class="page__title">A few quick questions</h1>
+    <p class="q-intro">There are no right or wrong answers, and "Not sure" is always fine.
+      This isn't a medical assessment.</p>
 
     <div class="q-progress" aria-hidden="true"><div class="q-progress__fill"></div></div>
     <p class="q-counter" aria-live="polite"></p>
 
+    <!--
+      Input names and values are sent to the API exactly as written: they must match the
+      questionnaire scorer (backend/app/services/questionnaire/schemas.py). A backend test
+      (app/tests/test_frontend_contract.py) checks every one. "not_sure" is never sent.
+    -->
     <form id="questionnaire" class="q-form" novalidate>
       <fieldset class="q-step" data-step>
-        <legend>How would you describe your skin?</legend>
-        <label><input type="radio" name="skin_type" value="oily" required> Oily — shiny, especially by midday</label>
-        <label><input type="radio" name="skin_type" value="dry"> Dry — tight or flaky</label>
-        <label><input type="radio" name="skin_type" value="combination"> Combination — oily T-zone, dry elsewhere</label>
-        <label><input type="radio" name="skin_type" value="normal"> Normal — rarely oily or dry</label>
-        <label><input type="radio" name="skin_type" value="sensitive"> Sensitive — reacts easily</label>
-        <label><input type="radio" name="skin_type" value="not_sure"> Not sure</label>
+        <legend tabindex="-1">Your skin by midday</legend>
+        <fieldset class="q-group">
+          <legend>How does your T-zone (forehead, nose, chin) usually look or feel by midday?</legend>
+          <label><input type="radio" name="oil_tzone" value="oily" required> Shiny or greasy</label>
+          <label><input type="radio" name="oil_tzone" value="normal"> Comfortable, a little shine at most</label>
+          <label><input type="radio" name="oil_tzone" value="dry"> Tight, rough or flaky</label>
+          <label><input type="radio" name="oil_tzone" value="not_sure"> Not sure</label>
+        </fieldset>
+        <fieldset class="q-group">
+          <legend>How do your cheeks usually feel by midday?</legend>
+          <label><input type="radio" name="oil_cheeks" value="oily" required> Shiny or greasy</label>
+          <label><input type="radio" name="oil_cheeks" value="normal"> Comfortable</label>
+          <label><input type="radio" name="oil_cheeks" value="dry"> Tight, rough or flaky</label>
+          <label><input type="radio" name="oil_cheeks" value="not_sure"> Not sure</label>
+        </fieldset>
       </fieldset>
 
       <fieldset class="q-step" data-step hidden>
-        <legend>What's your main skin concern?</legend>
-        <label><input type="radio" name="primary_concern" value="acne" required> Acne or breakouts</label>
-        <label><input type="radio" name="primary_concern" value="redness"> Redness</label>
-        <label><input type="radio" name="primary_concern" value="wrinkles"> Fine lines and wrinkles</label>
-        <label><input type="radio" name="primary_concern" value="pigmentation"> Dark spots or uneven tone</label>
-        <label><input type="radio" name="primary_concern" value="pores"> Visible pores</label>
+        <legend tabindex="-1">Breakouts</legend>
+        <fieldset class="q-group">
+          <legend>How often do you get breakouts (pimples or spots)?</legend>
+          <label><input type="radio" name="breakouts" value="rarely_or_never" required> Rarely or never</label>
+          <label><input type="radio" name="breakouts" value="occasionally"> Occasionally — a few times a year</label>
+          <label><input type="radio" name="breakouts" value="most_weeks"> Most weeks — a few new spots</label>
+          <label><input type="radio" name="breakouts" value="constantly"> Most of the time — several at once</label>
+          <label><input type="radio" name="breakouts" value="not_sure"> Not sure</label>
+        </fieldset>
+        <fieldset class="q-group">
+          <legend>Do you get painful, deep bumps under the skin?</legend>
+          <label><input type="radio" name="deep_bumps" value="no" required> No</label>
+          <label><input type="radio" name="deep_bumps" value="sometimes"> Sometimes</label>
+          <label><input type="radio" name="deep_bumps" value="often"> Often</label>
+          <label><input type="radio" name="deep_bumps" value="not_sure"> Not sure</label>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="q-step" data-step hidden>
+        <legend tabindex="-1">Redness and dark spots</legend>
+        <fieldset class="q-group">
+          <legend>Apart from exercise or heat, how often does your face look red or flushed?</legend>
+          <label><input type="radio" name="flushing" value="rarely" required> Rarely</label>
+          <label><input type="radio" name="flushing" value="sometimes"> Sometimes</label>
+          <label><input type="radio" name="flushing" value="often"> Often</label>
+          <label><input type="radio" name="flushing" value="almost_always"> Almost always</label>
+          <label><input type="radio" name="flushing" value="not_sure"> Not sure</label>
+        </fieldset>
+        <fieldset class="q-group">
+          <legend>Do you have dark spots, patches or uneven tone?</legend>
+          <label><input type="radio" name="dark_spots" value="none" required> None</label>
+          <label><input type="radio" name="dark_spots" value="a_few"> A few</label>
+          <label><input type="radio" name="dark_spots" value="several"> Several</label>
+          <label><input type="radio" name="dark_spots" value="widespread"> Across much of my face</label>
+          <label><input type="radio" name="dark_spots" value="not_sure"> Not sure</label>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="q-step" data-step hidden>
+        <legend tabindex="-1">Lines and pores</legend>
+        <fieldset class="q-group">
+          <legend>Do you have fine lines or wrinkles?</legend>
+          <label><input type="radio" name="fine_lines" value="none" required> None</label>
+          <label><input type="radio" name="fine_lines" value="only_with_expression"> Only when I smile or frown</label>
+          <label><input type="radio" name="fine_lines" value="some_at_rest"> Some, even when my face is relaxed</label>
+          <label><input type="radio" name="fine_lines" value="many_at_rest"> Many, even when my face is relaxed</label>
+          <label><input type="radio" name="fine_lines" value="not_sure"> Not sure</label>
+        </fieldset>
+        <fieldset class="q-group">
+          <legend>How visible are your pores in a normal mirror?</legend>
+          <label><input type="radio" name="pores" value="barely" required> Barely visible</label>
+          <label><input type="radio" name="pores" value="on_nose"> Visible on my nose</label>
+          <label><input type="radio" name="pores" value="nose_and_cheeks"> Visible on my nose and cheeks</label>
+          <label><input type="radio" name="pores" value="across_face"> Visible across most of my face</label>
+          <label><input type="radio" name="pores" value="not_sure"> Not sure</label>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="q-step" data-step hidden>
+        <legend tabindex="-1">What's your main skin goal?</legend>
+        <p class="q-help">This guides your routine. It doesn't change your scores.</p>
+        <label><input type="radio" name="primary_concern" value="acne" required> Fewer breakouts</label>
+        <label><input type="radio" name="primary_concern" value="redness"> Less redness</label>
+        <label><input type="radio" name="primary_concern" value="wrinkles"> Fewer fine lines and wrinkles</label>
+        <label><input type="radio" name="primary_concern" value="pigmentation"> More even tone, fewer dark spots</label>
+        <label><input type="radio" name="primary_concern" value="pores"> Less visible pores</label>
         <label><input type="radio" name="primary_concern" value="none"> Nothing in particular</label>
       </fieldset>
 
       <fieldset class="q-step" data-step hidden>
-        <legend>Any known allergies or sensitivities?</legend>
-        <p class="q-help">Select all that apply, or skip if none.</p>
-        <label><input type="checkbox" name="sensitivities" value="fragrance"> Fragrance</label>
-        <label><input type="checkbox" name="sensitivities" value="alcohol"> Drying alcohols</label>
-        <label><input type="checkbox" name="sensitivities" value="retinoids"> Retinoids</label>
-        <label><input type="checkbox" name="sensitivities" value="acids"> Exfoliating acids (AHA/BHA)</label>
-        <label><input type="checkbox" name="sensitivities" value="essential_oils"> Essential oils</label>
-        <label class="q-text">Anything else?
-          <input type="text" name="sensitivities_other" maxlength="200" placeholder="e.g. lanolin">
-        </label>
+        <legend tabindex="-1">How your skin reacts</legend>
+        <fieldset class="q-group">
+          <legend>How often do skincare products make your skin sting, burn, itch or turn red?</legend>
+          <label><input type="radio" name="reactivity" value="never" required> Never</label>
+          <label><input type="radio" name="reactivity" value="rarely"> Rarely</label>
+          <label><input type="radio" name="reactivity" value="sometimes"> Sometimes</label>
+          <label><input type="radio" name="reactivity" value="often"> Often</label>
+          <label><input type="radio" name="reactivity" value="not_sure"> Not sure</label>
+        </fieldset>
+        <fieldset class="q-group">
+          <legend>Any known allergies or sensitivities? <span class="q-optional">(optional)</span></legend>
+          <label><input type="checkbox" name="sensitivities" value="fragrance"> Fragrance</label>
+          <label><input type="checkbox" name="sensitivities" value="alcohol"> Drying alcohols</label>
+          <label><input type="checkbox" name="sensitivities" value="retinoids"> Retinoids</label>
+          <label><input type="checkbox" name="sensitivities" value="acids"> Exfoliating acids (AHA/BHA)</label>
+          <label><input type="checkbox" name="sensitivities" value="essential_oils"> Essential oils</label>
+          <label class="q-text">Anything else? <span class="q-optional">(optional)</span>
+            <input type="text" name="sensitivities_other" maxlength="200" placeholder="e.g. lanolin">
+          </label>
+        </fieldset>
       </fieldset>
 
       <fieldset class="q-step" data-step hidden>
-        <legend>What are you using on your skin right now?</legend>
+        <legend tabindex="-1">What are you using on your skin right now?</legend>
         <p class="q-help">Select all that apply, or skip if none.</p>
         <label><input type="checkbox" name="current_products" value="cleanser"> Cleanser</label>
         <label><input type="checkbox" name="current_products" value="moisturiser"> Moisturiser</label>
@@ -62,13 +147,13 @@
         <label><input type="checkbox" name="current_products" value="serum"> Serum</label>
         <label><input type="checkbox" name="current_products" value="exfoliant"> Exfoliant</label>
         <label><input type="checkbox" name="current_products" value="retinoid"> Retinoid</label>
-        <label class="q-text">Specific products (optional)
+        <label class="q-text">Specific products <span class="q-optional">(optional)</span>
           <input type="text" name="current_products_other" maxlength="200" placeholder="e.g. CeraVe Hydrating Cleanser">
         </label>
       </fieldset>
 
       <fieldset class="q-step" data-step hidden>
-        <legend>Sleep and stress</legend>
+        <legend tabindex="-1">Sleep and stress</legend>
         <fieldset class="q-group">
           <legend>How much do you usually sleep?</legend>
           <label><input type="radio" name="sleep" value="under_6" required> Under 6 hours</label>
@@ -83,8 +168,10 @@
         </fieldset>
       </fieldset>
 
-      <p id="q-error" class="q-error" role="alert" hidden></p>
-      <p id="q-loading" class="q-loading" role="status" hidden>Analysing your skin…</p>
+      <p id="q-resumed" class="q-resumed" role="status" hidden>Welcome back: your new photo
+        is in and your answers are kept. Press "See my results" to finish.</p>
+      <div id="q-error" class="q-error" role="alert" aria-live="assertive" hidden></div>
+      <p id="q-loading" class="q-loading" role="status" hidden>Analysing your photo and answers…</p>
 
       <div class="q-actions">
         <button type="button" id="q-back" class="btn btn--secondary">Back</button>
@@ -94,6 +181,7 @@
     </form>
   </main>
 
+  <script src="/static/js/scan-api.js"></script>
   <script src="/scan/questionnaire/questionnaire.js"></script>
 </body>
 </html>

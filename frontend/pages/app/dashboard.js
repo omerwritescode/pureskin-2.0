@@ -1,12 +1,35 @@
 // Dashboard: save any pending onboarding scan, then show the latest Skin Profile summary.
 
-const { el, scoreBars, formatDate, scanCta, statusMessage, capitalize, SCORE_FIELDS } = PureSkinUI;
+const {
+  el, scoreBars, skinTypeText, assumedSkinTypeNote, sensitiveIndicator, formatDate, scanCta,
+  statusMessage, SCORE_FIELDS,
+} = PureSkinUI;
 const summary = document.getElementById("summary");
+const saveNotice = document.getElementById("save-notice");
 
-// A visitor who scanned before signing up has their result in sessionStorage
-// (step 5). Save it to their account once, then clear it.
+const RETRY_DELAY_MS = 2000;
+const SAVE_LATER =
+  "We couldn't save your latest scan yet. We'll try again next time you visit this page.";
+const RESCAN = "We couldn't save your latest scan. Please scan again.";
+
+function showSaveNotice(text, { rescan = false } = {}) {
+  saveNotice.replaceChildren(
+    el("p", { text }),
+    rescan ? el("a", { href: "/scan/", text: "Start a new scan" }) : null);
+  saveNotice.hidden = false;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// A visitor who scanned before signing up has the /api/scan/analyze result in
+// sessionStorage. Save it to their account once, then clear it.
+//   422 (or any other rejection): no retry. Drop the result, ask for a new scan.
+//   5xx / network error: keep the result, retry at most once on this page load.
+//   401: keep the result; apiFetch is already redirecting to /auth/.
 async function savePendingScan() {
-  const { RESULT_KEY, IMAGE_KEY, read, write, remove } = window.PureSkinScan;
+  const { RESULT_KEY, read, write, remove, discardPhotoAndAnswers } = window.PureSkinScan;
   const raw = read(RESULT_KEY);
   if (!raw) return;
 
@@ -15,39 +38,62 @@ async function savePendingScan() {
     result = JSON.parse(raw);
   } catch {
     remove(RESULT_KEY);
-    remove(IMAGE_KEY);
-    return; // unreadable — nothing worth saving
+    discardPhotoAndAnswers();
+    showSaveNotice(RESCAN, { rescan: true });
+    return;
   }
 
-  // Clear before the request so a refresh mid-request can't save it twice.
-  remove(RESULT_KEY);
-  remove(IMAGE_KEY);
-
-  const body = { skin_type: result.skin_type };
+  // Exactly the fields POST /api/profile stores. Never the photo, and not the
+  // display-only "sources" / "quality".
+  const body = {
+    skin_type: result.skin_type,
+    is_sensitive: result.is_sensitive,
+    score_sources: result.score_sources,
+  };
   for (const [key] of SCORE_FIELDS) body[key] = result[key];
 
-  try {
-    await apiFetch("/api/profile", { method: "POST", body });
-  } catch (error) {
-    // Network/server error or expired session: put it back so the next visit retries.
-    // A 4xx means the data itself was rejected, so retrying wouldn't help.
-    if (error.status === 0 || error.status === 401 || error.status >= 500) {
-      try {
-        write(RESULT_KEY, raw);
-      } catch {
-        // storage unavailable — nothing more we can do
-      }
+  function keep() {
+    try {
+      write(RESULT_KEY, raw);
+    } catch {
+      // storage unavailable: nothing more we can do
     }
   }
+
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    // Cleared before each request, so a refresh mid-request can't save it twice.
+    remove(RESULT_KEY);
+    try {
+      await apiFetch("/api/profile", { method: "POST", body });
+      return;
+    } catch (error) {
+      const action = window.PureSkinScanApi.saveFailureAction(error.status);
+      if (action === "login") {
+        keep();
+        return;
+      }
+      if (action === "rescan") {
+        discardPhotoAndAnswers();
+        showSaveNotice(RESCAN, { rescan: true });
+        return;
+      }
+      keep(); // "retry": kept between attempts too, in case the page is closed
+      if (attempt === 1) await sleep(RETRY_DELAY_MS);
+    }
+  }
+  showSaveNotice(SAVE_LATER);
 }
 
 function renderProfile(profile) {
+  const skinType = skinTypeText(profile);
   summary.replaceChildren(
     el("div", { className: "card" },
       el("h2", { className: "card__title", text: "Your skin at a glance" }),
       el("p", { className: "card__meta" },
-        "Skin type: ", el("strong", { text: capitalize(profile.skin_type) || "Unknown" }),
+        "Skin type: ", el("strong", { text: skinType.text }),
         ` · Last scan ${formatDate(profile.created_at)}`),
+      skinType.assumed ? assumedSkinTypeNote(skinType.name) : null,
+      profile.is_sensitive ? sensitiveIndicator() : null,
       scoreBars(profile, { compact: true }),
       el("a", { href: "/app/profile/", text: "See full Skin Profile" })));
 }

@@ -25,14 +25,33 @@
       <div id="camera-idle" class="camera__idle">Camera is off</div>
     </div>
 
+    <p id="photo-checking" class="photo-checking" role="status" hidden>Checking your photo…</p>
     <p id="scan-error" class="scan-error" role="alert" hidden></p>
+
+    <!-- Retake screen: a state of this page, shown when the photo can't be used. -->
+    <section id="retake-screen" class="retake" aria-labelledby="retake-heading" hidden>
+      <h2 id="retake-heading" class="retake__title" tabindex="-1">Let's try another photo</h2>
+      <ul id="retake-issues" class="retake__issues"></ul>
+      <p id="retake-kept" class="retake__kept" hidden>Your answers are kept: after a new photo
+        you'll go straight back to the last question.</p>
+      <p class="retake__tips-title">A few tips:</p>
+      <ul id="retake-tips" class="retake__tips"></ul>
+    </section>
+
+    <!-- Soft warnings: the photo can be used, but could be better. -->
+    <div id="photo-tip" class="photo-tip" role="status" hidden>
+      <p class="photo-tip__title">Your photo works. For an even better result next time:</p>
+      <ul id="photo-tip-list"></ul>
+    </div>
 
     <div class="scan-actions">
       <button type="button" id="start-camera" class="btn">Start camera</button>
       <button type="button" id="capture" class="btn" hidden>Capture</button>
       <button type="button" id="continue" class="btn" hidden>Use this photo</button>
+      <button type="button" id="check-again" class="btn" hidden>Try again</button>
       <button type="button" id="retake" class="btn btn--secondary" hidden>Retake</button>
     </div>
+    <p class="privacy-note">Your photo is analysed in memory and never saved on our servers.</p>
 
     <div id="upload-fallback" class="upload" hidden>
       <label for="upload-input" class="upload__label">Upload a photo instead</label>
@@ -42,6 +61,7 @@
     <canvas id="capture-canvas" hidden></canvas>
   </main>
 
+  <script src="/static/js/scan-api.js"></script>
   <script src="/scan/scan.js"></script>
 </body>
 </html>

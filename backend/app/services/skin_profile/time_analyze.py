@@ -2,7 +2,7 @@
 
     python -m app.services.skin_profile.time_analyze [runs]     # from backend/
 
-Sends each sample selfie (downsized as the selfie page does: 720 px, JPEG q85) with
+Sends each sample selfie (downsized as the selfie page does: 720 px, JPEG q92) with
 questionnaire answers through the real endpoint in-process (ASGI, no network), and
 times the parts separately. Needs the face model and photos in
 image_analysis/samples/. Writes nothing.
@@ -41,7 +41,7 @@ def main(runs: int = 20) -> None:
     app.include_router(scan_analyze.router)
     client = TestClient(app)
     for path in sample_photos():
-        image = data_url(path, 720, 85)
+        image = data_url(path, 720, 92)
         client.post("/api/scan/analyze", json={"image": image, "answers": ANSWERS})  # warm-up
         total, questionnaire, analysis, merge = [], [], [], []
         for _ in range(runs):
