@@ -2,7 +2,7 @@
 // app/tests/test_frontend_contract.py:  node frontend_modules.mjs <repo root>
 // Prints "ok <n>" on success; any failed assertion exits non-zero.
 
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 
 const root = process.argv[2];
@@ -19,6 +19,21 @@ globalThis.PureSkinBands = Bands;
 const UI = load("static/js/ui.js", "PureSkinUI");
 new Function(source("static/js/scan-api.js"))();
 const Api = globalThis.PureSkinScanApi;
+
+// ---- A top-level const is a global name in a browser but NOT a window property ----
+// window = globalThis above hides that here, so check the source instead: a script that
+// reads window.PureSkinBands crashes the page ("Cannot read properties of undefined").
+const jsFiles = readdirSync(`${root}/frontend`, { recursive: true })
+  .map((path) => path.replaceAll("\\", "/"))
+  .filter((path) => path.endsWith(".js"));
+const constGlobals = jsFiles.flatMap((path) =>
+  [...source(path).matchAll(/^const (PureSkin\w+)/gm)].map((match) => match[1]));
+check(() => assert.ok(constGlobals.includes("PureSkinBands")));  // the scan itself works
+check(() => assert.deepEqual(
+  jsFiles.flatMap((path) => constGlobals
+    .filter((name) => source(path).includes(`window.${name}`))
+    .map((name) => `${path}: window.${name} (use ${name})`)),
+  []));
 
 // ---- Bands: the shared cutoffs, never a guessed band ----
 for (const [score, band] of [[1, "Low"], [30, "Low"], [31, "Moderate"], [60, "Moderate"], [61, "High"], [100, "High"]]) {

@@ -19,7 +19,7 @@ function renderProfile(profile) {
       el("h2", { className: "card__title", text: "Scores" }),
       el("p", {
         className: "card__meta",
-        text: `Higher means more noticeable. ${window.PureSkinBands.legend()}.`,
+        text: `Higher means more noticeable. ${PureSkinBands.legend()}.`,
       }),
       scoreBars(profile)),
     el("p", { className: "profile-rescan" },

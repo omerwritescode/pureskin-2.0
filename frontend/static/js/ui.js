@@ -31,7 +31,7 @@ const PureSkinUI = (() => {
     return el("ul", { className: compact ? "scores scores--compact" : "scores" },
       ...SCORE_FIELDS.map(([key, label]) => {
         const score = profile[key];
-        const band = window.PureSkinBands.bandFor(score);
+        const band = PureSkinBands.bandFor(score);
         const bandName = band ? band.name : "Unknown";
         const fill = el("div", { className: "score__fill" });
         fill.style.width = `${score}%`;

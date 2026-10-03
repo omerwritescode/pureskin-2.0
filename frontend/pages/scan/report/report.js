@@ -39,6 +39,6 @@ if (!valid) {
   }
 
   document.getElementById("scores-help").textContent =
-    `Higher means more noticeable. ${window.PureSkinBands.legend()}.`;
+    `Higher means more noticeable. ${PureSkinBands.legend()}.`;
   document.getElementById("scores").replaceChildren(scoreBars(result));
 }
