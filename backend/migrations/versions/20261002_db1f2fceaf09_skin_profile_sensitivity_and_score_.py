@@ -17,6 +17,18 @@ the columns. A row migrated up from 'sensitive' round-trips exactly. A row creat
 after the upgrade with a real type AND is_sensitive (e.g. oily + sensitive) comes back
 as just 'sensitive': lossy, because the old schema can't hold both, and that is how
 the old routine treated sensitive skin anyway.
+
+Restoring a pre-migration backup instead of downgrading (works in Windows PowerShell,
+which has no `<` input redirection). The dev setup uses container pureskin-db, user
+pureskin and database pureskin_db (see .env and docker-compose.yml):
+  1. Stop the app server (uvicorn) first, so nothing writes during the restore.
+  2. docker cp backups/<file>.dump pureskin-db:/tmp/restore.dump
+  3. docker exec pureskin-db pg_restore -U pureskin -d pureskin_db --clean --if-exists /tmp/restore.dump
+  4. docker exec pureskin-db rm /tmp/restore.dump
+(In Git Bash, `export MSYS_NO_PATHCONV=1` first, or /tmp/... is rewritten to a Windows path.)
+A restore puts alembic_version back at the revision the dump was taken at (for a
+backup taken before this migration: 3641b04c0465). Run `alembic upgrade head` again
+before starting the server with code that expects is_sensitive / score_sources.
 """
 from typing import Sequence, Union
 
