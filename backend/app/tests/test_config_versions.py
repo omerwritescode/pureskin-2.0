@@ -1,0 +1,65 @@
+"""A rule, threshold or weight can't change without a config version bump.
+
+Each profile stores the questionnaire and merge config versions it was scored with
+(score_sources.version), so a changed value under an old version string would make
+stored provenance lie. When this test fails:
+  1. bump the version string in the config file (e.g. merge-1.0.0 -> merge-1.1.0);
+  2. add the new version with the fingerprint from the failure message to RECORDED.
+Never edit a recorded fingerprint.
+"""
+
+import hashlib
+import json
+from types import ModuleType
+
+import pytest
+
+from app.services.questionnaire import questionnaire_config
+from app.services.skin_profile import skin_profile_config
+
+RECORDED = {
+    "questionnaire-1.0.0": "a228f50bd2e32cca",
+    "merge-1.0.0": "7485d277d8b2e553",
+}
+
+CONFIGS = [
+    (questionnaire_config, "CONFIG_VERSION"),
+    (skin_profile_config, "MERGE_CONFIG_VERSION"),
+]
+
+
+def _plain(value):
+    """JSON-able, deterministic form (tuple dict keys become their repr)."""
+    if isinstance(value, dict):
+        return {(k if isinstance(k, str) else repr(k)): _plain(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_plain(v) for v in value]
+    return value
+
+
+def fingerprint(module: ModuleType, version_name: str) -> str:
+    values = {
+        name: _plain(getattr(module, name))
+        for name in dir(module)
+        if name.isupper() and name != version_name
+    }
+    return hashlib.sha256(json.dumps(values, sort_keys=True).encode()).hexdigest()[:16]
+
+
+@pytest.mark.parametrize(("module", "version_name"), CONFIGS, ids=lambda c: getattr(c, "__name__", c))
+def test_config_values_change_only_with_a_version_bump(module, version_name):
+    version = getattr(module, version_name)
+    current = fingerprint(module, version_name)
+    assert version in RECORDED, (
+        f"{module.__name__}: new version {version!r}. Add {version!r}: {current!r} to RECORDED."
+    )
+    assert RECORDED[version] == current, (
+        f"{module.__name__}: a value changed but {version_name} is still {version!r}. "
+        f"Bump it, then add the new version with fingerprint {current!r} to RECORDED."
+    )
+
+
+def test_fingerprint_notices_a_change(monkeypatch):
+    before = fingerprint(skin_profile_config, "MERGE_CONFIG_VERSION")
+    monkeypatch.setattr(skin_profile_config, "ACNE_IMAGE_PULL", 0.3)
+    assert fingerprint(skin_profile_config, "MERGE_CONFIG_VERSION") != before
