@@ -20,9 +20,13 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
   uneven light, no face...) gets a retake screen with tips. The scores are unvalidated
   heuristics and self-reports, not clinical assessments.
 - **Routine.** A rule-based AM/PM routine built from the latest Skin Profile, using
-  products in the catalog. It checks for conflicting ingredients (e.g. retinol + benzoyl
-  peroxide) between the products in each session.
-- **Product catalog.** Searchable and filterable by category.
+  products in the catalog. It checks for conflicting ingredients (e.g. retinoids +
+  benzoyl peroxide) between the products in each session, leaves strong actives and
+  fragrance out for sensitive skin, and shows why any product was left out.
+- **Product catalog.** Searchable and filterable by category. **The 24 products are
+  synthetic placeholders** (invented brands and short invented ingredient lists, made up
+  to exercise the routine rules), not real products. The catalog and routine pages say
+  so. Roadmap step 7c-iii replaces them with verified products.
 - **Accounts.** Sign up and log in. The Dashboard and Skin Profile pages show the latest
   scan.
 

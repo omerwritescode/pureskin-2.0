@@ -82,6 +82,34 @@
   color: var(--text);
 }
 
+.routine-step__caution {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: #fff6e5;
+  border: 1px solid #f0d9a8;
+  border-radius: var(--radius);
+  color: #5c4100;
+  font-size: 0.85rem;
+}
+
+.routine-left-out {
+  margin-top: 16px;
+}
+
+.routine-left-out__list {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  font-size: 0.9rem;
+}
+
+.routine-left-out__list li + li {
+  margin-top: 6px;
+}
+
+.routine-left-out__when {
+  color: var(--muted);
+}
+
 @media (min-width: 720px) {
   .routine-grid {
     grid-template-columns: 1fr 1fr;

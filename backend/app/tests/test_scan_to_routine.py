@@ -1,7 +1,7 @@
 """Merged profiles through the step 6 routine: /api/scan/analyze -> /api/profile -> /api/routine.
 
-The image analyzer is replaced by fixed scores so each case is exact. The routine
-itself is the unchanged step 6 code (plus the 7b-i is_sensitive compatibility).
+The image analyzer is replaced by fixed scores so each case is exact. The routine is the
+7c-i (b) rule set (app/services/recommendation/).
 """
 
 import pytest
@@ -74,22 +74,39 @@ def test_corroborated_acne_adds_acne_steps_even_with_a_low_image_score(scan_to_r
     assert ACNE_STEPS <= keywords(routine)
 
 
-def test_sensitive_profile_gets_the_sensitive_routine(scan_to_routine):
+def test_oily_sensitive_profile_keeps_the_oily_steps(scan_to_routine):
     answers = {"oil_tzone": "oily", "oil_cheeks": "oily", "reactivity": "often"}
     profile, routine = scan_to_routine(answers, redness_score=70)
     assert (profile["skin_type"], profile["is_sensitive"]) == ("oily", True)
-    assert (routine["skin_type"], routine["is_sensitive"]) == ("sensitive", True)
+    assert (routine["skin_type"], routine["base_set"], routine["is_sensitive"]) == ("oily", "oily", True)
     found = keywords(routine)
-    assert {("am_routine", "fragrance-free"), ("am_routine", "mineral")} <= found
-    assert ("am_routine", "azelaic acid") in found  # redness 70 > 60
-    assert ("am_routine", "oil-free") not in found  # the oily set is replaced (7c: combine)
+    assert {("am_routine", "foaming"), ("am_routine", "lightweight")} <= found  # the oily steps
+    assert ("am_routine", "mineral") in found  # sensitive: mineral sunscreen first
+    assert ("am_routine", "azelaic acid") in found  # redness 70 is High
 
 
 def test_todays_funnel_answers_keep_the_self_reported_type(scan_to_routine):
     profile, routine = scan_to_routine(TODAYS_ANSWERS, pigmentation_score=66)
     assert routine["skin_type"] == "combination"
     assert profile["pigmentation_score"] == 66  # no questionnaire evidence: image only
-    assert ("am_routine", "alpha arbutin") in keywords(routine)
+    assert ("pm_routine", "tranexamic acid") in keywords(routine)
+    # The only arbutin serum lists lactic acid (an AHA), and AHAs are evening-only, so the
+    # morning step is skipped with a visible reason (a placeholder-catalog gap). It isn't
+    # in the evening routine either, so the reason says "left out".
+    (arbutin,) = [lo for lo in routine["left_out"] if lo["product_name"] == "Alpha Arbutin 2% + HA Serum"]
+    assert arbutin["sessions"] == ["am"]
+    assert arbutin["reason"] == (
+        "Left out because it contains lactic acid (an AHA), and AHAs are not used in the morning routine."
+    )
+
+
+def test_a_few_spots_keep_pigmentation_moderate(scan_to_routine):
+    """Image pigmentation 66 with "a few" dark spots merges to 55: no pigmentation steps."""
+    profile, routine = scan_to_routine({**TODAYS_ANSWERS, "dark_spots": "a_few"}, pigmentation_score=66)
+    assert profile["pigmentation_score"] == 55
+    found = {keyword for _, keyword in keywords(routine)}
+    assert not {"alpha arbutin", "tranexamic acid"} & found
+    assert not any(lo["product_name"] == "Alpha Arbutin 2% + HA Serum" for lo in routine["left_out"])
 
 
 # --------------------------------------------------------------------------------------
@@ -123,7 +140,7 @@ def test_rarely_breakouts_with_high_image_acne_adds_no_acne_steps(scan_to_routin
 def test_reactive_answers_give_a_sensitive_profile(scan_to_routine):
     profile, routine = scan_to_routine({**NEW_UI_ANSWERS, "reactivity": "often"})
     assert profile["is_sensitive"] is True
-    assert routine["skin_type"] == "sensitive"
+    assert (routine["skin_type"], routine["is_sensitive"]) == ("combination", True)
 
 
 def test_skipped_skin_feel_questions_are_stored_as_an_assumed_type(api, auth_headers, scan_to_routine):

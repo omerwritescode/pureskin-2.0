@@ -1,20 +1,25 @@
-"""Routine rules: base sets, score triggers and keyword matching, in one place.
+"""Routine rules: base sets, score triggers, hard rules and keyword matchers, in one place.
 
-routine-1.0.0 is the step 6 rule set exactly as it was in app/api/routine.py, moved here
-unchanged (step 7c-i a). Only the matching underneath changed: whole ingredient tokens
-instead of substrings. Any change that can alter a routine must bump
+HEURISTIC AND HAND-SET. No value here was fitted to data: there is no outcome data for
+routines (README.md). Any change that can alter a routine must bump
 ROUTINE_CONFIG_VERSION (app/tests/test_config_versions.py checks).
+
+routine-1.0.0: the step 6 rules, moved here unchanged (7c-i a).
+routine-2.0.0 (7c-i b): triggers at the High band edge; sensitivity as a modifier (strong
+actives, L-ascorbic acid and fragrance left out, mineral sunscreen first, a centella
+morning serum, substitutions); a fixed concern priority for conflicts; evening-only
+actives; core steps fall back to any eligible product; keywords match ingredients and
+labelled format fields, never descriptions.
 """
 
-ROUTINE_CONFIG_VERSION = "routine-1.0.0"
+ROUTINE_CONFIG_VERSION = "routine-2.0.0"
 
 AM, PM = "am", "pm"
 BOTH = (AM, PM)
 
-# A score's targeted steps are added when the score is above this (step 6).
-SCORE_THRESHOLD = 60
-# Step 6's combination-only rule: a PM retinol when wrinkle_score is above this.
-COMBINATION_RETINOL_WRINKLE_THRESHOLD = 40
+# A score's targeted steps are added when the score is in the High band (61-100). The
+# band edge is imported, never repeated: the bands are defined once, in skin_profile_config.
+from app.services.skin_profile.skin_profile_config import HIGH_BAND_MIN  # noqa: E402
 
 # Core steps are never removed for a conflict, and hold one product per session.
 CORE_CATEGORIES = ("cleanser", "moisturiser", "sunscreen")
@@ -22,18 +27,19 @@ CORE_CATEGORIES = ("cleanser", "moisturiser", "sunscreen")
 CATEGORY_ORDER = ("cleanser", "exfoliant", "serum", "treatment", "moisturiser", "sunscreen")
 
 # A step: (category, keywords, sessions, note). Keywords are alternatives, earlier ones
-# preferred; no keywords = any product in the category.
+# preferred; no keywords = any product in the category. What each keyword requires of a
+# product is in MATCHERS, below.
 BASE_STEPS = {
     "oily": (
-        ("cleanser", ("oil-free", "foaming"), BOTH, None),
+        ("cleanser", ("foaming",), BOTH, None),
         ("serum", ("niacinamide",), BOTH, None),
-        ("moisturiser", ("oil-free", "lightweight"), BOTH, None),
-        ("sunscreen", ("spf 50", "spf 30"), (AM,), None),  # SPF 30+, higher preferred
+        ("moisturiser", ("lightweight",), BOTH, None),
+        ("sunscreen", ("spf 50", "spf 30"), (AM,), None),  # higher SPF preferred
     ),
     "dry": (
         ("cleanser", ("cream",), BOTH, None),
         ("serum", ("hyaluronic acid",), BOTH, None),
-        ("moisturiser", ("rich", "hydrating"), BOTH, None),
+        ("moisturiser", ("rich",), BOTH, None),
         ("treatment", ("facial oil",), (PM,), None),
         ("sunscreen", (), (AM,), None),
     ),
@@ -49,22 +55,120 @@ BASE_STEPS = {
         ("moisturiser", (), BOTH, None),
         ("sunscreen", (), (AM,), None),
     ),
-    "sensitive": (
-        ("cleanser", ("fragrance-free",), BOTH, None),
-        ("serum", ("centella",), BOTH, None),
-        ("moisturiser", ("barrier",), BOTH, None),
-        ("sunscreen", ("mineral",), (AM,), None),
-    ),
 }
-# is_sensitive -> the "sensitive" set replaces the skin type's (step 6 compatibility).
-SENSITIVE_BASE_SET = "sensitive"
 # A skin type with no base set of its own (NULL or unknown) uses this one.
 DEFAULT_BASE_SET = "normal"
 
-COMBINATION_RETINOL_STEP = ("serum", ("retinol",), (PM,), None)
+# ======================================================================================
+# Sensitive skin (is_sensitive): a modifier on the skin type's steps, never a replacement
+# ======================================================================================
+# An oily, sensitive user keeps the oily steps; sensitivity only adds the rules below.
 
-# Score -> steps added when it is above SCORE_THRESHOLD, in priority order. A step that
-# is already required (the combination retinol) isn't added twice.
+SENSITIVE = "sensitive"  # the source of the steps it adds
+# Hard: no declared fragrance (fragrance, declared allergens, essential oils) in ANY
+# step, core steps included. A step with no fragrance-free product stays empty, with a
+# warning.
+SENSITIVE_FRAGRANCE_FREE = True
+# Preferred first, falling back to the skin type's own step (core categories only).
+SENSITIVE_STEPS = (
+    ("sunscreen", ("mineral",), (AM,), None),
+)
+# Hard: strong actives are never given to sensitive skin, in any step (core steps
+# included). These are the classes of every ingredient in a high-severity conflict row
+# (retinol, benzoyl peroxide, glycolic acid, salicylic acid); a test keeps it that way.
+# Membership applies the preservative cutoff (app/services/ingredients/membership.py):
+# a trace member listed after the preservative doesn't count.
+SENSITIVE_STRONG_CLASSES = ("retinoid", "benzoyl_peroxide", "aha", "bha")
+# Hard: single ingredients left out for sensitive skin, by their exact canonical token
+# (not by class). "ascorbic acid" is L-ascorbic acid; its derivatives (ascorbyl
+# glucoside, 3-o-ethyl ascorbic acid...) are separate tokens and stay allowed.
+SENSITIVE_EXCLUDED_INGREDIENTS = ("ascorbic acid",)
+
+# Steps replaced by another step, or dropped (None), for sensitive skin, each with the
+# warning shown to the user. Keyed by the step's (source, category, keywords): source is
+# "base" or the score that adds it. When:
+#   "always"        for every sensitive profile;
+#   "all_excluded"  only when the catalog has products for the step and every one of them
+#                   is left out by a sensitive-skin hard rule (a strong active or an
+#                   excluded ingredient).
+# A replacement keeps the original step's concern priority, and isn't added twice.
+ALWAYS, ALL_EXCLUDED = "always", "all_excluded"
+SENSITIVE_SUBSTITUTIONS = {
+    # The morning base serum: a soothing centella serum instead.
+    ("base", "serum", ("vitamin c",)): (
+        ("serum", ("centella",), (AM,), None),
+        "For sensitive skin, the morning serum step uses centella instead of vitamin C.",
+        ALWAYS,
+    ),
+    ("base", "serum", ("antioxidant",)): (
+        ("serum", ("centella",), (AM,), None),
+        "For sensitive skin, the morning serum step uses centella instead of an "
+        "antioxidant serum.",
+        ALWAYS,
+    ),
+    ("acne_score", "treatment", ("benzoyl peroxide",)): (
+        ("serum", ("azelaic acid",), BOTH, None),
+        "For sensitive skin, the breakouts step uses azelaic acid instead of benzoyl "
+        "peroxide, which is left out for sensitive skin.",
+        ALL_EXCLUDED,
+    ),
+    ("pigmentation_score", "serum", ("alpha arbutin",)): (
+        None,
+        "No morning dark-spot step: every product for it is left out for sensitive skin.",
+        ALL_EXCLUDED,
+    ),
+    ("wrinkle_score", "serum", ("retinol",)): (
+        None,
+        "No evening retinol step: retinoids are left out for sensitive skin.",
+        ALL_EXCLUDED,
+    ),
+    ("pore_score", "exfoliant", ("bha",)): (
+        None,
+        "No pore step: every product for it is left out for sensitive skin.",
+        ALL_EXCLUDED,
+    ),
+}
+
+# ======================================================================================
+# Sessions: some actives go in the evening routine only, whatever step they fill
+# ======================================================================================
+# (class, the sessions a product with it may be used in, applies to rinse-off products
+# too). Retinoids: evening only, every category. AHAs: evening only in leave-on products;
+# a cleanser is rinsed off. Membership applies the preservative cutoff.
+SESSION_RULES = (
+    ("retinoid", (PM,), True),
+    ("aha", (PM,), False),
+)
+RINSE_OFF_CATEGORIES = ("cleanser",)
+SESSION_NAMES = {AM: "morning", PM: "evening"}
+# (singular, plural) for the session-rule reasons: "Not used in the morning routine
+# because it contains lactic acid (an AHA); AHAs are evening-only."
+SESSION_CLASS_NAMES = {"retinoid": ("a retinoid", "retinoids"), "aha": ("an AHA", "AHAs")}
+
+# Shown on every step whose product lists a retinoid (any trace: strict membership).
+RETINOID_CAUTION = (
+    "If you're pregnant, trying to get pregnant or breastfeeding, ask a doctor before "
+    "using a retinoid."
+)
+
+# How a class is named in a reason shown to the user ("It contains lactic acid, an alpha
+# hydroxy acid (AHA)."). A class whose only member names itself needs no label.
+CLASS_LABELS = {
+    "retinoid": "a retinoid",
+    "aha": "an alpha hydroxy acid (AHA)",
+    "bha": "a beta hydroxy acid (BHA)",
+}
+
+# When two optional products (serum/treatment/exfoliant) in a session conflict, the one
+# serving the higher-priority concern stays, the same way for every skin type. A
+# score-triggered step outranks every base step: a base preference never evicts a
+# targeted step. (Ties: the later-required step goes.)
+CONCERN_PRIORITY = ("acne_score", "redness_score", "pigmentation_score", "wrinkle_score", "pore_score")
+# Every conflict is resolved, whatever its severity. When two products clash on several
+# rows, the reason shown is the most severe one.
+SEVERITY_ORDER = ("high", "medium", "low")
+
+# Score -> steps added when it is in the High band (>= HIGH_BAND_MIN).
 SCORE_STEPS = (
     ("acne_score", (
         ("cleanser", ("salicylic acid",), (AM,), None),
@@ -87,26 +191,48 @@ SCORE_STEPS = (
 )
 
 # ======================================================================================
-# Keyword matching (step 6 semantics: a keyword matches a product's ingredients OR its
-# description). Since 7c-i (a) both sides use whole tokens, never substrings.
+# What each keyword requires of a product (7c-i b: descriptions are never matched)
 # ======================================================================================
+# A keyword is a tuple of conditions that must all hold:
+#   ("ingredient", token)      the canonical ingredient is listed
+#   ("class", name)            an ingredient of that class counts (preservative cutoff)
+#   ("property", name)         derived from the ingredient list: mineral_only, anhydrous_oil
+#   ("texture", textures)      the product's texture field is one of these
+#   ("foaming", values)        the cleanser's foaming field is one of these
+#   ("min_spf", n)             the product's SPF field is at least n
+# Texture, foaming and SPF are product fields filled when the catalog is seeded: an
+# ingredient list can't give them reliably.
 
-# The keywords step 6 found in ingredient lists -> the canonical token, or a class as
-# "class:<name>", they stand for. Every other keyword matches descriptions only.
-INGREDIENT_KEYWORDS = {
-    "niacinamide": "niacinamide",
-    "hyaluronic acid": "hyaluronic acid",
-    "centella": "class:centella",
-    "retinol": "retinol",
-    "salicylic acid": "salicylic acid",
-    "benzoyl peroxide": "benzoyl peroxide",
-    "azelaic acid": "azelaic acid",
-    "alpha arbutin": "alpha arbutin",
-    "tranexamic acid": "tranexamic acid",
-    "peptide": "class:peptide",
+LIGHT_TEXTURES = ("liquid", "gel", "gel_cream", "fluid", "lotion")
+RICH_TEXTURES = ("cream", "balm")
+CREAM_CLEANSER_TEXTURES = ("cream", "milk", "balm")
+
+MATCHERS = {
+    "foaming": (("foaming", ("foaming",)),),
+    "cream": (("texture", CREAM_CLEANSER_TEXTURES),),
+    "lightweight": (("texture", LIGHT_TEXTURES),),
+    "rich": (("texture", RICH_TEXTURES),),
+    "spf 50": (("min_spf", 50),),
+    "spf 30": (("min_spf", 30),),
+    "mineral": (("property", "mineral_only"),),
+    # Both: the label says oil, and the list has no water and starts with an oil. A balm
+    # (shea butter first, no water) is anhydrous but not an oil; a water-based "oil
+    # serum" is labelled oil but isn't anhydrous.
+    "facial oil": (("texture", ("oil",)), ("property", "anhydrous_oil")),
+    "centella": (("class", "centella"),),
+    "niacinamide": (("ingredient", "niacinamide"),),
+    "hyaluronic acid": (("ingredient", "hyaluronic acid"),),
+    "vitamin c": (("class", "vitamin_c"),),
+    "antioxidant": (("class", "antioxidant"),),
+    "salicylic acid": (("ingredient", "salicylic acid"),),
+    "benzoyl peroxide": (("ingredient", "benzoyl peroxide"),),
+    "azelaic acid": (("ingredient", "azelaic acid"),),
+    "alpha arbutin": (("ingredient", "alpha arbutin"),),
+    "tranexamic acid": (("ingredient", "tranexamic acid"),),
+    "retinol": (("ingredient", "retinol"),),
+    "peptide": (("class", "peptide"),),
+    "bha": (("class", "bha"),),
 }
 
-# A description phrase doesn't match when the word right before it is one of these
-# ("Non-foaming cream cleanser" is not "foaming"). Only the word right before: a wider
-# window would also cancel "cream" in that sentence.
-DESCRIPTION_NEGATORS = ("non", "not", "no", "without")
+# The catalog loader (seed.py) refuses a sunscreen without a labelled SPF of at least this.
+MIN_SUNSCREEN_SPF = 30

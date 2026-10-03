@@ -179,7 +179,13 @@ The sections above are the original specification and are left unchanged. As bui
 6. **No on-device inference option** (added after 7b-ii). The scan funnel sends the photo
    to the server for analysis (in memory, never stored). The user's choice of
    on-device/in-browser inference (§3, §6) is not built.
+7. **The product catalog is synthetic placeholders** (added in 7c-i). The 24 seeded
+   products (§4 item 8) have invented brands and short invented ingredient lists, written
+   in step 6 to exercise the routine rules. They are not real products, and the catalog
+   and routine pages say so. Step 7c-iii replaces them with verified products whose
+   ingredient lists come from brand pages.
 
 Details: `backend/app/services/image_analysis/README.md`,
-`backend/app/services/questionnaire/README.md` and
-`backend/app/services/skin_profile/README.md`.
+`backend/app/services/questionnaire/README.md`,
+`backend/app/services/skin_profile/README.md` and
+`backend/app/services/recommendation/README.md`.

@@ -233,9 +233,11 @@ The contract is in `schemas.py`, stored in `skin_profiles.score_sources` (JSONB)
    (`avoid`, `actives_in_use`, `concern_tags`) are neither returned by
    `/api/scan/analyze` nor stored, because `skin_profiles` has no column for them. 7c
    (recommendations) will need to decide where they live.
-5. **Oily + sensitive.** The step 6 routine still *replaces* the skin type's base steps
-   with the sensitive set when `is_sensitive` is true (minimal 7b-i compatibility,
-   TODO(7c) in `routine.py`).
+5. **Oily + sensitive** (resolved in 7c-i b). Until then the routine *replaced* the skin
+   type's base steps with a separate sensitive set. Since 7c-i (b) sensitivity is a
+   modifier: an oily, sensitive user keeps the oily steps, and sensitivity adds hard
+   rules (no strong actives, fragrance-free only) and a mineral-sunscreen preference.
+   See `app/services/recommendation/README.md`.
 
 ## Checks run for 7b-i and 7b-ii
 
@@ -264,14 +266,17 @@ The funnel makes both calls, so a scan spends about 0.45 s on the server: far in
 the spec's 3-5 s target. Network time comes on top. The 7b-i measurement (0.60-0.91 s)
 was taken on battery with a throttled CPU, before the canonical resolution.
 
-**The step 6 routine on merged profiles** (`app/tests/test_scan_to_routine.py`):
+**The routine on merged profiles** (`app/tests/test_scan_to_routine.py`; updated for the
+7c-i (b) rules):
 - **High image acne without corroboration** (image 92, today's answers): acne becomes
   60, so there are no salicylic or benzoyl peroxide steps.
 - **Corroborated acne with image acne 1:** floored to 61, so both acne steps are added.
-- **Oily + sensitive:** gets the sensitive set (fragrance-free cleanser, mineral SPF),
-  plus azelaic acid for redness 70.
-- **"A few spots" with image pigmentation 66:** becomes 55, so the pigmentation serums
-  are not added.
+- **Oily + sensitive:** keeps the oily steps (foaming cleanser, lightweight moisturiser),
+  puts a mineral sunscreen first, and adds azelaic acid for redness 70.
+- **"A few spots" with image pigmentation 66:** becomes 55 (Moderate), so the
+  pigmentation serums are not added (`test_a_few_spots_keep_pigmentation_moderate`).
+  Until 7c-i (b) this README listed the case as tested here although no test covered
+  it; the test now exists.
 
 ## Testing
 

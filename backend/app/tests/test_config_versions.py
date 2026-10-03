@@ -25,6 +25,7 @@ RECORDED = {
     "merge-1.0.0": "7485d277d8b2e553",
     "ingredients-1.0.0": "4a94921f822ddff6",
     "routine-1.0.0": "08209916f5c2a19f",
+    "routine-2.0.0": "cbf3b7f0e9dd5ac6",
 }
 
 CONFIGS = [

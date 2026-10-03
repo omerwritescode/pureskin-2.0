@@ -2,7 +2,7 @@ import itertools
 
 import pytest
 
-from app.services.recommendation.routine_config import SCORE_THRESHOLD
+from app.services.recommendation import routine_config
 from app.services.questionnaire import questionnaire_config as qcfg
 from app.services.skin_profile import band, merge_score, reproduce_final
 from app.services.skin_profile import skin_profile_config as cfg
@@ -26,9 +26,9 @@ def test_bands_cover_1_to_100_without_gaps():
 
 
 def test_routine_trigger_is_exactly_the_high_band():
-    """step 6 adds a score's targeted steps when score > SCORE_THRESHOLD."""
-    assert SCORE_THRESHOLD + 1 == cfg.HIGH_BAND_MIN
-    assert SCORE_THRESHOLD == cfg.MODERATE_BAND_MAX
+    """The routine adds a score's targeted steps at HIGH_BAND_MIN, imported from here."""
+    assert routine_config.HIGH_BAND_MIN is cfg.HIGH_BAND_MIN
+    assert cfg.HIGH_BAND_MIN == cfg.MODERATE_BAND_MAX + 1
 
 
 def test_acne_thresholds_are_the_band_edges():
@@ -127,7 +127,7 @@ def test_acne_bounds_and_rules_over_every_input():
 
 
 def test_image_alone_can_never_trigger_the_acne_step():
-    assert all(acne(image, None)[0] <= SCORE_THRESHOLD for image in IMAGES)
+    assert all(acne(image, None)[0] < routine_config.HIGH_BAND_MIN for image in IMAGES)
 
 
 def test_every_reachable_acne_self_report():
@@ -139,7 +139,7 @@ def test_every_reachable_acne_self_report():
         for points in sorted(set(qcfg.MODIFIER_POINTS["deep_bumps"].values())):
             q = base + points
             finals = {acne(image, q)[0] for image in IMAGES}
-            assert (min(finals) > SCORE_THRESHOLD) is (q >= cfg.ACNE_CORROBORATION_MIN)
+            assert (min(finals) >= routine_config.HIGH_BAND_MIN) is (q >= cfg.ACNE_CORROBORATION_MIN)
 
 
 def test_acne_is_monotonic_in_both_inputs():

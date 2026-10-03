@@ -141,3 +141,17 @@ def normalise_ingredients(raw_names: Iterable[str]) -> NormalisedIngredients:
 
 def is_known(token: str) -> bool:
     return token in KNOWN
+
+
+def check_conflict_name(name: str) -> None:
+    """A conflict-table name must be "class:<a known class>" or a known canonical token.
+
+    Raises ValueError otherwise, so a typo can't create a rule that silently never fires.
+    """
+    if name.startswith(cfg.CLASS_PREFIX):
+        cls = name.removeprefix(cfg.CLASS_PREFIX)
+        if not re.fullmatch(cfg.CLASS_NAME, cls) or cls not in cfg.CLASSES:
+            raise ValueError(f"Unknown ingredient class in conflict rule: {name!r}")
+        return
+    if canonical(name) != name or name not in KNOWN:
+        raise ValueError(f"Conflict rule names {name!r}, which isn't a known canonical ingredient")

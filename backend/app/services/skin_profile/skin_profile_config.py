@@ -13,8 +13,9 @@ SCORE_MIN, SCORE_MAX = 1, 100
 # ======================================================================================
 # Score bands: the ONE definition of Low / Moderate / High for a 1-100 score.
 # The frontend band module (7b-ii) MUST use these same cutoffs.
-# The step 6 routine adds a score's targeted steps when the score is > 60
-# (routine.py SCORE_THRESHOLD), which is exactly the High band.
+# The routine adds a score's targeted steps from HIGH_BAND_MIN, which it imports from
+# here (app/services/recommendation/routine_config.py). Until 7c-i (b) it used its own
+# "> 60" plus a combination-only "wrinkle > 40" rule; both are gone.
 # ======================================================================================
 SCORE_BANDS = (
     ("Low", 1, 30),

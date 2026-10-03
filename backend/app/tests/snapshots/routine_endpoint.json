@@ -5,45 +5,48 @@
         1,
         "Clear Balance Foaming Cleanser",
         null,
+        null,
         null
       ],
       [
         2,
         "Vitamin C 15% Brightening Serum",
         "vitamin c",
+        null,
         null
       ],
       [
         3,
         "Oil-Free Gel Moisturiser",
         "lightweight",
+        null,
         null
       ],
       [
         4,
         "Invisible Fluid SPF 50",
         null,
+        null,
         null
       ]
     ],
+    "base_set": "combination",
+    "is_sensitive": false,
+    "left_out": [],
     "message": null,
     "pm": [
       [
         1,
         "Clear Balance Foaming Cleanser",
         null,
+        null,
         null
       ],
       [
         2,
-        "Retinol 0.5% Night Serum",
-        "retinol",
-        null
-      ],
-      [
-        3,
         "Oil-Free Gel Moisturiser",
         "lightweight",
+        null,
         null
       ]
     ],
@@ -56,31 +59,61 @@
         1,
         "Blemish Control Cleanser",
         "salicylic acid",
+        null,
         null
       ],
       [
         2,
         "Hyaluronic Acid 2% + B5 Serum",
         "hyaluronic acid",
+        null,
         null
       ],
       [
         3,
-        "Alpha Arbutin 2% + HA Serum",
-        "alpha arbutin",
+        "Peptide Firming Moisturiser",
+        "peptide",
+        null,
         null
       ],
       [
         4,
-        "Peptide Firming Moisturiser",
-        "peptide",
-        null
-      ],
-      [
-        5,
         "Invisible Fluid SPF 50",
         null,
+        null,
         null
+      ]
+    ],
+    "base_set": "dry",
+    "is_sensitive": false,
+    "left_out": [
+      [
+        "Alpha Arbutin 2% + HA Serum",
+        [
+          "am"
+        ],
+        "Left out because it contains lactic acid (an AHA), and AHAs are not used in the morning routine."
+      ],
+      [
+        "Azelaic Acid 10% Suspension",
+        [
+          "am"
+        ],
+        "It clashes with Blemish Control Cleanser: Layering two exfoliating acids can over-dry and irritate skin."
+      ],
+      [
+        "Retinol 0.5% Night Serum",
+        [
+          "pm"
+        ],
+        "It clashes with Benzoyl Peroxide 5% Spot Gel: Benzoyl peroxide can deactivate retinoids such as retinol, and using both together greatly increases irritation."
+      ],
+      [
+        "2% BHA Liquid Exfoliant",
+        [
+          "pm"
+        ],
+        "It clashes with Benzoyl Peroxide 5% Spot Gel: Two strong acne actives together can cause excessive dryness and peeling."
       ]
     ],
     "message": null,
@@ -89,54 +122,62 @@
         1,
         "Hydra Cream Cleanser",
         "cream",
+        null,
         null
       ],
       [
         2,
         "Hyaluronic Acid 2% + B5 Serum",
         "hyaluronic acid",
+        null,
         null
       ],
       [
         3,
         "Azelaic Acid 10% Suspension",
         "azelaic acid",
+        null,
         null
       ],
       [
         4,
         "Tranexamic Acid 5% Serum",
         "tranexamic acid",
+        null,
         null
       ],
       [
         5,
         "Squalane Facial Oil",
         "facial oil",
+        null,
         null
       ],
       [
         6,
         "Benzoyl Peroxide 5% Spot Gel",
         "benzoyl peroxide",
+        null,
         null
       ],
       [
         7,
         "Rich Repair Cream",
         "rich",
+        null,
         null
       ]
     ],
     "skin_type": "dry",
     "warnings": [
-      "Azelaic Acid 10% Suspension was left out of your AM routine: Layering two exfoliating acids can over-dry and irritate skin.",
-      "Retinol 0.5% Night Serum was left out of your PM routine: Benzoyl peroxide can deactivate retinol, and using both together greatly increases irritation.",
-      "2% BHA Liquid Exfoliant was left out of your PM routine: Two strong acne actives together can cause excessive dryness and peeling."
+      "No suitable serum with alpha arbutin for this step"
     ]
   },
   "no_profile": {
     "am": [],
+    "base_set": null,
+    "is_sensitive": false,
+    "left_out": [],
     "message": "Complete your skin scan first to get a personalised routine.",
     "pm": [],
     "skin_type": null,
@@ -148,31 +189,40 @@
         1,
         "Blemish Control Cleanser",
         "salicylic acid",
+        null,
         null
       ],
       [
         2,
-        "Green Tea Antioxidant Serum",
+        "Vitamin C 15% Brightening Serum",
         "antioxidant",
+        null,
         null
       ],
       [
         3,
-        "Alpha Arbutin 2% + HA Serum",
-        "alpha arbutin",
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
         null
       ],
       [
         4,
-        "Oil-Free Gel Moisturiser",
-        null,
-        null
-      ],
-      [
-        5,
         "Invisible Fluid SPF 50",
         null,
+        null,
         null
+      ]
+    ],
+    "base_set": "normal",
+    "is_sensitive": false,
+    "left_out": [
+      [
+        "Alpha Arbutin 2% + HA Serum",
+        [
+          "am"
+        ],
+        "Left out because it contains lactic acid (an AHA), and AHAs are not used in the morning routine."
       ]
     ],
     "message": null,
@@ -180,6 +230,7 @@
       [
         1,
         "Clear Balance Foaming Cleanser",
+        null,
         null,
         null
       ],
@@ -187,23 +238,28 @@
         2,
         "Tranexamic Acid 5% Serum",
         "tranexamic acid",
+        null,
         null
       ],
       [
         3,
         "Benzoyl Peroxide 5% Spot Gel",
         "benzoyl peroxide",
+        null,
         null
       ],
       [
         4,
         "Oil-Free Gel Moisturiser",
         null,
+        null,
         null
       ]
     ],
     "skin_type": "normal",
-    "warnings": []
+    "warnings": [
+      "No suitable serum with alpha arbutin for this step"
+    ]
   },
   "normal_pores": {
     "am": [
@@ -211,17 +267,20 @@
         1,
         "Clear Balance Foaming Cleanser",
         null,
+        null,
         null
       ],
       [
         2,
-        "Green Tea Antioxidant Serum",
+        "Vitamin C 15% Brightening Serum",
         "antioxidant",
+        null,
         null
       ],
       [
         3,
         "Oil-Free Gel Moisturiser",
+        null,
         null,
         null
       ],
@@ -229,14 +288,19 @@
         4,
         "Invisible Fluid SPF 50",
         null,
+        null,
         null
       ]
     ],
+    "base_set": "normal",
+    "is_sensitive": false,
+    "left_out": [],
     "message": null,
     "pm": [
       [
         1,
         "Clear Balance Foaming Cleanser",
+        null,
         null,
         null
       ],
@@ -244,11 +308,13 @@
         2,
         "2% BHA Liquid Exfoliant",
         "bha",
-        "Twice a week"
+        "Twice a week",
+        null
       ],
       [
         3,
         "Oil-Free Gel Moisturiser",
+        null,
         null,
         null
       ]
@@ -261,46 +327,56 @@
       [
         1,
         "Clear Balance Foaming Cleanser",
-        "oil-free",
+        "foaming",
+        null,
         null
       ],
       [
         2,
         "Niacinamide 10% + Zinc Serum",
         "niacinamide",
+        null,
         null
       ],
       [
         3,
         "Oil-Free Gel Moisturiser",
-        "oil-free",
+        "lightweight",
+        null,
         null
       ],
       [
         4,
         "Invisible Fluid SPF 50",
         "spf 50",
+        null,
         null
       ]
     ],
+    "base_set": "oily",
+    "is_sensitive": false,
+    "left_out": [],
     "message": null,
     "pm": [
       [
         1,
         "Clear Balance Foaming Cleanser",
-        "oil-free",
+        "foaming",
+        null,
         null
       ],
       [
         2,
         "Niacinamide 10% + Zinc Serum",
         "niacinamide",
+        null,
         null
       ],
       [
         3,
         "Oil-Free Gel Moisturiser",
-        "oil-free",
+        "lightweight",
+        null,
         null
       ]
     ],
@@ -311,142 +387,203 @@
     "am": [
       [
         1,
-        "Blemish Control Cleanser",
-        "salicylic acid",
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
         null
       ],
       [
         2,
         "Centella Calming Serum",
         "centella",
+        null,
         null
       ],
       [
         3,
-        "Alpha Arbutin 2% + HA Serum",
-        "alpha arbutin",
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null,
         null
       ],
       [
         4,
         "Peptide Firming Moisturiser",
         "peptide",
+        null,
         null
       ],
       [
         5,
         "Mineral Shield SPF 30",
         "mineral",
+        null,
         null
+      ]
+    ],
+    "base_set": "normal",
+    "is_sensitive": true,
+    "left_out": [
+      [
+        "Vitamin C 15% Brightening Serum",
+        [
+          "am"
+        ],
+        "It contains ascorbic acid, which is left out for sensitive skin."
+      ],
+      [
+        "Benzoyl Peroxide 5% Spot Gel",
+        [
+          "pm"
+        ],
+        "It contains benzoyl peroxide. Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Alpha Arbutin 2% + HA Serum",
+        [
+          "am"
+        ],
+        "It contains lactic acid, an alpha hydroxy acid (AHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Retinol 0.5% Night Serum",
+        [
+          "pm"
+        ],
+        "It contains retinol, a retinoid. Strong actives are left out for sensitive skin."
+      ],
+      [
+        "2% BHA Liquid Exfoliant",
+        [
+          "pm"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Blemish Control Cleanser",
+        [
+          "am"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
       ]
     ],
     "message": null,
     "pm": [
       [
         1,
-        "Calm Skin Gentle Cleanser",
-        "fragrance-free",
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
         null
       ],
       [
         2,
-        "Centella Calming Serum",
-        "centella",
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null,
         null
       ],
       [
         3,
-        "Azelaic Acid 10% Suspension",
-        "azelaic acid",
+        "Tranexamic Acid 5% Serum",
+        "tranexamic acid",
+        null,
         null
       ],
       [
         4,
-        "Tranexamic Acid 5% Serum",
-        "tranexamic acid",
-        null
-      ],
-      [
-        5,
-        "Benzoyl Peroxide 5% Spot Gel",
-        "benzoyl peroxide",
-        null
-      ],
-      [
-        6,
-        "Barrier Support Moisturiser",
-        "barrier",
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
         null
       ]
     ],
-    "skin_type": "sensitive",
+    "skin_type": "normal",
     "warnings": [
-      "Azelaic Acid 10% Suspension was left out of your AM routine: Layering two exfoliating acids can over-dry and irritate skin.",
-      "Retinol 0.5% Night Serum was left out of your PM routine: Benzoyl peroxide can deactivate retinol, and using both together greatly increases irritation.",
-      "2% BHA Liquid Exfoliant was left out of your PM routine: Two strong acne actives together can cause excessive dryness and peeling."
+      "For sensitive skin, the morning serum step uses centella instead of an antioxidant serum.",
+      "For sensitive skin, the breakouts step uses azelaic acid instead of benzoyl peroxide, which is left out for sensitive skin.",
+      "No morning dark-spot step: every product for it is left out for sensitive skin.",
+      "No evening retinol step: retinoids are left out for sensitive skin.",
+      "No pore step: every product for it is left out for sensitive skin.",
+      "No suitable cleanser with salicylic acid for this step \u2014 using a standard one instead"
     ]
   },
   "sensitive_redness": {
     "am": [
       [
         1,
-        "Calm Skin Gentle Cleanser",
-        "fragrance-free",
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
         null
       ],
       [
         2,
         "Centella Calming Serum",
         "centella",
+        null,
         null
       ],
       [
         3,
         "Azelaic Acid 10% Suspension",
         "azelaic acid",
+        null,
         null
       ],
       [
         4,
-        "Barrier Support Moisturiser",
-        "barrier",
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
         null
       ],
       [
         5,
         "Mineral Shield SPF 30",
         "mineral",
+        null,
         null
+      ]
+    ],
+    "base_set": "normal",
+    "is_sensitive": true,
+    "left_out": [
+      [
+        "Vitamin C 15% Brightening Serum",
+        [
+          "am"
+        ],
+        "It contains ascorbic acid, which is left out for sensitive skin."
       ]
     ],
     "message": null,
     "pm": [
       [
         1,
-        "Calm Skin Gentle Cleanser",
-        "fragrance-free",
+        "Clear Balance Foaming Cleanser",
+        null,
+        null,
         null
       ],
       [
         2,
-        "Centella Calming Serum",
-        "centella",
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null,
         null
       ],
       [
         3,
-        "Azelaic Acid 10% Suspension",
-        "azelaic acid",
-        null
-      ],
-      [
-        4,
-        "Barrier Support Moisturiser",
-        "barrier",
+        "Oil-Free Gel Moisturiser",
+        null,
+        null,
         null
       ]
     ],
-    "skin_type": "sensitive",
-    "warnings": []
+    "skin_type": "normal",
+    "warnings": [
+      "For sensitive skin, the morning serum step uses centella instead of an antioxidant serum."
+    ]
   }
 }

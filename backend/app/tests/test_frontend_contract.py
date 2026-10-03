@@ -231,6 +231,21 @@ def test_pages_after_the_photo_steps_drop_the_photo(path):
     assert guard and "data-outside-funnel" in guard.group(0), path
 
 
+@pytest.mark.parametrize("path", ["pages/app/catalog/index.html", "pages/app/routine/index.html"])
+def test_placeholder_note_until_verified_products_replace_them(path):
+    """The seeded products are synthetic placeholders (step 7c-iii replaces them)."""
+    source = page(path)
+    assert 'class="placeholder-note"' in source
+    assert "placeholders" in source and "not real products" in source
+
+
+def test_routine_page_shows_reasons_and_detects_no_profile_by_message():
+    source = page("pages/app/routine/routine.js")
+    assert "routine.message" in source  # a stored profile may have a NULL skin type
+    assert "!routine.skin_type" not in source
+    assert "routine.left_out" in source and "step.caution" in source
+
+
 def test_storage_keys_are_defined_only_in_scan_guard():
     keys = re.findall(r'"(pureskin_scan_\w+)"', page("static/js/scan-guard.js"))
     assert set(keys) == {

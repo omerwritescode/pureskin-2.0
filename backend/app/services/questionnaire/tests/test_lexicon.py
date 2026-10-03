@@ -14,11 +14,17 @@ CATALOG_ACTIVES = {
 def test_active_names_match_the_catalog():
     import seed
 
+    from app.services.ingredients import CLASS_PREFIX, ingredient_config
+
     catalog_ingredients = {i for *_, ingredients in seed.PRODUCTS for i in ingredients}
-    conflict_ingredients = {x for a, b, *_ in seed.CONFLICTS for x in (a, b)}
+    conflict_names = {x for a, b, *_ in seed.CONFLICTS for x in (a, b)}
+    classes = {x.removeprefix(CLASS_PREFIX) for x in conflict_names if x.startswith(CLASS_PREFIX)}
     assert set(cfg.ACTIVE_TERMS) == CATALOG_ACTIVES
     assert CATALOG_ACTIVES <= catalog_ingredients
-    assert conflict_ingredients <= CATALOG_ACTIVES
+    assert {x for x in conflict_names if not x.startswith(CLASS_PREFIX)} <= CATALOG_ACTIVES
+    # Since 7c-i (b) a conflict row can name a whole class: each one has a lexicon active.
+    for cls in classes:
+        assert CATALOG_ACTIVES & set(ingredient_config.CLASSES[cls]), cls
 
 
 @pytest.mark.parametrize(

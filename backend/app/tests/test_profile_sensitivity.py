@@ -1,8 +1,8 @@
 """Step 7b-i: is_sensitive + score_sources on skin_profiles, through the profile API.
 
 Covers the legacy mapping (the step 5 funnel still posts skin_type "sensitive"), the
-new optional fields, strict score_sources validation, the DB CHECK, and the minimal
-routine change (sensitivity read from is_sensitive).
+new optional fields, strict score_sources validation, the DB CHECK, and how the routine
+reads sensitivity (a modifier on the skin type's steps since 7c-i b).
 """
 
 from types import SimpleNamespace
@@ -200,7 +200,7 @@ def test_skin_types_agree_between_db_and_questionnaire():
 
 
 # --------------------------------------------------------------------------------------
-# Routine: sensitivity is honoured via is_sensitive
+# Routine: sensitivity is a modifier on the skin type's steps (7c-i b)
 # --------------------------------------------------------------------------------------
 
 
@@ -212,19 +212,21 @@ def requirements(skin_type, is_sensitive, **scores):
 
 @pytest.mark.parametrize("skin_type", SKIN_TYPES)
 @pytest.mark.parametrize("scores", [{}, dict.fromkeys(SCORES, 75)])
-def test_is_sensitive_gives_the_old_sensitive_routine(skin_type, scores):
-    assert requirements(skin_type, True, **scores) == requirements("sensitive", False, **scores)
+def test_is_sensitive_keeps_every_step_of_the_skin_type(skin_type, scores):
+    plain = requirements(skin_type, False, **scores)
+    sensitive = requirements(skin_type, True, **scores)
+    assert [r for r in sensitive if r in plain] == plain  # nothing removed, same order
+    assert ("sunscreen", ("mineral",), ("am",)) in sensitive  # one preference added
 
 
-@pytest.mark.parametrize("skin_type", SKIN_TYPES)
-def test_not_sensitive_keeps_the_skin_types_routine(skin_type):
-    assert requirements(skin_type, False) != requirements("sensitive", False)
+def test_the_legacy_sensitive_label_has_no_base_set_of_its_own():
+    assert requirements("sensitive", False) == requirements("normal", False)
 
 
-def test_routine_reports_the_base_set_used(api, auth_headers):
+def test_routine_reports_the_profiles_skin_type_and_the_base_set(api, auth_headers):
     post(api, auth_headers, skin_type="oily", is_sensitive=True)
     routine = api.get("/api/routine", headers=auth_headers).json()
-    assert (routine["skin_type"], routine["is_sensitive"]) == ("sensitive", True)
+    assert (routine["skin_type"], routine["base_set"], routine["is_sensitive"]) == ("oily", "oily", True)
     post(api, auth_headers, skin_type="oily")
     routine = api.get("/api/routine", headers=auth_headers).json()
-    assert (routine["skin_type"], routine["is_sensitive"]) == ("oily", False)
+    assert (routine["skin_type"], routine["base_set"], routine["is_sensitive"]) == ("oily", "oily", False)

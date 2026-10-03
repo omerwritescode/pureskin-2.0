@@ -21,6 +21,9 @@ class ProductOut(BaseModel):
     description: str | None
     ingredients: list[str]
     image_url: str | None
+    texture: str | None
+    foaming: str | None
+    spf: int | None
 
 
 class ProductPage(BaseModel):

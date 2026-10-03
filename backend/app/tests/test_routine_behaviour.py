@@ -1,9 +1,8 @@
-"""Behaviour records for the step 6 rule-based routine (app/services/recommendation/).
+"""Behaviour records for the rule-based routine (app/services/recommendation/).
 
-Recorded on the unchanged step 6 code before 7b-i touched routine.py, so they show
-that the 7b-i compatibility change (sensitivity read from is_sensitive) left the
-routine's output alone. The snapshots are what the code did, not a specification:
-7c is expected to change them deliberately.
+First recorded on the step 6 code (before 7b-i), then re-recorded only after a reviewed
+behaviour diff (7c-i b). The snapshots are what the code did, not a specification: a
+change to them must be deliberate and reviewed.
 """
 
 from types import SimpleNamespace
@@ -11,6 +10,7 @@ from types import SimpleNamespace
 import pytest
 
 from app.services.recommendation.rules import build_requirements
+from app.services.skin_profile.skin_profile_config import HIGH_BAND_MIN
 from app.tests.snapshot import check_snapshot
 
 SCORES = ("acne_score", "redness_score", "wrinkle_score", "pigmentation_score", "pore_score")
@@ -42,7 +42,7 @@ def requirement_cases() -> dict[str, SimpleNamespace]:
     for score in SCORES:  # the > 60 trigger, either side of the boundary
         for value in (60, 61):
             cases[f"normal/{score}={value}"] = stub_profile("normal", **{score: value})
-    for value in (40, 41):  # combination's separate wrinkle > 40 retinol rule
+    for value in (40, 41):  # step 6's combination-only wrinkle > 40 rule (gone in 7c-i b)
         cases[f"combination/wrinkle_score={value}"] = stub_profile(
             "combination", wrinkle_score=value
         )
@@ -55,10 +55,10 @@ def test_requirements_match_recorded_behaviour():
 
 
 @pytest.mark.parametrize("score", SCORES)
-def test_scores_trigger_strictly_above_60(score):
-    """The step 6 trigger is score > 60, i.e. exactly the High band (61-100)."""
-    at_60 = describe(build_requirements(stub_profile("normal", **{score: 60})))
-    at_61 = describe(build_requirements(stub_profile("normal", **{score: 61})))
+def test_scores_trigger_at_the_high_band(score):
+    """A score's steps are added from HIGH_BAND_MIN (61), the start of the High band."""
+    at_60 = describe(build_requirements(stub_profile("normal", **{score: HIGH_BAND_MIN - 1})))
+    at_61 = describe(build_requirements(stub_profile("normal", **{score: HIGH_BAND_MIN})))
     baseline = describe(build_requirements(stub_profile("normal")))
     assert at_60 == baseline
     assert len(at_61) > len(baseline)
@@ -79,7 +79,7 @@ ROUTINE_CASES = {
         "acne_score": 61, "pigmentation_score": 61,
     },
     "normal_pores": {"skin_type": "normal", **dict.fromkeys(SCORES, 30), "pore_score": 80},
-    # The funnel's legacy answer. Its routine must stay the same across 7b-i.
+    # The funnel's legacy answer: stored as normal + is_sensitive.
     "sensitive_redness": {"skin_type": "sensitive", **dict.fromkeys(SCORES, 30), "redness_score": 70},
     "sensitive_high": {"skin_type": "sensitive", **dict.fromkeys(SCORES, 75)},
 }
@@ -88,13 +88,17 @@ ROUTINE_CASES = {
 def summarise(routine: dict) -> dict:
     def steps(session):
         return [
-            [s["step"], s["product"]["name"], s["matched_keyword"], s["note"]] for s in session
+            [s["step"], s["product"]["name"], s["matched_keyword"], s["note"], s["caution"]]
+            for s in session
         ]
 
     return {
         "skin_type": routine["skin_type"],
+        "base_set": routine["base_set"],
+        "is_sensitive": routine["is_sensitive"],
         "am": steps(routine["am_routine"]),
         "pm": steps(routine["pm_routine"]),
+        "left_out": [[lo["product_name"], lo["sessions"], lo["reason"]] for lo in routine["left_out"]],
         "warnings": routine["warnings"],
         "message": routine["message"],
     }
