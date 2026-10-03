@@ -2,8 +2,11 @@
 # hide source code elsewhere: an unanchored "models/" would also match backend/app/models/
 # (the SQLAlchemy models). Only build/cache folders and file types are left unanchored.
 
-# Environment / secrets. The template, .env.example, IS tracked.
+# Environment / secrets: .env and any variant (.env.local, .env.production, ...).
+# The template, .env.example, IS tracked.
 .env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
