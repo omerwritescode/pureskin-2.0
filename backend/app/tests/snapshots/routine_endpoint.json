@@ -1,0 +1,452 @@
+{
+  "combination_wrinkle_45": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null
+      ],
+      [
+        2,
+        "Vitamin C 15% Brightening Serum",
+        "vitamin c",
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        "lightweight",
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null
+      ],
+      [
+        2,
+        "Retinol 0.5% Night Serum",
+        "retinol",
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        "lightweight",
+        null
+      ]
+    ],
+    "skin_type": "combination",
+    "warnings": []
+  },
+  "dry_high": {
+    "am": [
+      [
+        1,
+        "Blemish Control Cleanser",
+        "salicylic acid",
+        null
+      ],
+      [
+        2,
+        "Hyaluronic Acid 2% + B5 Serum",
+        "hyaluronic acid",
+        null
+      ],
+      [
+        3,
+        "Alpha Arbutin 2% + HA Serum",
+        "alpha arbutin",
+        null
+      ],
+      [
+        4,
+        "Peptide Firming Moisturiser",
+        "peptide",
+        null
+      ],
+      [
+        5,
+        "Invisible Fluid SPF 50",
+        null,
+        null
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Hydra Cream Cleanser",
+        "cream",
+        null
+      ],
+      [
+        2,
+        "Hyaluronic Acid 2% + B5 Serum",
+        "hyaluronic acid",
+        null
+      ],
+      [
+        3,
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null
+      ],
+      [
+        4,
+        "Tranexamic Acid 5% Serum",
+        "tranexamic acid",
+        null
+      ],
+      [
+        5,
+        "Squalane Facial Oil",
+        "facial oil",
+        null
+      ],
+      [
+        6,
+        "Benzoyl Peroxide 5% Spot Gel",
+        "benzoyl peroxide",
+        null
+      ],
+      [
+        7,
+        "Rich Repair Cream",
+        "rich",
+        null
+      ]
+    ],
+    "skin_type": "dry",
+    "warnings": [
+      "Azelaic Acid 10% Suspension was left out of your AM routine: Layering two exfoliating acids can over-dry and irritate skin.",
+      "Retinol 0.5% Night Serum was left out of your PM routine: Benzoyl peroxide can deactivate retinol, and using both together greatly increases irritation.",
+      "2% BHA Liquid Exfoliant was left out of your PM routine: Two strong acne actives together can cause excessive dryness and peeling."
+    ]
+  },
+  "no_profile": {
+    "am": [],
+    "message": "Complete your skin scan first to get a personalised routine.",
+    "pm": [],
+    "skin_type": null,
+    "warnings": []
+  },
+  "normal_acne_and_pigmentation": {
+    "am": [
+      [
+        1,
+        "Blemish Control Cleanser",
+        "salicylic acid",
+        null
+      ],
+      [
+        2,
+        "Green Tea Antioxidant Serum",
+        "antioxidant",
+        null
+      ],
+      [
+        3,
+        "Alpha Arbutin 2% + HA Serum",
+        "alpha arbutin",
+        null
+      ],
+      [
+        4,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null
+      ],
+      [
+        5,
+        "Invisible Fluid SPF 50",
+        null,
+        null
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null
+      ],
+      [
+        2,
+        "Tranexamic Acid 5% Serum",
+        "tranexamic acid",
+        null
+      ],
+      [
+        3,
+        "Benzoyl Peroxide 5% Spot Gel",
+        "benzoyl peroxide",
+        null
+      ],
+      [
+        4,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null
+      ]
+    ],
+    "skin_type": "normal",
+    "warnings": []
+  },
+  "normal_pores": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null
+      ],
+      [
+        2,
+        "Green Tea Antioxidant Serum",
+        "antioxidant",
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        null,
+        null
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        null,
+        null
+      ],
+      [
+        2,
+        "2% BHA Liquid Exfoliant",
+        "bha",
+        "Twice a week"
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        null,
+        null
+      ]
+    ],
+    "skin_type": "normal",
+    "warnings": []
+  },
+  "oily_low": {
+    "am": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        "oil-free",
+        null
+      ],
+      [
+        2,
+        "Niacinamide 10% + Zinc Serum",
+        "niacinamide",
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        "oil-free",
+        null
+      ],
+      [
+        4,
+        "Invisible Fluid SPF 50",
+        "spf 50",
+        null
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Clear Balance Foaming Cleanser",
+        "oil-free",
+        null
+      ],
+      [
+        2,
+        "Niacinamide 10% + Zinc Serum",
+        "niacinamide",
+        null
+      ],
+      [
+        3,
+        "Oil-Free Gel Moisturiser",
+        "oil-free",
+        null
+      ]
+    ],
+    "skin_type": "oily",
+    "warnings": []
+  },
+  "sensitive_high": {
+    "am": [
+      [
+        1,
+        "Blemish Control Cleanser",
+        "salicylic acid",
+        null
+      ],
+      [
+        2,
+        "Centella Calming Serum",
+        "centella",
+        null
+      ],
+      [
+        3,
+        "Alpha Arbutin 2% + HA Serum",
+        "alpha arbutin",
+        null
+      ],
+      [
+        4,
+        "Peptide Firming Moisturiser",
+        "peptide",
+        null
+      ],
+      [
+        5,
+        "Mineral Shield SPF 30",
+        "mineral",
+        null
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Calm Skin Gentle Cleanser",
+        "fragrance-free",
+        null
+      ],
+      [
+        2,
+        "Centella Calming Serum",
+        "centella",
+        null
+      ],
+      [
+        3,
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null
+      ],
+      [
+        4,
+        "Tranexamic Acid 5% Serum",
+        "tranexamic acid",
+        null
+      ],
+      [
+        5,
+        "Benzoyl Peroxide 5% Spot Gel",
+        "benzoyl peroxide",
+        null
+      ],
+      [
+        6,
+        "Barrier Support Moisturiser",
+        "barrier",
+        null
+      ]
+    ],
+    "skin_type": "sensitive",
+    "warnings": [
+      "Azelaic Acid 10% Suspension was left out of your AM routine: Layering two exfoliating acids can over-dry and irritate skin.",
+      "Retinol 0.5% Night Serum was left out of your PM routine: Benzoyl peroxide can deactivate retinol, and using both together greatly increases irritation.",
+      "2% BHA Liquid Exfoliant was left out of your PM routine: Two strong acne actives together can cause excessive dryness and peeling."
+    ]
+  },
+  "sensitive_redness": {
+    "am": [
+      [
+        1,
+        "Calm Skin Gentle Cleanser",
+        "fragrance-free",
+        null
+      ],
+      [
+        2,
+        "Centella Calming Serum",
+        "centella",
+        null
+      ],
+      [
+        3,
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null
+      ],
+      [
+        4,
+        "Barrier Support Moisturiser",
+        "barrier",
+        null
+      ],
+      [
+        5,
+        "Mineral Shield SPF 30",
+        "mineral",
+        null
+      ]
+    ],
+    "message": null,
+    "pm": [
+      [
+        1,
+        "Calm Skin Gentle Cleanser",
+        "fragrance-free",
+        null
+      ],
+      [
+        2,
+        "Centella Calming Serum",
+        "centella",
+        null
+      ],
+      [
+        3,
+        "Azelaic Acid 10% Suspension",
+        "azelaic acid",
+        null
+      ],
+      [
+        4,
+        "Barrier Support Moisturiser",
+        "barrier",
+        null
+      ]
+    ],
+    "skin_type": "sensitive",
+    "warnings": []
+  }
+}

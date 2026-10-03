@@ -13,6 +13,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from app.api.request_body import PayloadTooLarge, read_body, too_large_response
 from app.services.image_analysis import ImageRejected, ModelUnavailable, analyze_image
 from app.services.image_analysis.scoring_config import MAX_DRAINED_BYTES, MAX_REQUEST_BYTES
 
@@ -48,32 +49,6 @@ class ImageAnalysisResponse(BaseModel):
 
 class ImageRejectedResponse(BaseModel):
     quality: Quality
-
-
-class _PayloadTooLarge(Exception):
-    pass
-
-
-async def _read_body(request: Request) -> bytes:
-    """The request body, or _PayloadTooLarge once it exceeds MAX_REQUEST_BYTES.
-
-    Bytes are counted as they arrive, so chunked uploads (no Content-Length) are capped
-    too. Past the limit nothing more is kept, but the rest is drained (up to
-    MAX_DRAINED_BYTES) so the client can actually read the 413 response.
-    """
-    declared = request.headers.get("content-length", "")
-    if declared.isdigit() and int(declared) > MAX_DRAINED_BYTES:
-        raise _PayloadTooLarge
-    body, received = bytearray(), 0
-    async for chunk in request.stream():
-        received += len(chunk)
-        if received > MAX_DRAINED_BYTES:
-            raise _PayloadTooLarge
-        if received <= MAX_REQUEST_BYTES:
-            body += chunk
-    if received > MAX_REQUEST_BYTES:
-        raise _PayloadTooLarge
-    return bytes(body)
 
 
 @router.post(
@@ -112,11 +87,9 @@ async def analyze(request: Request):
     # never echoed back (FastAPI's default validation errors include the input value,
     # which here would be the user's photo).
     try:
-        body = await _read_body(request)
-    except _PayloadTooLarge:
-        return JSONResponse(
-            status_code=status.HTTP_413_CONTENT_TOO_LARGE, content={"detail": TOO_LARGE}
-        )
+        body = await read_body(request, MAX_REQUEST_BYTES, MAX_DRAINED_BYTES)
+    except PayloadTooLarge:
+        return too_large_response(TOO_LARGE)
     try:
         payload = json.loads(body)
     except ValueError:

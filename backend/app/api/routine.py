@@ -85,9 +85,24 @@ BASE_STEPS: dict[str, list[Requirement]] = {
 }
 
 
+def base_steps_key(profile) -> str | None:
+    """Which BASE_STEPS set the routine starts from (also what RoutineOut.skin_type reports).
+
+    Step 7b-i moved sensitivity out of skin_type ("sensitive") into profile.is_sensitive.
+    A sensitive profile gets the "sensitive" set, exactly what a skin_type "sensitive"
+    profile got in step 6, whatever its oil/dry type.
+
+    TODO(7c): combine the skin type's steps with sensitivity instead of replacing them,
+    and make RoutineOut.skin_type return the profile's skin_type, with the base set in a
+    separate field.
+    """
+    return "sensitive" if profile.is_sensitive else profile.skin_type
+
+
 def build_requirements(profile) -> list[Requirement]:
     """Base steps for the skin type, then score-based additions, in priority order."""
-    skin_type = profile.skin_type if profile.skin_type in BASE_STEPS else "normal"
+    key = base_steps_key(profile)
+    skin_type = key if key in BASE_STEPS else "normal"
     reqs = list(BASE_STEPS[skin_type])
     if skin_type == "combination" and profile.wrinkle_score > 40:
         reqs.append(R("serum", "retinol", sessions=(PM,)))
@@ -231,7 +246,8 @@ class RoutineStep(BaseModel):
 
 
 class RoutineOut(BaseModel):
-    skin_type: str | None
+    skin_type: str | None  # the base set used (see base_steps_key)
+    is_sensitive: bool = False
     am_routine: list[RoutineStep]
     pm_routine: list[RoutineStep]
     warnings: list[str]
@@ -274,7 +290,8 @@ def get_routine(user: User = Depends(get_current_user), db: Session = Depends(ge
     resolve_conflicts(pm, conflicts, "PM", warnings)
 
     return RoutineOut(
-        skin_type=profile.skin_type,
+        skin_type=base_steps_key(profile),
+        is_sensitive=profile.is_sensitive,
         am_routine=to_response(am),
         pm_routine=to_response(pm),
         warnings=list(dict.fromkeys(warnings)),  # de-duplicate, keep order

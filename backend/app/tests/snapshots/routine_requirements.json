@@ -1,0 +1,1722 @@
+{
+  "None/all_high": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "None/all_low": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "combination/all_high": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "vitamin c"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "lightweight"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "combination/all_low": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "vitamin c"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "lightweight"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "combination/wrinkle_score=40": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "vitamin c"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "lightweight"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "combination/wrinkle_score=41": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "vitamin c"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "lightweight"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "dry/all_high": [
+    {
+      "category": "cleanser",
+      "keywords": [
+        "cream"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "hyaluronic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "rich",
+        "hydrating"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "facial oil"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "dry/all_low": [
+    {
+      "category": "cleanser",
+      "keywords": [
+        "cream"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "hyaluronic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "rich",
+        "hydrating"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "facial oil"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "normal/acne_score=60": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "normal/acne_score=61": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "normal/all_high": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "normal/all_low": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "normal/pigmentation_score=60": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "normal/pigmentation_score=61": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "normal/pore_score=60": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "normal/pore_score=61": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "normal/redness_score=60": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "normal/redness_score=61": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    }
+  ],
+  "normal/wrinkle_score=60": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "normal/wrinkle_score=61": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "oily/all_high": [
+    {
+      "category": "cleanser",
+      "keywords": [
+        "oil-free",
+        "foaming"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "niacinamide"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "oil-free",
+        "lightweight"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [
+        "spf 50",
+        "spf 30"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "oily/all_low": [
+    {
+      "category": "cleanser",
+      "keywords": [
+        "oil-free",
+        "foaming"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "niacinamide"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "oil-free",
+        "lightweight"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [
+        "spf 50",
+        "spf 30"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "sensitive/all_high": [
+    {
+      "category": "cleanser",
+      "keywords": [
+        "fragrance-free"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "centella"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "barrier"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [
+        "mineral"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "sensitive/all_low": [
+    {
+      "category": "cleanser",
+      "keywords": [
+        "fragrance-free"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "centella"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "barrier"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [
+        "mineral"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ],
+  "unknown/all_high": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "cleanser",
+      "keywords": [
+        "salicylic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "treatment",
+      "keywords": [
+        "benzoyl peroxide"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "azelaic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "alpha arbutin"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "tranexamic acid"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "retinol"
+      ],
+      "note": null,
+      "sessions": [
+        "pm"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [
+        "peptide"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "exfoliant",
+      "keywords": [
+        "bha"
+      ],
+      "note": "Twice a week",
+      "sessions": [
+        "pm"
+      ]
+    }
+  ],
+  "unknown/all_low": [
+    {
+      "category": "cleanser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "serum",
+      "keywords": [
+        "antioxidant"
+      ],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    },
+    {
+      "category": "moisturiser",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am",
+        "pm"
+      ]
+    },
+    {
+      "category": "sunscreen",
+      "keywords": [],
+      "note": null,
+      "sessions": [
+        "am"
+      ]
+    }
+  ]
+}

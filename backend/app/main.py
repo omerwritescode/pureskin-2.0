@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.api import auth, catalog, image_analysis, profile, routine, scan
+from app.api import auth, catalog, image_analysis, profile, questionnaire, routine, scan
 from app.core.config import settings
 from app.services import image_analysis as image_analysis_service
 
@@ -46,6 +46,7 @@ app.include_router(profile.router)
 app.include_router(routine.router)
 app.include_router(catalog.router)
 app.include_router(image_analysis.router)
+app.include_router(questionnaire.router)
 
 
 @app.get("/health")
