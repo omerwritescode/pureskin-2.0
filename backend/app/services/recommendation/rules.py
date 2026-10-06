@@ -22,6 +22,7 @@ class Requirement:
     note: str | None = None
     source: str = field(default=BASE, compare=False)  # "base" or the score that added it
     priority: int = field(default=BASE_PRIORITY, compare=False)
+    replaces: tuple[str, ...] = field(default=(), compare=False)  # a substitution's original keywords
 
     def describe(self) -> str:
         if not self.keywords:
@@ -29,10 +30,10 @@ class Requirement:
         return f"{self.category} with {' or '.join(self.keywords)}"
 
 
-def requirement(step: tuple, source: str = BASE) -> Requirement:
+def requirement(step: tuple, source: str = BASE, replaces: tuple[str, ...] = ()) -> Requirement:
     category, keywords, sessions, note = step
     priority = PRIORITY.get(source, BASE_PRIORITY)
-    return Requirement(category, tuple(keywords), tuple(sessions), note, source, priority)
+    return Requirement(category, tuple(keywords), tuple(sessions), note, source, priority, tuple(replaces))
 
 
 def base_set(profile) -> str:

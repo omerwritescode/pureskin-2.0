@@ -115,6 +115,26 @@ def test_a_substitution_applies_only_when_every_product_is_a_strong_active():
     assert not any("dark-spot" in w for w in routine.warnings)
 
 
+def test_the_acne_substitution_also_applies_when_the_catalog_has_no_benzoyl_peroxide():
+    azelaic = P(10, "Azelaic Serum", "serum", ["Water", "Azelaic Acid"])
+    routine = build_routine(profile(sensitive=True, acne_score=75), [*CORE, azelaic], {})
+    assert "Azelaic Serum" in names(routine.am) and "Azelaic Serum" in names(routine.pm)
+    assert any("uses azelaic acid instead of benzoyl peroxide" in w for w in routine.warnings)
+    assert not any("No treatment with benzoyl peroxide" in w for w in routine.warnings)
+    # Without sensitivity there is no substitution: the step is simply not found.
+    plain = build_routine(profile(acne_score=75), [*CORE, azelaic], {})
+    assert "Azelaic Serum" not in names(plain.pm)
+    assert any("No treatment with benzoyl peroxide found" in w for w in plain.warnings)
+
+
+def test_a_dropped_step_needs_products_that_are_all_left_out():
+    """"No morning dark-spot step: every product for it is left out" would be untrue
+    when the catalog has none: the step then stays, and isn't found."""
+    routine = build_routine(profile(sensitive=True, pigmentation_score=75), CORE, {})
+    assert not any("dark-spot" in w for w in routine.warnings)
+    assert any("No serum with alpha arbutin found" in w for w in routine.warnings)
+
+
 def test_a_trace_ambiguous_member_after_the_preservative_is_not_a_strong_active():
     trace = P(10, "Arbutin With Trace Lactic", "serum",
               ["Water", "Alpha Arbutin", "Phenoxyethanol", "Lactic Acid"])

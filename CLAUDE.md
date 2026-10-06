@@ -69,8 +69,13 @@ before auth, the DB schema, and the static frontend shell are working. Currently
     - [x] 7c-i (c). `skin_profiles.questionnaire_tags` (migration 440d5393300d): the user's
           current products and avoid list (duplicates, conflicts with actives in use, the
           avoid list; routine-2.1.0); tag-drop notices.
-    - [ ] 7c-ii. Content-based ranker (ingredient TF-IDF) within rule-eligible sets,
-          explanations, evaluation.
+    - [x] 7c-ii. Content-based ranker (ingredient TF-IDF, recommendation-1.0.0) within
+          rule-eligible sets: it only orders them (keyword tier, strong actives outside
+          their step last, conflict-safe, score, rule order); `why` and up to 2
+          alternatives per step; routine-2.2.0 (note wording; the sensitive acne
+          substitution also fires when no benzoyl-peroxide product exists). Evaluation:
+          `python -m app.services.recommendation.evaluate`. Results are on the placeholder
+          catalog until 7c-iii (IDF over 24 short lists is not meaningful).
     - [ ] 7c-iii. Verified catalog expansion for thin slots; retire the placeholders.
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
@@ -103,7 +108,8 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   (`*_config.py`), never as numbers in code. Bump the version string when a result can change.
 - Bump `CONFIG_VERSION` (questionnaire_config.py), `MERGE_CONFIG_VERSION`
   (skin_profile_config.py), `INGREDIENT_CONFIG_VERSION` (ingredient_config.py, now
-  ingredients-1.1.0) or `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.1.0)
+  ingredients-1.1.0), `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.2.0) or
+  `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.0)
   whenever a value there changes. `app/tests/test_config_versions.py` fingerprints the
   values and fails on any change without a bump; record the new version's fingerprint
   there (a version not yet committed may have its fingerprint updated in place).
@@ -150,6 +156,8 @@ python -m app.services.skin_profile.merge_cases          # merge-case table (rep
 python -m app.services.skin_profile.time_analyze         # /api/scan/analyze timing (needs samples/)
 python -m app.services.image_analysis.check_funnel_resolution   # one photo at several upload sizes
 python -m app.services.ingredients.review    # ingredient review: unknown tokens, cutoff dismissals
+python -m app.services.recommendation.evaluate   # ranker evaluation report (~7 min; --no-timing)
+python -m app.services.recommendation.evaluate --update-readme   # rewrite the README's results
 UPDATE_SNAPSHOTS=1 python -m pytest app/tests # re-record routine behaviour snapshots (check the diff!)
 pip install -r requirements-train.txt        # GPU training only: CUDA 12.8 torch (~2.5 GB)
 python -m app.services.image_analysis.train_skin_type   # train the skin-type classifier

@@ -96,12 +96,25 @@ def test_a_low_clash_with_an_active_in_use_is_a_note_not_an_exclusion():
     r = routine(skin_type="oily", questionnaire_tags=tags(actives_in_use=["ascorbic acid"]))
     assert "Niacinamide 10% + Zinc Serum" in names(r.am) and "Niacinamide 10% + Zinc Serum" in names(r.pm)
     assert not any(lo.product_name == "Niacinamide 10% + Zinc Serum" for lo in r.left_out)
-    reason = SEED_CONFLICTS[("ascorbic acid", "niacinamide")].reason
-    note = cfg.EXISTING_LOW_CONFLICT_NOTE.format(
-        active="ascorbic acid", product="Niacinamide 10% + Zinc Serum", reason=reason)
+    note = (
+        "You already use ascorbic acid. Using it alongside Niacinamide 10% + Zinc Serum is a "
+        "low-concern pairing: the reported clash is generally overstated, though some people "
+        "notice flushing."
+    )
     assert r.warnings.count(note) == 1  # once, though the serum is in both sessions
-    assert note.startswith("You already use ascorbic acid; combining it with Niacinamide 10% + Zinc Serum "
-                           "is generally fine for most people, but note: The vitamin C and niacinamide")
+
+
+def test_every_low_severity_pair_reads_naturally_in_the_note():
+    for conflict in SEED_CONFLICTS.values():
+        if conflict.severity != "low":
+            continue
+        clause = engine.low_conflict_clause(conflict)
+        note = cfg.EXISTING_LOW_CONFLICT_NOTE.format(active="X", product="Y", clause=clause)
+        assert note.count("generally") <= 1 and ": " in note
+        after_colon = note.split(": ", 1)[1]
+        assert after_colon[0].islower() or after_colon.split()[0].isupper() or after_colon[:4] == "AHAs", note
+    aha = SEED_CONFLICTS[("ascorbic acid", "class:aha")]
+    assert engine.low_conflict_clause(aha) == "AHAs can destabilise vitamin C and increase sensitivity when layered."
 
 
 def test_conflicts_between_two_products_are_unchanged_at_low_severity():

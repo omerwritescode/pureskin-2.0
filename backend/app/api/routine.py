@@ -18,9 +18,37 @@ from app.api.profile import latest_profile
 from app.models import IngredientConflict, Product, User
 from app.services.ingredients import INGREDIENT_CONFIG_VERSION
 from app.services.recommendation.engine import Step, build_routine, conflict_table, kept_in_order, product_record
+from app.services.recommendation.explain import explain, explain_alternative
+from app.services.recommendation.recommendation_config import RECOMMENDATION_CONFIG_VERSION
 from app.services.recommendation.routine_config import ROUTINE_CONFIG_VERSION
 
 router = APIRouter(prefix="/api/routine", tags=["routine"])
+
+
+class WhyTerm(BaseModel):
+    ingredient: str  # as listed on the product
+    position: int
+    count: int
+    target: str  # who asked for it: "oily skin", "redness (High)", "sensitive skin"
+    contribution: float
+
+
+class Why(BaseModel):
+    """Why the step holds this product: facts and fixed-template sentences, no claims."""
+
+    rule: str  # the rule that created the step
+    matched: list[dict]  # what met the step's keyword (ingredients or label fields)
+    candidates: int  # eligible products for the step
+    rule_order_rank: int  # 1 = the rule-order pick
+    top_terms: list[WhyTerm]  # positive contributions only
+    text: list[str]
+
+
+class Alternative(BaseModel):
+    id: int
+    name: str
+    brand: str
+    text: str
 
 
 class RoutineStep(BaseModel):
@@ -29,6 +57,8 @@ class RoutineStep(BaseModel):
     matched_keyword: str | None  # the keyword the product met (None: any product in the category)
     note: str | None
     caution: str | None = None  # fixed text, e.g. on every retinoid step
+    why: Why | None = None
+    alternatives: list[Alternative] = []  # up to 2 conflict-free swaps
 
 
 class LeftOut(BaseModel):
@@ -55,17 +85,26 @@ class RoutineOut(BaseModel):
     config_versions: dict[str, str] | None = None
 
 
-def to_response(steps: list[Step], rows: dict[int, Product]) -> list[RoutineStep]:
-    return [
-        RoutineStep(
+def to_response(steps: list[Step], rows: dict[int, Product], profile, base_set: str) -> list[RoutineStep]:
+    out = []
+    for i, s in enumerate(kept_in_order(steps), start=1):
+        why = explain(s, profile, base_set)
+        out.append(RoutineStep(
             step=i,
             product=ProductOut.model_validate(rows[s.product.id]),
             matched_keyword=s.matched_keyword,
             note=s.req.note,
             caution=s.caution,
-        )
-        for i, s in enumerate(kept_in_order(steps), start=1)
-    ]
+            why=Why(rule=why.rule, matched=list(why.matched), candidates=why.candidates,
+                    rule_order_rank=why.rule_order_rank,
+                    top_terms=[WhyTerm(**vars(t)) for t in why.top_terms], text=list(why.text)),
+            alternatives=[
+                Alternative(id=a.product.id, name=a.product.name, brand=rows[a.product.id].brand,
+                            text=explain_alternative(a))
+                for a in s.alternatives
+            ],
+        ))
+    return out
 
 
 @router.get("", response_model=RoutineOut)
@@ -93,8 +132,8 @@ def get_routine(user: User = Depends(get_current_user), db: Session = Depends(ge
         skin_type=profile.skin_type,
         base_set=routine.base_set,
         is_sensitive=profile.is_sensitive,
-        am_routine=to_response(routine.am, rows),
-        pm_routine=to_response(routine.pm, rows),
+        am_routine=to_response(routine.am, rows, profile, routine.base_set),
+        pm_routine=to_response(routine.pm, rows, profile, routine.base_set),
         left_out=[
             LeftOut(product_id=lo.product_id, product_name=lo.product_name,
                     sessions=list(lo.sessions), reason=lo.reason)
@@ -102,5 +141,9 @@ def get_routine(user: User = Depends(get_current_user), db: Session = Depends(ge
         ],
         warnings=routine.warnings,
         current_products_considered=routine.current_products_considered,
-        config_versions={"routine": ROUTINE_CONFIG_VERSION, "ingredients": INGREDIENT_CONFIG_VERSION},
+        config_versions={
+            "routine": ROUTINE_CONFIG_VERSION,
+            "ingredients": INGREDIENT_CONFIG_VERSION,
+            "recommendation": RECOMMENDATION_CONFIG_VERSION,
+        },
     )

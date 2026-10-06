@@ -1,9 +1,29 @@
 // Routine: AM/PM steps from GET /api/routine, with what was left out (and why) and other
-// notes on top.
+// notes on top. Each step can open a "Why this product" panel (the API's fixed-template
+// sentences) and list up to two conflict-free alternatives.
 
 const { el, scanCta, statusMessage, capitalize, sensitiveIndicator } = PureSkinUI;
 const content = document.getElementById("content");
 const SESSION_LABELS = { am: "morning", pm: "evening" };
+
+// The API's sentences, shown as text only.
+function why(step) {
+  if (!step.why || !step.why.text.length) return null;
+  return el("details", { className: "routine-why" },
+    el("summary", { className: "routine-why__toggle", text: "Why this product" }),
+    el("ul", { className: "routine-why__list" }, ...step.why.text.map((t) => el("li", { text: t }))));
+}
+
+function alternatives(step) {
+  if (!step.alternatives || !step.alternatives.length) return null;
+  return el("div", { className: "routine-alternatives" },
+    el("span", { className: "routine-alternatives__title", text: "Alternatives" }),
+    el("ul", { className: "routine-alternatives__list" },
+      ...step.alternatives.map((alt) => el("li", {},
+        el("a", { href: `/app/catalog/${alt.id}/`, text: alt.name }),
+        el("span", { className: "routine-step__brand", text: ` (${alt.brand})` }),
+        el("span", { className: "routine-alternatives__text", text: alt.text })))));
+}
 
 function stepItem(step) {
   const { product } = step;
@@ -18,7 +38,9 @@ function stepItem(step) {
       el("a", { className: "routine-step__name", href: `/app/catalog/${product.id}/`, text: product.name }),
       el("span", { className: "routine-step__brand", text: product.brand }),
       notes.length ? el("span", { className: "routine-step__note", text: notes.join(" · ") }) : null,
-      step.caution ? el("span", { className: "routine-step__caution", role: "note", text: step.caution }) : null));
+      step.caution ? el("span", { className: "routine-step__caution", role: "note", text: step.caution }) : null,
+      why(step),
+      alternatives(step)));
 }
 
 function session(title, steps) {

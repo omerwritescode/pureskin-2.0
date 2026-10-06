@@ -115,6 +115,34 @@ def test_routine_endpoint_matches_recorded_behaviour(api, auth_headers):
     check_snapshot("routine_endpoint", actual)
 
 
+def test_every_step_explains_its_pick_and_lists_safe_alternatives(api, auth_headers):
+    """The ranker's "why" and alternatives (7c-ii); the snapshots above record the picks."""
+    from app.services.ingredients import INGREDIENT_CONFIG_VERSION
+    from app.services.recommendation.recommendation_config import (
+        RECOMMENDATION_CONFIG_VERSION,
+        TOP_TERMS,
+    )
+    from app.services.recommendation.routine_config import ROUTINE_CONFIG_VERSION
+
+    for name in ("dry_high", "sensitive_high"):
+        assert api.post("/api/profile", json=ROUTINE_CASES[name], headers=auth_headers).status_code == 201
+        routine = api.get("/api/routine", headers=auth_headers).json()
+        assert routine["config_versions"] == {
+            "routine": ROUTINE_CONFIG_VERSION, "ingredients": INGREDIENT_CONFIG_VERSION,
+            "recommendation": RECOMMENDATION_CONFIG_VERSION,
+        }
+        for session in ("am_routine", "pm_routine"):
+            ids = {s["product"]["id"] for s in routine[session]}
+            for step in routine[session]:
+                why = step["why"]
+                assert why["text"] and why["text"][0] == why["rule"]
+                assert 1 <= why["rule_order_rank"] <= why["candidates"]
+                assert len(why["top_terms"]) <= TOP_TERMS
+                assert all(t["contribution"] > 0 for t in why["top_terms"])
+                for alt in step["alternatives"]:
+                    assert alt["id"] not in ids and alt["brand"] and alt["text"].startswith(alt["name"])
+
+
 # --------------------------------------------------------------------------------------
 # The user's current products and avoid list (questionnaire_tags, 7c-i c): new cases in
 # their own snapshot, so the cases above (no tags) are untouched.

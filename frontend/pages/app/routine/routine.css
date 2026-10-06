@@ -98,6 +98,50 @@
   font-size: 0.85rem;
 }
 
+.routine-why {
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+.routine-why__toggle {
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.routine-why__list {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.routine-why__list li + li {
+  margin-top: 4px;
+}
+
+.routine-alternatives {
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+.routine-alternatives__title {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.routine-alternatives__list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.routine-alternatives__list li + li {
+  margin-top: 4px;
+}
+
+.routine-alternatives__text {
+  display: block;
+  color: var(--muted);
+}
+
 .routine-left-out {
   margin-top: 16px;
 }

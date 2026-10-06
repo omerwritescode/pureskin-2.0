@@ -246,6 +246,19 @@ def test_routine_page_shows_reasons_and_detects_no_profile_by_message():
     assert "routine.left_out" in source and "step.caution" in source
 
 
+def test_routine_page_shows_why_and_alternatives_as_text_only():
+    source = page("pages/app/routine/routine.js")
+    assert "step.why" in source and "step.alternatives" in source
+    assert "innerHTML" not in source  # the API's sentences are rendered with textContent
+
+
+def test_goal_helper_text_says_it_only_chooses_between_suitable_products():
+    """The stated goal reorders eligible products (recommendation ranker); it never adds a step."""
+    source = page("pages/scan/questionnaire/index.html")
+    assert "This helps us choose between suitable products. It doesn't change your scores." in source
+    assert "guides your routine" not in source
+
+
 def test_dashboard_saves_the_tags_and_tells_the_user_when_they_were_dropped():
     source = page("pages/app/dashboard.js")
     assert "questionnaire_tags: result.questionnaire_tags" in source

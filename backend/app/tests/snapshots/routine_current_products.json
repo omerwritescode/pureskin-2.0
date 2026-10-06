@@ -10,7 +10,7 @@
       ],
       [
         2,
-        "Vitamin C 15% Brightening Serum",
+        "Green Tea Antioxidant Serum",
         "antioxidant",
         null,
         null
@@ -91,7 +91,7 @@
       ],
       [
         2,
-        "Vitamin C 15% Brightening Serum",
+        "Green Tea Antioxidant Serum",
         "antioxidant",
         null,
         null
@@ -224,7 +224,7 @@
     "am": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
@@ -267,14 +267,14 @@
     "pm": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
       ],
       [
         2,
-        "Oil-Free Gel Moisturiser",
+        "Peptide Firming Moisturiser",
         null,
         null,
         null
@@ -297,7 +297,7 @@
       ],
       [
         2,
-        "Vitamin C 15% Brightening Serum",
+        "Green Tea Antioxidant Serum",
         "antioxidant",
         null,
         null
@@ -378,7 +378,7 @@
       ],
       [
         4,
-        "Oil-Free Gel Moisturiser",
+        "Daily Balance Moisturiser",
         "lightweight",
         null,
         null
@@ -420,7 +420,7 @@
       ],
       [
         4,
-        "Oil-Free Gel Moisturiser",
+        "Daily Balance Moisturiser",
         "lightweight",
         null,
         null
@@ -434,14 +434,14 @@
     "am": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
       ],
       [
         2,
-        "Vitamin C 15% Brightening Serum",
+        "Green Tea Antioxidant Serum",
         "antioxidant",
         null,
         null
@@ -469,7 +469,7 @@
     "pm": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
@@ -490,14 +490,14 @@
     "am": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
       ],
       [
         2,
-        "Vitamin C 15% Brightening Serum",
+        "Green Tea Antioxidant Serum",
         "antioxidant",
         null,
         null
@@ -525,7 +525,7 @@
     "pm": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
@@ -546,14 +546,14 @@
     "am": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
       ],
       [
         2,
-        "Vitamin C 15% Brightening Serum",
+        "Green Tea Antioxidant Serum",
         "antioxidant",
         null,
         null
@@ -581,7 +581,7 @@
     "pm": [
       [
         1,
-        "Clear Balance Foaming Cleanser",
+        "Hydra Cream Cleanser",
         null,
         null,
         null
@@ -660,7 +660,7 @@
     "questionnaire_tags_dropped": false,
     "skin_type": "oily",
     "warnings": [
-      "You already use ascorbic acid; combining it with Niacinamide 10% + Zinc Serum is generally fine for most people, but note: The vitamin C and niacinamide clash is generally overstated, but some people experience flushing."
+      "You already use ascorbic acid. Using it alongside Niacinamide 10% + Zinc Serum is a low-concern pairing: the reported clash is generally overstated, though some people notice flushing."
     ]
   }
 }

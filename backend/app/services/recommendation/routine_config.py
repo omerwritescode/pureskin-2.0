@@ -12,9 +12,11 @@ actives; core steps fall back to any eligible product; keywords match ingredient
 labelled format fields, never descriptions.
 routine-2.1.0 (7c-i c): the user's current products and avoid list (questionnaire tags):
 duplicates, conflicts with actives in use, the avoid list. Without tags, as 2.0.0.
+routine-2.2.0 (7c-ii): the low-severity note's wording (per-pair clauses); the sensitive
+acne substitution also applies when the catalog has no product for the step.
 """
 
-ROUTINE_CONFIG_VERSION = "routine-2.1.0"
+ROUTINE_CONFIG_VERSION = "routine-2.2.0"
 
 AM, PM = "am", "pm"
 BOTH = (AM, PM)
@@ -92,9 +94,14 @@ SENSITIVE_EXCLUDED_INGREDIENTS = ("ascorbic acid",)
 #   "always"        for every sensitive profile;
 #   "all_excluded"  only when the catalog has products for the step and every one of them
 #                   is left out by a sensitive-skin hard rule (a strong active or an
-#                   excluded ingredient).
+#                   excluded ingredient);
+#   "no_eligible"   when no product for the step is eligible for sensitive skin: the
+#                   catalog has none, or every one is left out as above.
+# A step that is dropped (None) uses "all_excluded": its warning says every product for it
+# is left out, which is only true when there are some. A replacement uses "no_eligible":
+# a sensitive user gets it whether the original step's products are left out or missing.
 # A replacement keeps the original step's concern priority, and isn't added twice.
-ALWAYS, ALL_EXCLUDED = "always", "all_excluded"
+ALWAYS, ALL_EXCLUDED, NO_ELIGIBLE = "always", "all_excluded", "no_eligible"
 SENSITIVE_SUBSTITUTIONS = {
     # The morning base serum: a soothing centella serum instead.
     ("base", "serum", ("vitamin c",)): (
@@ -112,7 +119,7 @@ SENSITIVE_SUBSTITUTIONS = {
         ("serum", ("azelaic acid",), BOTH, None),
         "For sensitive skin, the breakouts step uses azelaic acid instead of benzoyl "
         "peroxide, which is left out for sensitive skin.",
-        ALL_EXCLUDED,
+        NO_ELIGIBLE,
     ),
     ("pigmentation_score", "serum", ("alpha arbutin",)): (
         None,
@@ -181,9 +188,15 @@ DUPLICATE_CLASSES = ("retinoid", "benzoyl_peroxide", "aha", "bha")
 # pair's reason appended). Conflicts between two products in a routine are unaffected.
 EXISTING_CONFLICT_HARD_SEVERITIES = ("high", "medium")
 EXISTING_LOW_CONFLICT_NOTE = (
-    "You already use {active}; combining it with {product} is generally fine for most "
-    "people, but note: {reason}"
+    "You already use {active}. Using it alongside {product} is a low-concern pairing: {clause}"
 )
+# The clause for a low-severity pair, keyed by its conflict-table pair. A pair not listed
+# uses its stored reason (first letter lowercased unless it starts an acronym, e.g. AHAs).
+EXISTING_LOW_CONFLICT_CLAUSES = {
+    ("ascorbic acid", "niacinamide"): (
+        "the reported clash is generally overstated, though some people notice flushing."
+    ),
+}
 PRESCRIPTION_RETINOID_NOTE = (
     "You use a prescription retinoid, so products that commonly clash with retinoids are "
     "left out. Your prescriber's instructions come first."

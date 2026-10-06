@@ -42,6 +42,7 @@ class InvalidIngredientName(ValueError):
 class Ingredient:
     token: str  # canonical
     position: int  # 1-based position in the original list (its first occurrence)
+    name: str = ""  # as listed (for display: "sodium hyaluronate", token "hyaluronic acid")
 
 
 @dataclass(frozen=True)
@@ -49,6 +50,7 @@ class NormalisedIngredients:
     ingredients: tuple[Ingredient, ...]  # one per token, in list order
     unknown: tuple[str, ...] = ()  # tokens outside the vocabulary (also in ingredients)
     invalid: tuple[str, ...] = ()  # names that failed cleaning (left out of ingredients)
+    count: int = 0  # how many names the original list had ("2nd of 5 ingredients")
 
     @property
     def tokens(self) -> tuple[str, ...]:
@@ -124,6 +126,7 @@ def canonical(raw: str) -> str:
 def normalise_ingredients(raw_names: Iterable[str]) -> NormalisedIngredients:
     """Canonical tokens for an ingredient list, keeping each token's first position."""
     ingredients, unknown, invalid, seen = [], [], [], set()
+    position = 0
     for position, raw in enumerate(raw_names, start=1):
         try:
             token = canonical(raw)
@@ -133,10 +136,10 @@ def normalise_ingredients(raw_names: Iterable[str]) -> NormalisedIngredients:
         if token in seen:
             continue
         seen.add(token)
-        ingredients.append(Ingredient(token, position))
+        ingredients.append(Ingredient(token, position, raw.strip()))
         if token not in KNOWN:
             unknown.append(token)
-    return NormalisedIngredients(tuple(ingredients), tuple(unknown), tuple(invalid))
+    return NormalisedIngredients(tuple(ingredients), tuple(unknown), tuple(invalid), position)
 
 
 def is_known(token: str) -> bool:

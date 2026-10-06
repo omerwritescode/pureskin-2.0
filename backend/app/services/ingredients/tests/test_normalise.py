@@ -135,6 +135,8 @@ def test_normalise_ingredients_keeps_first_position_and_reports_problems():
     assert [(i.token, i.position) for i in result.ingredients] == [
         ("water", 1), ("hyaluronic acid", 2), ("mystery extract", 5), ("glycerin", 6),
     ]
+    assert result.ingredients[1].name == "Sodium Hyaluronate"  # as listed, for display
+    assert result.count == 6
     assert result.unknown == ("mystery extract",)
     assert result.invalid == ("Ingredients: x",)
     assert not result.fully_known

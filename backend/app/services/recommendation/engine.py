@@ -14,6 +14,7 @@ The user's current products and avoid list (profile.questionnaire_tags, 7c-i c) 
 rules; NULL tags mean no information, and the routine is then exactly as without them.
 """
 
+import random
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 
@@ -28,8 +29,10 @@ from app.services.ingredients import (
 )
 from app.services.ingredients.normalise import TOKEN_CLASSES
 
+from . import recommendation_config as rcfg
 from . import routine_config as cfg
 from .matching import keyword_matches
+from .ranker import Scored, Scorer
 from .rules import Requirement, base_set, build_requirements, requirement
 
 FALLBACK = "fallback"  # the source of a core step's last-resort "any eligible product"
@@ -56,6 +59,7 @@ def product_record(id: int, name: str, category: str | None, ingredients: Iterab
 class Conflict:
     severity: str
     reason: str | None
+    pair: tuple[str, str] = ("", "")  # its conflict-table key
 
 
 ConflictTable = Mapping[tuple[str, str], Conflict]
@@ -71,10 +75,65 @@ def conflict_table(rows: Iterable[tuple[str, str, str, str | None]]) -> dict[tup
     A name is an ingredient token or a whole class ("class:retinoid"). The seed loader
     rejects unknown names; here an unknown one simply never matches.
     """
-    return {
-        normalize_ingredient_pair(_conflict_key(a), _conflict_key(b)): Conflict(severity, reason)
-        for a, b, severity, reason in rows
-    }
+    table = {}
+    for a, b, severity, reason in rows:
+        pair = normalize_ingredient_pair(_conflict_key(a), _conflict_key(b))
+        table[pair] = Conflict(severity, reason, pair)
+    return table
+
+
+@dataclass(frozen=True)
+class RankOptions:
+    """How a step orders its eligible products.
+
+    RANKED (the default): keyword tier, then a strong active outside its step last, then
+    conflict-safe first, then score, then rule order; steps choose in concern-priority
+    order. RULE_ORDER reproduces 7c-i exactly (the evaluation baseline). A random seed
+    picks uniformly from the eligible set (baseline). The other switches exist for the
+    evaluation's ablations.
+    """
+
+    use_scores: bool = True
+    conflict_safe: bool = True
+    priority_order: bool = True
+    strong_last: bool = True
+    random_seed: int | None = None
+
+
+RANKED = RankOptions()
+RULE_ORDER = RankOptions(use_scores=False, conflict_safe=False, priority_order=False, strong_last=False)
+
+
+def random_order(seed: int) -> RankOptions:
+    return RankOptions(use_scores=False, conflict_safe=False, priority_order=False, strong_last=False,
+                       random_seed=seed)
+
+
+@dataclass(frozen=True)
+class Ranked:
+    """An eligible product for a step, with what ordered it."""
+
+    product: "ProductRecord"
+    keyword: str | None
+    tier: int  # which keyword alternative it met (earlier = preferred)
+    position: int  # rule order: keyword order, then product id
+    scored: Scored | None  # None outside RANKED mode
+    clashes_with: str | None  # an earlier pick in this session it clashes with
+    strong_outside_its_step: bool = False  # has a strong active the step doesn't target
+
+    @property
+    def score(self) -> float:
+        return self.scored.score if self.scored else 0.0
+
+
+@dataclass(frozen=True)
+class Ranking:
+    ranked: tuple[Ranked, ...]  # every eligible product, best first (a permutation)
+    rule_order: tuple[Ranked, ...]  # the same products in rule order
+
+    @property
+    def rule_order_pick(self) -> Ranked:
+        return self.rule_order[0]
 
 
 @dataclass
@@ -83,6 +142,8 @@ class Step:
     product: ProductRecord
     matched_keyword: str | None
     removed: bool = field(default=False)
+    ranking: Ranking | None = None
+    alternatives: tuple[Ranked, ...] = ()
 
     @property
     def caution(self) -> str | None:
@@ -103,6 +164,17 @@ class LeftOut:
     severity: str | None = None  # for a conflict
 
 
+@dataclass(frozen=True)
+class Unfilled:
+    """A requirement no eligible product met (its warning says so). For the evaluation."""
+
+    session: str
+    req: Requirement
+    excluded: bool  # a product met it, but a hard rule left it out
+    fell_back: bool  # a core step: the next level of its chain was tried
+    codes: tuple[str, ...] = ()  # the Exclusion codes of the products that met it (sorted)
+
+
 @dataclass
 class Routine:
     base_set: str
@@ -111,6 +183,7 @@ class Routine:
     warnings: list[str]
     left_out: list[LeftOut]
     current_products_considered: bool = False  # False when the profile has no tags
+    unfilled: list[Unfilled] = field(default_factory=list)
 
 
 # ======================================================================================
@@ -282,8 +355,19 @@ def existing_low_conflict_notes(plan: "_Plan", steps: list["Step"]) -> None:
         for conflict, in_use in existing_clashes(plan.current, step.product, plan.conflicts):
             if conflict.severity not in cfg.EXISTING_CONFLICT_HARD_SEVERITIES:
                 plan.warnings.append(cfg.EXISTING_LOW_CONFLICT_NOTE.format(
-                    active=in_use.name, product=step.product.name, reason=conflict.reason,
+                    active=in_use.name, product=step.product.name, clause=low_conflict_clause(conflict),
                 ))
+
+
+def low_conflict_clause(conflict: Conflict) -> str:
+    """The pair's clause for the low-severity note (its reason, read as a clause)."""
+    clause = cfg.EXISTING_LOW_CONFLICT_CLAUSES.get(conflict.pair)
+    if clause is not None:
+        return clause
+    reason = conflict.reason or ""
+    if len(reason) > 1 and reason[1].islower():  # "The …" -> "the …"; "AHAs …" stays
+        reason = reason[0].lower() + reason[1:]
+    return reason
 
 
 def exclusion(profile, product: ProductRecord, session: str,
@@ -344,7 +428,10 @@ class _Plan:
     products: list[ProductRecord]
     conflicts: ConflictTable = field(default_factory=dict)
     current: CurrentUse | None = None
+    options: RankOptions = RANKED
+    scorer: Scorer | None = None
     warnings: list[str] = field(default_factory=list)
+    unfilled: list[Unfilled] = field(default_factory=list)
     left_out: list[_LeftOutEntry] = field(default_factory=list)  # in the order they happened
     _index: dict[tuple, _LeftOutEntry] = field(default_factory=dict)
 
@@ -402,22 +489,74 @@ def candidates(products: list[ProductRecord], req: Requirement) -> list[tuple[Pr
     return ordered
 
 
-def find_product(
-    plan: _Plan, req: Requirement, session: str, chosen_ids: set[int]
-) -> tuple[ProductRecord | None, str | None, bool]:
-    """The first eligible product for the requirement, its keyword, and whether any
-    product was skipped for a hard rule. Skipped products are recorded in plan.left_out."""
-    excluded = False
-    for product, keyword in candidates(plan.products, req):
+def step_targets_strong(req: Requirement) -> bool:
+    """Does the step itself look for a strong active (e.g. salicylic acid, retinol, bha)?"""
+    for keyword in req.keywords:
+        for kind, value in cfg.MATCHERS[keyword]:
+            classes = {value} if kind == "class" else set(TOKEN_CLASSES.get(value, ())) if kind == "ingredient" else set()
+            if classes & set(rcfg.STRONG_CLASSES):
+                return True
+    return False
+
+
+@dataclass
+class _SlotLog:
+    """What one step recorded; replayed in the steps' rule order, whatever order they chose in."""
+
+    warnings: list[str] = field(default_factory=list)
+    left_out: list[tuple[ProductRecord, str, Exclusion]] = field(default_factory=list)
+    unfilled: list[Unfilled] = field(default_factory=list)
+
+
+def choose(
+    plan: _Plan, log: _SlotLog, req: Requirement, session: str,
+    chosen_ids: set[int], earlier: list[ProductRecord],
+) -> tuple[Ranking | None, tuple[str, ...]]:
+    """Every eligible product for the requirement, ordered (None if there is none), and
+    the Exclusion codes of the products a hard rule skipped (empty: none was skipped).
+
+    Hard rules decide eligibility; the order never adds or removes a product. Skipped
+    products ahead of the first eligible one in rule order are recorded (as in 7c-i).
+    """
+    eligible = []
+    codes: set[str] = set()
+    for position, (product, keyword) in enumerate(candidates(plan.products, req)):
         if product.id in chosen_ids:  # already in this session's routine
             continue
         excluded_by = plan.exclusion(product, session)
         if excluded_by is not None:
-            plan.leave_out(product, session, excluded_by)
-            excluded = True
+            codes.add(excluded_by.code)
+            if not eligible:
+                log.left_out.append((product, session, excluded_by))
             continue
-        return product, keyword, excluded
-    return None, None, excluded
+        tier = req.keywords.index(keyword) if keyword is not None else 0
+        eligible.append((product, keyword, tier, position))
+    if not eligible:
+        return None, tuple(sorted(codes))
+
+    options = plan.options
+    targets_strong = step_targets_strong(req)
+    ranked = []
+    for product, keyword, tier, position in eligible:
+        scored = plan.scorer.score(product) if options.use_scores and plan.scorer else None
+        clash = None
+        if options.conflict_safe:
+            clash = next((e.name for e in earlier if find_conflict(product, e, plan.conflicts)), None)
+        strong = options.strong_last and not targets_strong and bool(
+            memberships(product.ingredients, strict=False).classes & set(rcfg.STRONG_CLASSES))
+        ranked.append(Ranked(product, keyword, tier, position, scored, clash, strong))
+    rule_order = tuple(sorted(ranked, key=lambda r: r.position))
+    if options.random_seed is not None:
+        order = list(rule_order)
+        random.Random(f"{options.random_seed}|{session}|{req.category}|{req.keywords}|{req.source}").shuffle(order)
+    elif options.use_scores:
+        # Keyword tier, strong active outside its step last, clashing with an earlier pick
+        # last, then score (rounded), then rule order.
+        order = sorted(ranked, key=lambda r: (
+            r.tier, r.strong_outside_its_step, r.clashes_with is not None, -r.score, r.position))
+    else:
+        order = list(rule_order)
+    return Ranking(tuple(order), rule_order), tuple(sorted(codes))
 
 
 def _not_found(req: Requirement, excluded: bool, fallback: bool) -> str:
@@ -445,26 +584,59 @@ def plan_session(plan: _Plan, session: str, reqs: list[Requirement]) -> list[Ste
         if all(req.keywords for req in chain):
             chain.append(Requirement(category, (), (session,), None, FALLBACK))
 
-    steps: list[Step] = []
+    # Slots in rule order: the core categories, then the optional steps.
+    slots = [(chain, True) for chain in core_choice.values()] + [([req], False) for req in optional]
+    # The order slots choose in: in RANKED mode by concern priority (score-triggered steps
+    # first, in CONCERN_PRIORITY order, then sensitive, base and fallback steps), each
+    # choice seeing the earlier picks; ties keep rule order. RULE_ORDER keeps 7c-i's order.
+    order = list(range(len(slots)))
+    if plan.options.priority_order:
+        order.sort(key=lambda i: (min(r.priority for r in slots[i][0]), i))
+
+    logs = [_SlotLog() for _ in slots]
+    picks: dict[int, Step] = {}
     chosen_ids: set[int] = set()
-
-    for chain in core_choice.values():
-        for i, req in enumerate(chain):
-            product, keyword, excluded = find_product(plan, req, session, chosen_ids)
-            if product:
-                steps.append(Step(req, product, keyword))
-                chosen_ids.add(product.id)
+    earlier: list[ProductRecord] = []
+    for i in order:
+        chain, core = slots[i]
+        for level, req in enumerate(chain):
+            ranking, codes = choose(plan, logs[i], req, session, chosen_ids, earlier)
+            if ranking is not None:
+                best = ranking.ranked[0]
+                picks[i] = Step(req, best.product, best.keyword, ranking=ranking)
+                chosen_ids.add(best.product.id)
+                earlier.append(best.product)
                 break
-            plan.warnings.append(_not_found(req, excluded, fallback=i < len(chain) - 1))
+            fell_back = core and level < len(chain) - 1
+            logs[i].warnings.append(_not_found(req, bool(codes), fallback=fell_back))
+            logs[i].unfilled.append(Unfilled(session, req, bool(codes), fell_back, codes))
+    for log in logs:
+        for product, where, excluded_by in log.left_out:
+            plan.leave_out(product, where, excluded_by)
+        plan.warnings.extend(log.warnings)
+        plan.unfilled.extend(log.unfilled)
+    return [picks[i] for i in sorted(picks)]
 
-    for req in optional:
-        product, keyword, excluded = find_product(plan, req, session, chosen_ids)
-        if product:
-            steps.append(Step(req, product, keyword))
-            chosen_ids.add(product.id)
-        else:
-            plan.warnings.append(_not_found(req, excluded, fallback=False))
-    return steps
+
+def set_alternatives(plan: _Plan, steps: list[Step]) -> None:
+    """Up to MAX_ALTERNATIVES per kept step: the next products in its ranking that aren't
+    already in this session and wouldn't clash with any other kept product if swapped in."""
+    if not plan.options.use_scores:
+        return
+    kept = [s for s in steps if not s.removed]
+    for step in kept:
+        if step.ranking is None:
+            continue
+        others = [s.product for s in kept if s is not step]
+        used = {p.id for p in others} | {step.product.id}
+        alternatives = []
+        for r in step.ranking.ranked:
+            if r.product.id in used or any(find_conflict(r.product, o, plan.conflicts) for o in others):
+                continue
+            alternatives.append(r)
+            if len(alternatives) == rcfg.MAX_ALTERNATIVES:
+                break
+        step.alternatives = tuple(alternatives)
 
 
 # ======================================================================================
@@ -538,7 +710,8 @@ def sensitive_substitutions(plan: _Plan, reqs: list[Requirement]) -> list[Requir
 
     An "always" entry applies to every sensitive profile. An "all_excluded" entry applies
     only when the catalog has products for the step and every one of them is left out by
-    a sensitive-skin hard rule. Each applied entry adds its warning, and the step's
+    a sensitive-skin hard rule; a "no_eligible" entry also applies when the catalog has
+    none. Each applied entry adds its warning, and the step's
     products that a hard rule excludes are listed with their reasons. A replacement keeps
     the original step's concern priority, and isn't added twice (e.g. when redness is
     High too, the azelaic acid step is already there).
@@ -558,13 +731,16 @@ def sensitive_substitutions(plan: _Plan, reqs: list[Requirement]) -> list[Requir
         if when == cfg.ALL_EXCLUDED and not (found and all(hard)):
             out.append(req)
             continue
+        if when == cfg.NO_ELIGIBLE and not all(hard):  # all([]) is True: none in the catalog
+            out.append(req)
+            continue
         plan.warnings.append(warning)
         for (product, _), excluded_by, is_hard in zip(found, exclusions, hard):
             if is_hard:
                 for session in req.sessions:
                     plan.leave_out(product, session, excluded_by)
         if replacement is not None:
-            new = requirement(replacement, req.source)
+            new = requirement(replacement, req.source, replaces=req.keywords)
             if new not in reqs and new not in out:
                 out.append(new)
     return out
@@ -603,9 +779,13 @@ def current_use_duplicates(plan: _Plan, reqs: list[Requirement]) -> list[Require
     return out
 
 
-def build_routine(profile, products: Iterable[ProductRecord], conflicts: ConflictTable) -> Routine:
+def build_routine(
+    profile, products: Iterable[ProductRecord], conflicts: ConflictTable, options: RankOptions = RANKED
+) -> Routine:
     current = current_use(profile)
-    plan = _Plan(profile, sorted(products, key=lambda p: p.id), conflicts, current)
+    catalog = sorted(products, key=lambda p: p.id)
+    scorer = Scorer(profile, catalog) if options.use_scores else None
+    plan = _Plan(profile, catalog, conflicts, current, options, scorer)
     if current is not None and current.prescription_retinoid:
         plan.warnings.append(cfg.PRESCRIPTION_RETINOID_NOTE)
     reqs = current_use_duplicates(plan, sensitive_substitutions(plan, build_requirements(profile)))
@@ -615,6 +795,8 @@ def build_routine(profile, products: Iterable[ProductRecord], conflicts: Conflic
     resolve_conflicts(plan, pm, conflicts, cfg.PM)
     existing_low_conflict_notes(plan, am)
     existing_low_conflict_notes(plan, pm)
+    set_alternatives(plan, am)
+    set_alternatives(plan, pm)
     kept = {cfg.AM: {s.product.id for s in am if not s.removed},
             cfg.PM: {s.product.id for s in pm if not s.removed}}
     return Routine(
@@ -624,4 +806,5 @@ def build_routine(profile, products: Iterable[ProductRecord], conflicts: Conflic
         warnings=list(dict.fromkeys(plan.warnings)),  # de-duplicate, keep order
         left_out=plan.finish_left_out(kept),
         current_products_considered=current is not None,
+        unfilled=plan.unfilled,
     )
