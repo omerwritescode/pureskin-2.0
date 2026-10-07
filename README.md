@@ -26,7 +26,8 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
 - **Product catalog.** Searchable and filterable by category. **The 24 products are
   synthetic placeholders** (invented brands and short invented ingredient lists, made up
   to exercise the routine rules), not real products. The catalog and routine pages say
-  so. Roadmap step 7c-iii replaces them with verified products.
+  so. Roadmap step 7c-iii replaces them with real products whose ingredient lists are
+  sourced from the cited pages; spot-checked by a person: not yet.
 - **Accounts.** Sign up and log in. The Dashboard and Skin Profile pages show the latest
   scan.
 
@@ -172,7 +173,7 @@ Tracking against the roadmap in [`docs/spec.md`](docs/spec.md) §8:
     - [x] 7c-i (b). Rule fixes, product format fields, class-level conflicts, visible reasons
     - [x] 7c-i (c). The user's current products and avoid list (questionnaire tags)
     - [ ] 7c-ii. Content-based ranker, explanations, evaluation
-    - [ ] 7c-iii. Verified catalog expansion
+    - [ ] 7c-iii. Catalog expansion (sourced ingredient lists)
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy

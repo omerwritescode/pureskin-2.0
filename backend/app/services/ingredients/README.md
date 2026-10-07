@@ -7,12 +7,15 @@ each ingredient belongs to. Pure Python, no dependencies, no I/O.
 
 > **A vocabulary, not a model.** Every synonym, class member and list below is a
 > reviewed judgement written into `ingredient_config.py`. Nothing was learned from data.
-> The vocabulary covers the seeded catalog completely; anything outside it is reported
-> for review instead of guessed.
+> The vocabulary covers the seeded catalog and the real catalog (`backend/catalog/`)
+> completely; anything outside it is reported for review instead of guessed.
 
 **Status:** live since 7c-i (a). The routine matches its ingredient keywords through it.
 Conflicts, strong-active suppression and session rules use it from 7c-i (b), and the
-avoid list from 7c-i (c).
+avoid list from 7c-i (c). **ingredients-1.2.0** (7c-iii) adds the real catalog's tokens
+and the cleaning of page text (`clean.py`). It only adds: every 1.1.0 synonym, class
+membership, NEUTRAL, PRESERVATIVES and AMBIGUOUS_MEMBERS entry is unchanged
+(`tests/test_vocabulary.py` checks against `tests/vocabulary_ingredients-1.1.0.json`).
 
 ---
 
@@ -40,6 +43,7 @@ in_class(items, "aha", strict=False)        # True: lactic acid is before the cu
 | `normalise_ingredients(names)` | `NormalisedIngredients`: tokens with their list positions, plus `unknown` and `invalid` |
 | `memberships(items, strict=...)` | the classes each ingredient counts toward, and the ambiguous ones the cutoff dismissed |
 | `fragrance_free`, `mineral_only`, `anhydrous_oil` | the three product properties an ingredient list gives reliably |
+| `clean_ingredient_text(text, directives)` | page text -> names (7c-iii, below), with a log of every change |
 
 ## Normalisation
 
@@ -87,14 +91,14 @@ A token can be in several classes (ascorbic acid is `vitamin_c` and `antioxidant
 | `pha` | gluconolactone, lactobionic acid, maltobionic acid |
 | `vitamin_c` | ascorbic acid and five stable derivatives |
 | `antioxidant` | the `vitamin_c` members, ferulic acid, resveratrol, camellia sinensis leaf extract |
-| `peptide`, `centella`, `ceramide` | named members only |
+| `peptide`, `centella`, `ceramide` | named members only (1.2.0: three peptides, centella root extract, ceramides 2 and 4 as printed) |
 | `fragrance` | fragrance (parfum, perfume), aroma |
 | `fragrance_allergen` | the 26 EU-declared fragrance allergens |
-| `essential_oil` | 16 named essential oils |
+| `essential_oil` | 18 named essential oils (1.2.0: pogostemon cablin oil, lemongrass oil) |
 | `uv_mineral` / `uv_organic` | zinc oxide, titanium dioxide / 22 organic filters |
-| `water_phase` | water, aloe barbadensis leaf juice, two floral/plant waters |
-| `oil` | oils, butters and ester emollients (not silicones) |
-| `drying_alcohol` | alcohol (ethanol), alcohol denat., SD alcohol 40 / 40-B, isopropyl alcohol (7c-i c) |
+| `water_phase` | water, aloe barbadensis leaf juice, plant waters and juices |
+| `oil` | plant oils, butters and ester emollients (not silicones, not hydrocarbons) |
+| `drying_alcohol` | alcohol (ethanol), alcohol denat., SD alcohol 40 / 40-B, isopropyl alcohol (7c-i c), t-butyl alcohol (1.2.0) |
 | `lanolin` | lanolin and 7 lanolin derivatives (7c-i c) |
 | `sulfate` | 8 sulfate surfactants (sodium lauryl / laureth sulfate, …) (7c-i c) |
 | `paraben` | methyl-, ethyl-, propyl-, butyl-, isobutylparaben and 3 sodium salts (7c-i c) |
@@ -117,6 +121,16 @@ Deliberate exclusions (each one tested):
   yet). Most formulas carry them in trace amounts to protect the formula itself.
 - **Not essential oils:** carrier oils such as `rosa canina seed oil`. There is no
   pattern rule ("… oil"), because a carrier oil and an essential oil can look alike.
+- **Not oils (1.2.0):** hydrocarbons (paraffinum liquidum, petrolatum, isododecane,
+  alkanes, polyisobutene) and PEG-hydrogenated castor oils.
+- **Not BHAs or AHAs (1.2.0):** silanediol salicylate (a salicylate) and hydroxyphenoxy
+  propionic acid (a pigmentation active).
+- **Not antioxidants (1.2.0, decided in review):** epigallocatechin gallate and
+  ubiquinone stay neutral, like tocopherol.
+- **Not declared fragrance (1.2.0):** cinnamomum cassia bark extract, mentha arvensis
+  leaf extract and phenethyl alcohol (none is in EU Annex III; see limitation 2).
+- **"BHA" on an ingredient list** is butylated hydroxyanisole, an antioxidant: it is not a
+  synonym of anything here and never the BHA class.
 
 ## The ambiguous-member rule (a proxy for the ~1% line)
 
@@ -174,11 +188,42 @@ From 7c-i (b), a conflict row may name a whole class as `class:<name>`
 no ingredient name may contain `:` (the normaliser rejects it), and class names are
 `[a-z][a-z0-9_]*`.
 
+## Cleaning page text (7c-iii)
+
+`clean_ingredient_text(text, directives)` turns an ingredient list as printed on a page
+into names, before `split_inci()` and the normaliser. Only the catalog loader uses it;
+`canonical()` and `split_inci()` are unchanged, so nothing else is affected. The rules are
+in `ingredient_config.py` (CLEANING); every step that changes something is logged:
+
+1. reviewed corrections (a product's directive; the text must occur exactly once);
+2. a mojibake non-breaking space ("Â" + NBSP) becomes a space;
+3. a US Drug Facts block (directive `format: "drug_facts"`): the actives, then the
+   inactive ingredients; the labels and the Purpose line go;
+4. line breaks and "●" become separators;
+5. a word broken by a line-end hyphen is joined ("Acry- lates"); after a digit only the
+   space goes ("1,2- Hexanediol");
+6. the spaces around a slash go ("AQUA / WATER / EAU"), so a multilingual name meets one
+   synonym; a slash without spaces is part of an INCI name and is untouched;
+7. `split_inci()`;
+8. bracketed function notes are removed (directive `strip_bracket_notes`), so a function
+   word can never act as the bracket fallback;
+9. blends are split outside brackets: "(and)" always; " & " and " and " only with a
+   product's `split_on` directive. The parts take consecutive positions;
+10. a final full stop goes.
+
+Anything that can't be applied as written (a correction that doesn't occur exactly once,
+a Drug Facts block without its labels) raises `CleaningError`.
+
 ## Review command
 
 ```bash
-python -m app.services.ingredients.review     # from backend/: the seeded catalog
+python -m app.services.ingredients.review                  # from backend/: the seeded catalog
+python -m app.services.ingredients.review --catalog        # backend/catalog/products.json
+python -m app.services.ingredients.review --staging ../catalog_staging   # every staging row
 ```
+
+`--catalog` and `--staging` review the cleaned names, as the loader sees them (a staging
+row that is in products.json is cleaned with its directives).
 
 It prints a markdown report with:
 1. **unknown ingredients**, with how many products use each. Any token containing oil,
@@ -193,7 +238,9 @@ It prints a markdown report with:
 
 **Fail closed:** an unknown or invalid ingredient name is never guessed. A product with
 one is not loaded (7c-iii) and never recommended until a person has reviewed the token
-and added it to the vocabulary. On the seeded catalog, every section is empty.
+and added it to the vocabulary. On the seeded catalog, every section is empty. On the
+real catalog (1.2.0): no unknown or invalid names; B10 is not fragrance-free only because
+of benzyl alcohol; B01's lactic acid is dismissed (after phenoxyethanol).
 
 ## Testing
 
@@ -209,16 +256,23 @@ python -m pytest app/services/ingredients     # from backend/
   sodium salicylate never the cutoff, glycols never the cutoff, strict mode).
 - `test_properties.py`: fragrance-free, mineral-only, anhydrous oil.
 - `test_vocabulary.py`: the config is consistent (canonical forms, no `:`, synonyms lead
-  to known tokens, NEUTRAL is class-less) and the 24 seeded products are fully known.
-- `test_review.py`: the review report.
+  to known tokens, NEUTRAL is class-less), the 24 seeded products are fully known, the
+  vocabulary only grew after 1.1.0, and the 7c-iii decisions.
+- `test_clean.py`: each cleaning rule and directive.
+- `test_review.py`: the review report, on the real catalog and from the command line.
 
 ## Known limitations
 
 1. **The vocabulary is hand-written and finite.** It covers the seeded catalog and the
    reviewed families, not the full INCI dictionary. Real catalogs will hit unknown
    tokens; the review command and fail-closed loading are how that is handled.
-2. **The fragrance allergens are the EU 26.** The EU extended the list in 2023; those
-   additions are to be added from the official text, not from memory.
+2. **The fragrance allergens are the EU 26.** The EU's current list (Regulation (EC)
+   No 1223/2009, Annex III, consolidated 2026-05-18, which includes the 2023 additions
+   from Regulation (EU) 2023/1545) has 81 labelling entries. They were checked against
+   the real catalog in 7c-iii and **not** added: every token in the catalog that the list
+   names is already a `fragrance_allergen` or `essential_oil` member. Two of the 26 here
+   (butylphenyl methylpropional, hydroxyisohexyl 3-cyclohexene carboxaldehyde) are now
+   prohibited in the EU (Annex II).
 3. **"Fragrance-free" means "no declared fragrance".** An undeclared fragrance component,
    or one hidden inside a botanical extract, can't be seen in an ingredient list.
 4. **Willow bark is not counted as a BHA** (salicin, not salicylic acid), although some
@@ -226,4 +280,5 @@ python -m pytest app/services/ingredients     # from backend/
 5. **The cutoff is a proxy for the 1% line**, not a measurement: brands don't publish
    concentrations, and ingredients below 1% may be listed in any order.
 6. **The 24 seeded products are synthetic placeholders** with short invented ingredient
-   lists, so the review being clean on them says nothing about real products.
+   lists, so the review being clean on them says nothing about real products. The real
+   catalog (`backend/catalog/`) is reviewed separately (above).

@@ -16,6 +16,7 @@ from types import ModuleType
 
 import pytest
 
+from app.services.catalog import catalog_config
 from app.services.ingredients import ingredient_config
 from app.services.questionnaire import questionnaire_config
 from app.services.recommendation import recommendation_config, routine_config
@@ -31,6 +32,9 @@ RECORDED = {
     "routine-2.1.0": "02df1ea245514a25",
     "routine-2.2.0": "74cb6b4aa47dadf4",
     "recommendation-1.0.0": "2c664808e8887a95",
+    "ingredients-1.2.0": "6a51213d2fe604c6",
+    "routine-2.3.0": "cac112506d014a46",
+    "catalog-1.0.0": "7f4991367e8eabda",
 }
 
 CONFIGS = [
@@ -39,6 +43,7 @@ CONFIGS = [
     (ingredient_config, "INGREDIENT_CONFIG_VERSION"),
     (routine_config, "ROUTINE_CONFIG_VERSION"),
     (recommendation_config, "RECOMMENDATION_CONFIG_VERSION"),
+    (catalog_config, "CATALOG_CONFIG_VERSION"),
 ]
 
 

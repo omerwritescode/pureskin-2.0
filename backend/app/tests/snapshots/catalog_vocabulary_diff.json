@@ -1,0 +1,627 @@
+{
+  "A09": {
+    "1.1.0": "left out: 10 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "oil",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_azelaic_acid": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "A13": {
+    "1.1.0": "left out: 4 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_aha_or_bha": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": [
+      "bha"
+    ]
+  },
+  "B01": {
+    "1.1.0": "left out: 22 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {},
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B02": {
+    "1.1.0": "left out: 8 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "fragrance",
+      "sulfate",
+      "water_phase"
+    ],
+    "constraints": {},
+    "fragrance": [
+      "fragrance"
+    ],
+    "mineral_only": false,
+    "strong actives": [
+      "aha"
+    ]
+  },
+  "B03": {
+    "1.1.0": "left out: 19 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "fragrance",
+      "water_phase"
+    ],
+    "constraints": {},
+    "fragrance": [
+      "fragrance"
+    ],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B04": {
+    "1.1.0": "left out: 3 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "sulfate",
+      "water_phase"
+    ],
+    "constraints": {
+      "fragrance_free": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B06": {
+    "1.1.0": "left out: 10 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_bha": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": [
+      "bha"
+    ]
+  },
+  "B07": {
+    "1.1.0": "left out: 19 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "centella",
+      "fragrance",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_bha": true
+    },
+    "fragrance": [
+      "fragrance"
+    ],
+    "mineral_only": false,
+    "strong actives": [
+      "bha"
+    ]
+  },
+  "B08": {
+    "1.1.0": "left out: 2 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {},
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B09": {
+    "1.1.0": "left out: 13 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "fragrance",
+      "oil",
+      "water_phase"
+    ],
+    "constraints": {},
+    "fragrance": [
+      "fragrance"
+    ],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B10": {
+    "1.1.0": "left out: 11 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "fragrance_allergen",
+      "oil",
+      "water_phase"
+    ],
+    "constraints": {},
+    "fragrance": [
+      "benzyl alcohol"
+    ],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B11": {
+    "1.1.0": "left out: 9 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "ceramide",
+      "oil",
+      "water_phase"
+    ],
+    "constraints": {},
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B12": {
+    "1.1.0": "left out: 19 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "ceramide",
+      "oil",
+      "water_phase"
+    ],
+    "constraints": {
+      "fragrance_free": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B13": {
+    "1.1.0": "left out: 21 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "centella",
+      "oil",
+      "uv_mineral",
+      "water_phase"
+    ],
+    "constraints": {
+      "fragrance_free": true
+    },
+    "fragrance": [],
+    "mineral_only": true,
+    "strong actives": []
+  },
+  "B14": {
+    "1.1.0": "left out: 22 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "fragrance",
+      "fragrance_allergen",
+      "oil",
+      "paraben",
+      "peptide",
+      "uv_mineral",
+      "water_phase"
+    ],
+    "constraints": {
+      "no_retinoid": true
+    },
+    "fragrance": [
+      "fragrance",
+      "benzyl alcohol",
+      "butylphenyl methylpropional",
+      "linalool",
+      "limonene",
+      "citronellol",
+      "benzyl salicylate",
+      "hexyl cinnamal",
+      "alpha-isomethyl ionone"
+    ],
+    "mineral_only": true,
+    "strong actives": []
+  },
+  "B15": {
+    "1.1.0": "left out: 17 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "oil",
+      "uv_mineral",
+      "water_phase"
+    ],
+    "constraints": {
+      "fragrance_free": true,
+      "mineral_only": true,
+      "spf_30_plus": true
+    },
+    "fragrance": [],
+    "mineral_only": true,
+    "strong actives": []
+  },
+  "B16": {
+    "1.1.0": "left out: 8 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "oil",
+      "uv_mineral"
+    ],
+    "constraints": {
+      "fragrance_free": true,
+      "mineral_only": true,
+      "spf_30_plus": true
+    },
+    "fragrance": [],
+    "mineral_only": true,
+    "strong actives": []
+  },
+  "B17": {
+    "1.1.0": "left out: 15 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "oil",
+      "uv_mineral",
+      "water_phase"
+    ],
+    "constraints": {
+      "fragrance_free": true,
+      "mineral_only": true,
+      "spf_30_plus": true
+    },
+    "fragrance": [],
+    "mineral_only": true,
+    "strong actives": []
+  },
+  "B18": {
+    "1.1.0": "left out: 15 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "oil",
+      "uv_mineral",
+      "uv_organic",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_organic_uv_filter": true,
+      "spf_30_plus": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B19": {
+    "1.1.0": "left out: 26 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "drying_alcohol",
+      "oil",
+      "uv_organic",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_organic_uv_filter": true,
+      "spf_30_plus": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B20": {
+    "1.1.0": "left out: 13 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "fragrance",
+      "oil",
+      "uv_mineral",
+      "uv_organic"
+    ],
+    "constraints": {
+      "has_organic_uv_filter": true,
+      "spf_30_plus": true
+    },
+    "fragrance": [
+      "fragrance"
+    ],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B21": {
+    "1.1.0": "left out: 13 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "vitamin_c",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_niacinamide": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B22": {
+    "1.1.0": "left out: 5 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_niacinamide": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B23": {
+    "1.1.0": "left out: 7 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "peptide",
+      "vitamin_c",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_hyaluronic_acid": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B24": {
+    "1.1.0": "left out: 11 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_hyaluronic_acid": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B25": {
+    "1.1.0": "left out: 7 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "vitamin_c",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_vitamin_c": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B26": {
+    "1.1.0": "left out: 11 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "centella",
+      "pha",
+      "vitamin_c"
+    ],
+    "constraints": {
+      "has_vitamin_c": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B27": {
+    "1.1.0": "left out: 1 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "centella",
+      "water_phase"
+    ],
+    "constraints": {
+      "fragrance_free": true,
+      "has_centella": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B28": {
+    "1.1.0": "left out: 24 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "centella",
+      "ceramide",
+      "essential_oil",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_centella": true
+    },
+    "fragrance": [
+      "melaleuca alternifolia leaf oil",
+      "mentha piperita oil"
+    ],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B29": {
+    "1.1.0": "left out: 12 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "centella",
+      "ceramide",
+      "oil",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_azelaic_acid": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": [
+      "bha"
+    ]
+  },
+  "B30": {
+    "1.1.0": "left out: 12 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "antioxidant",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_alpha_arbutin": true,
+      "no_aha": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B31": {
+    "1.1.0": "left out: 13 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_tranexamic_acid": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": [
+      "aha",
+      "bha"
+    ]
+  },
+  "B32": {
+    "1.1.0": "left out: 33 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "peptide",
+      "water_phase"
+    ],
+    "constraints": {
+      "has_peptide": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B34": {
+    "1.1.0": "left out: 6 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "essential_oil",
+      "oil"
+    ],
+    "constraints": {
+      "anhydrous_oil": false
+    },
+    "fragrance": [
+      "citrus aurantium dulcis peel oil",
+      "pogostemon cablin oil",
+      "lemongrass oil"
+    ],
+    "mineral_only": false,
+    "strong actives": []
+  },
+  "B35": {
+    "1.1.0": "left out: 5 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_bha": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": [
+      "bha"
+    ]
+  },
+  "B36": {
+    "1.1.0": "left out: 31 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_aha": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": [
+      "aha"
+    ]
+  },
+  "B37": {
+    "1.1.0": "left out: 13 unknown names",
+    "1.2.0": "fully known",
+    "anhydrous_oil": false,
+    "classes": [
+      "water_phase"
+    ],
+    "constraints": {
+      "has_benzoyl_peroxide": true
+    },
+    "fragrance": [],
+    "mineral_only": false,
+    "strong actives": [
+      "benzoyl_peroxide"
+    ]
+  }
+}

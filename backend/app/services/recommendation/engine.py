@@ -23,10 +23,10 @@ from app.services.ingredients import (
     CLASS_PREFIX,
     NormalisedIngredients,
     canonical,
-    fragrance_tokens,
     memberships,
     normalise_ingredients,
 )
+from app.services.ingredients.ingredient_config import FRAGRANCE_CLASSES
 from app.services.ingredients.normalise import TOKEN_CLASSES
 
 from . import recommendation_config as rcfg
@@ -391,12 +391,11 @@ def exclusion(profile, product: ProductRecord, session: str,
                     f"It contains {token}, which is left out for sensitive skin."
                 ))
         if cfg.SENSITIVE_FRAGRANCE_FREE:
-            fragrance = fragrance_tokens(product.ingredients)
-            if fragrance:
-                return Exclusion(FRAGRANCE, (
-                    f"It lists {fragrance[0]} (declared fragrance). "
-                    "Sensitive skin gets fragrance-free products only."
-                ))
+            found_strict = memberships(product.ingredients, strict=True)
+            for cls in FRAGRANCE_CLASSES:  # the order fragrance_tokens() uses
+                members = found_strict.of(cls)
+                if members:
+                    return Exclusion(FRAGRANCE, cfg.SENSITIVE_FRAGRANCE_REASONS[cls].format(token=members[0].token))
     if current is not None:
         excluded_by = current_use_exclusion(current, product, conflicts or {})
         if excluded_by is not None:

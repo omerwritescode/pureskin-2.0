@@ -1,12 +1,15 @@
-"""The vocabulary in ingredient_config.py is consistent, and covers the seeded catalog."""
+"""The vocabulary in ingredient_config.py is consistent, covers the seeded catalog, and
+only grew after ingredients-1.1.0 (the 7c-iii guard)."""
 
+import json
 import re
+from pathlib import Path
 
 import pytest
 
 import seed
 from app.services.ingredients import canonical, ingredient_config as cfg, normalise_ingredients
-from app.services.ingredients.normalise import KNOWN
+from app.services.ingredients.normalise import KNOWN, TOKEN_CLASSES
 from app.services.questionnaire import questionnaire_config as qcfg
 
 MEMBERS = {token for tokens in cfg.CLASSES.values() for token in tokens}
@@ -82,6 +85,59 @@ def test_avoid_list_classes():
         assert canonical(not_sulfate) not in sulfates, not_sulfate
     assert "lanolin alcohol" in cfg.CLASSES["lanolin"]
     assert {"methylparaben", "propylparaben"} <= set(cfg.CLASSES["paraben"])
+
+
+FROZEN_1_1_0 = json.loads(
+    (Path(__file__).with_name("vocabulary_ingredients-1.1.0.json")).read_text(encoding="utf-8"))
+
+
+def test_the_vocabulary_only_grows_after_1_1_0():
+    """7c-iii guard: every ingredients-1.1.0 entry (frozen from commit 94a32c2) is
+    unchanged. A token keeps its classes, a synonym its target; NEUTRAL, PRESERVATIVES and
+    AMBIGUOUS_MEMBERS keep every entry, and the cutoff lists gain nothing."""
+    assert FROZEN_1_1_0["version"] == "ingredients-1.1.0"
+    for alias, target in FROZEN_1_1_0["synonyms"].items():
+        assert cfg.SYNONYMS[alias] == target, alias
+    old_classes = {}
+    for cls, members in FROZEN_1_1_0["classes"].items():
+        for token in members:
+            old_classes.setdefault(token, set()).add(cls)
+    for token, classes in old_classes.items():
+        assert TOKEN_CLASSES[token] == classes, token  # no class gained or lost
+    assert set(FROZEN_1_1_0["neutral"]) <= set(cfg.NEUTRAL)
+    assert list(cfg.PRESERVATIVES) == FROZEN_1_1_0["preservatives"]  # no new cutoff
+    assert {c: list(v) for c, v in cfg.AMBIGUOUS_MEMBERS.items()} == FROZEN_1_1_0["ambiguous_members"]
+    # Strong-active classes gained no member (conflicts, sessions, sensitive rules unchanged)
+    for cls in ("retinoid", "benzoyl_peroxide", "aha", "bha", "vitamin_c", "antioxidant", "fragrance",
+                "fragrance_allergen", "uv_mineral", "uv_organic", "sulfate", "paraben", "lanolin"):
+        assert sorted(cfg.CLASSES[cls]) == FROZEN_1_1_0["classes"][cls], cls
+
+
+def test_reviewed_decisions_7c_iii():
+    # The five essential oils the sensitive rule must catch (B34, B28)
+    oils = set(cfg.CLASSES["essential_oil"])
+    for name in ("Orangepeel Oil (Citrus sinensis)*", "Patchouli Oil (Pogostemon cablin)*",
+                 "Lemongrass Oil (Cymbopogon)*", "Melaleuca Alternafolia (Tea Tree) Leaf Oil",
+                 "Mentha Piperita (Peppermint) Oil"):
+        assert canonical(name) in oils, name
+    assert canonical("Allergen Free Fragrance") == canonical("Fragrance/Parfum") == "fragrance"
+    # Decided in review: antioxidants left out of the class, neutral
+    assert {"epigallocatechin gallate", "ubiquinone"} <= set(cfg.NEUTRAL)
+    assert "t-butyl alcohol" in cfg.CLASSES["drying_alcohol"]
+    # Oil = plant oils and ester emollients; hydrocarbons are not oils
+    for ester in ("c12-15 alkyl benzoate", "jojoba esters", "coco-caprylate/caprate"):
+        assert ester in cfg.CLASSES["oil"]
+    for hydrocarbon in ("paraffinum liquidum", "petrolatum", "isododecane", "hydrogenated polyisobutene"):
+        assert hydrocarbon in cfg.NEUTRAL
+    # Not exfoliating acids
+    assert canonical("Silanediol Salicylate") not in cfg.CLASSES["bha"]
+    assert canonical("Hydroxyphenoxy Propionic Acid") not in cfg.CLASSES["aha"]
+    # Left neutral and reported (EU Annex III check, 7c-iii plan item 4)
+    assert {"cinnamomum cassia bark extract", "mentha arvensis leaf extract", "phenethyl alcohol"} <= set(cfg.NEUTRAL)
+    # "BHA" in an ingredient list is butylated hydroxyanisole: never a synonym of the class
+    assert "bha" not in cfg.SYNONYMS and "bha" not in KNOWN
+    # No new cutoff preservative
+    assert "didecyldimonium chloride" not in cfg.PRESERVATIVES
 
 
 @pytest.mark.parametrize("active", sorted(qcfg.ACTIVE_TERMS))

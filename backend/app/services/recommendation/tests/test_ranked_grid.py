@@ -173,3 +173,41 @@ def test_rule_order_mode_reproduces_the_7c_i_routines():
     out = [summary(build_routine(p, te.SEED_PRODUCTS, CONFLICTS, RULE_ORDER)) for p in profiles]
     digest = hashlib.sha256(json.dumps(out, sort_keys=True).encode()).hexdigest()[:16]
     assert digest == RULE_ORDER_DIGEST
+
+
+# --------------------------------------------------------------------------------------
+# The ranked routines on the seeded (placeholder) catalog (the 7c-iii old-vs-new guard)
+# --------------------------------------------------------------------------------------
+
+# Recorded on routine-2.2.0 / ingredients-1.1.0 / recommendation-1.0.0 (commit 94a32c2),
+# before step 7c-iii changed the vocabulary, the wrinkle step's matcher (retinol -> the
+# retinoid class) and the sensitive fragrance reasons. None of those changes may alter a
+# routine on this catalog. If a later change does so on purpose, re-record and say why.
+RANKED_DIGEST = "b5a6bbaaf29de26d"
+
+
+def ranked_summary(p, routine):
+    """Everything a ranked routine shows: picks, full rankings and scores, alternatives,
+    the why texts, cautions, warnings and left-out reasons."""
+    out = [routine.base_set, routine.current_products_considered]
+    for session, steps in sessions(routine):
+        for step in steps:
+            out.append([
+                session, step.req.category, step.req.source, list(step.req.keywords), step.removed,
+                step.matched_keyword, [r.product.id for r in step.ranking.ranked],
+                [round(r.score, rcfg.SCORE_DECIMALS) for r in step.ranking.ranked],
+                [a.product.id for a in step.alternatives], list(explain(step, p, routine.base_set).text),
+                step.caution,
+            ])
+    out.append(routine.warnings)
+    out.append([(lo.product_id, list(lo.sessions), lo.reason, lo.code, lo.severity) for lo in routine.left_out])
+    return out
+
+
+def ranked_digest(cases) -> str:
+    out = [ranked_summary(p, routine) for p, routine in cases]
+    return hashlib.sha256(json.dumps(out, sort_keys=True).encode()).hexdigest()[:16]
+
+
+def test_the_ranked_routines_on_the_seeded_catalog_are_unchanged():
+    assert ranked_digest(CASES) == RANKED_DIGEST

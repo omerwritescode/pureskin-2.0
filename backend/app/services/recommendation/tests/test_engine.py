@@ -222,6 +222,42 @@ def test_the_evening_only_reason_says_whether_the_product_is_used_in_the_evening
 # --------------------------------------------------------------------------------------
 
 
+def test_the_wrinkle_step_takes_any_retinoid_in_the_evening():
+    """routine-2.3.0: the "retinol" keyword matches the retinoid class (retinal too)."""
+    retinal = P(10, "Retinal Serum", "serum", ["Water", "Retinal", "Glycerin"])
+    routine = build_routine(profile(wrinkle_score=75), [*CORE, retinal], {})
+    (step,) = [s for s in routine.pm if s.req.source == "wrinkle_score" and s.req.category == "serum"]
+    assert (step.product.name, step.matched_keyword) == ("Retinal Serum", "retinol")
+    assert step.caution == cfg.RETINOID_CAUTION
+    # A retinyl ester after the preservative is a trace: it doesn't make a retinoid serum
+    trace = P(11, "Trace Ester Serum", "serum", ["Water", "Glycerin", "Phenoxyethanol", "Retinyl Palmitate"])
+    routine = build_routine(profile(wrinkle_score=75), [*CORE, trace], {})
+    assert "No serum with retinol found in the catalog for this step" in routine.warnings
+
+
+@pytest.mark.parametrize(("ingredients", "reason"), [
+    (["Water", "Glycerin", "Fragrance"],
+     "It lists fragrance (declared fragrance). Sensitive skin gets fragrance-free products only."),
+    (["Water", "Glycerin", "Benzyl Alcohol"],
+     "It contains benzyl alcohol, a listed fragrance allergen. Sensitive skin gets fragrance-free products only."),
+    (["Water", "Mentha Piperita (Peppermint) Oil"],
+     "It contains mentha piperita oil, an essential oil. Sensitive skin gets fragrance-free products only."),
+    # Declared fragrance is named first, whatever the list order
+    (["Water", "Limonene", "Parfum"],
+     "It lists fragrance (declared fragrance). Sensitive skin gets fragrance-free products only."),
+])
+def test_the_sensitive_fragrance_reason_names_what_the_ingredient_is(ingredients, reason):
+    product = P(10, "Scented Cream", "moisturiser", ingredients, "cream")
+    excluded = engine.exclusion(profile(sensitive=True), product, "am")
+    assert (excluded.code, excluded.reason) == (engine.FRAGRANCE, reason)
+    assert engine.exclusion(profile(), product, "am") is None
+
+
+def test_every_fragrance_class_has_a_sensitive_reason():
+    from app.services.ingredients.ingredient_config import FRAGRANCE_CLASSES
+    assert set(cfg.SENSITIVE_FRAGRANCE_REASONS) == set(FRAGRANCE_CLASSES)
+
+
 def test_l_ascorbic_acid_is_left_out_for_sensitive_skin_but_not_its_derivatives():
     l_aa = P(10, "L-AA Serum", "serum", ["Water", "L-Ascorbic Acid"])
     glucoside = P(11, "Ascorbyl Glucoside Serum", "serum", ["Water", "Ascorbyl Glucoside"])

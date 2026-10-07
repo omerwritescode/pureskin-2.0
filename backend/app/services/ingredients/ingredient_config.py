@@ -10,7 +10,10 @@ ASCII, brackets, percentages and footnote marks removed). This file holds vocabu
 only, never a product's ingredient list.
 """
 
-INGREDIENT_CONFIG_VERSION = "ingredients-1.1.0"  # 1.1.0 (7c-i c): avoid-list classes
+# 1.1.0 (7c-i c): avoid-list classes. 1.2.0 (7c-iii): the real catalog's tokens (additions
+# only: every 1.1.0 entry is unchanged, tests/test_vocabulary.py checks against
+# tests/vocabulary_ingredients-1.1.0.json) and the cleaning rules for page text.
+INGREDIENT_CONFIG_VERSION = "ingredients-1.2.0"
 
 # ======================================================================================
 # Normalisation
@@ -90,6 +93,35 @@ SYNONYMS = {
     "ethyl alcohol": "alcohol",
     "denatured alcohol": "alcohol denat",
     "sodium lauryl ether sulfate": "sodium laureth sulfate",
+    # --- 7c-iii: names on the real catalog's pages, each reviewed (never fuzzy-matched) ---
+    # Spellings and typos as printed
+    "purified water": "water",
+    "melaleuca alternafolia leaf oil": "melaleuca alternifolia leaf oil",
+    "ethylhexyllycerin": "ethylhexylglycerin",
+    "sodium laureth sulphate": "sodium laureth sulfate",
+    "sodium lauryl sulphate": "sodium lauryl sulfate",
+    "sodium lauryl sarcosinate": "sodium lauroyl sarcosinate",
+    "sodium metabisulphate": "sodium metabisulfite",  # not an INCI name: read as a misspelling
+    "disodium edetate": "disodium edta",
+    "polysorbate-80": "polysorbate 80",
+    "peg-150 penta-erythrityl tetrastearate": "peg-150 pentaerythrityl tetrastearate",
+    "bht": "butylated hydroxytoluene",
+    "ceramide 6ii": "ceramide ap",
+    # Fragrance as printed: still a declared fragrance
+    "allergen free fragrance": "fragrance",
+    "fragrance/parfum": "fragrance",
+    # Multilingual or alias names joined by "/" (clean.py removes the spaces around it)
+    "ci 77891/titanium dioxide": "titanium dioxide",
+    "butyrospermum parkii butter/shea butter": "butyrospermum parkii butter",
+    "zea mays starch/corn starch": "zea mays starch",
+    "secale cereale seed extract/rye seed extract": "secale cereale seed extract",
+    "paraffinum liquidum/mineral oil/huile minerale": "paraffinum liquidum",
+    "canola/canola oil/huile de colza": "canola oil",
+    # Common names -> INCI names, from the species printed in brackets on the page
+    "orangepeel oil": "citrus aurantium dulcis peel oil",  # Citrus sinensis (sweet orange)
+    "patchouli oil": "pogostemon cablin oil",
+    "pumpkin seed oil": "cucurbita pepo seed oil",
+    "rosehip seed oil": "rosa moschata seed oil",
 }
 
 # ======================================================================================
@@ -156,6 +188,10 @@ CLASSES = {
         "palmitoyl tripeptide-38",
         "acetyl hexapeptide-8",
         "copper tripeptide-1",
+        # 7c-iii
+        "pentapeptide-18",
+        "dipeptide diaminobutyroyl benzylamide diacetate",
+        "acetylarginyltryptophyl diphenylglycine",
     ),
     "centella": (
         "centella asiatica extract",
@@ -164,12 +200,17 @@ CLASSES = {
         "asiaticoside",
         "madecassic acid",
         "asiatic acid",
+        "centella asiatica root extract",  # 7c-iii
     ),
-    "ceramide": ("ceramide np", "ceramide ap", "ceramide eop", "ceramide ns", "ceramide as"),
+    # Ceramide 2 and 4: older numbered names, kept as printed (no letter name assumed).
+    "ceramide": ("ceramide np", "ceramide ap", "ceramide eop", "ceramide ns", "ceramide as",
+                 "ceramide 2", "ceramide 4"),
     # --- Fragrance: "fragrance-free" means none of these three classes ---
     "fragrance": ("fragrance", "aroma"),  # aroma: the EU name for flavour
-    # The 26 EU-declared fragrance allergens. The 2023 additions are to come from the
-    # official text, not from memory. Benzyl alcohol is also a preservative; it counts.
+    # The 26 EU-declared fragrance allergens. Benzyl alcohol is also a preservative; it
+    # counts. 7c-iii checked the real catalog against the current official list (Reg.
+    # 1223/2009 Annex III, consolidated 2026-05-18, with the 2023 additions: 81 entries);
+    # nothing was added (README, limitation 2).
     "fragrance_allergen": (
         "amyl cinnamal",
         "amylcinnamyl alcohol",
@@ -217,6 +258,10 @@ CLASSES = {
         "boswellia carterii oil",
         "anthemis nobilis flower oil",
         "citrus aurantium amara flower oil",
+        # 7c-iii. Lemongrass as printed: the page names only the genus (Cymbopogon), so no
+        # species-level INCI name is assumed.
+        "pogostemon cablin oil",
+        "lemongrass oil",
     ),
     # --- UV filters: "mineral-only" means at least one mineral and no organic filter ---
     "uv_mineral": ("zinc oxide", "titanium dioxide"),
@@ -248,7 +293,10 @@ CLASSES = {
     # "parabens" mean when a user avoids them ---
     # Drying (short-chain) alcohols only. Fatty alcohols (cetyl, cetearyl, stearyl,
     # behenyl, lanolin alcohol) and benzyl alcohol are not drying alcohols.
-    "drying_alcohol": ("alcohol", "alcohol denat", "sd alcohol 40", "sd alcohol 40-b", "isopropyl alcohol"),
+    # t-Butyl alcohol (7c-iii): a short-chain alcohol used as a denaturant; the avoid list
+    # counts a trace, so it is in.
+    "drying_alcohol": ("alcohol", "alcohol denat", "sd alcohol 40", "sd alcohol 40-b", "isopropyl alcohol",
+                       "t-butyl alcohol"),
     "lanolin": (
         "lanolin",
         "lanolin alcohol",
@@ -287,8 +335,15 @@ CLASSES = {
         "aloe barbadensis leaf juice",
         "hamamelis virginiana water",
         "rosa damascena flower water",
+        # 7c-iii: plant waters and juices
+        "aloe barbadensis leaf water",
+        "centaurea cyanus flower water",
+        "camellia sinensis leaf water",
+        "chrysanthemum parthenium flower/leaf/stem juice",
+        "polymnia sonchifolia root juice",
     ),
-    # Oils, butters and ester emollients. Silicones (dimethicone) are not oils.
+    # Oils, butters and ester emollients. Silicones (dimethicone) are not oils, and neither
+    # are hydrocarbons (mineral oil, petrolatum, isododecane, alkanes): see NEUTRAL.
     "oil": (
         "squalane",
         "caprylic/capric triglyceride",
@@ -307,6 +362,22 @@ CLASSES = {
         "cocos nucifera oil",
         "vitis vinifera seed oil",
         "persea gratissima oil",
+        # 7c-iii: plant oils (seed oils, not flower oils: those are essential oils)
+        "canola oil",
+        "limnanthes alba seed oil",
+        "cucurbita pepo seed oil",
+        "rosa moschata seed oil",
+        # 7c-iii: ester and carbonate emollients
+        "jojoba esters",
+        "c12-15 alkyl benzoate",
+        "coco-caprylate/caprate",
+        "dibutyl adipate",
+        "diisopropyl adipate",
+        "diisopropyl sebacate",
+        "isopropyl isostearate",
+        "neopentyl glycol diheptanoate",
+        "propylene glycol dicaprylate/dicaprate",
+        "dicaprylyl carbonate",
     ),
 }
 
@@ -402,7 +473,337 @@ NEUTRAL = (
     "salix nigra bark extract",
     "butyloctyl salicylate",
     "tridecyl salicylate",
+    # ----------------------------------------------------------------------------------
+    # 7c-iii: the real catalog's tokens, reviewed 2026-10-06 (plan item 3). The comments
+    # mark the judgement calls.
+    # ----------------------------------------------------------------------------------
+    # Reviewed: not exfoliating acids. Silanediol salicylate is a salicylate, not salicylic
+    # acid (as for the salicylate esters above); hydroxyphenoxy propionic acid (B31's
+    # "HPA") is a pigmentation active, not an alpha hydroxy acid; acer saccharum extract is
+    # a maple extract (B03's page calls its fruit extracts "AHAs", but its list names no acid).
+    "silanediol salicylate",
+    "hydroxyphenoxy propionic acid",
+    "acer saccharum extract",
+    # Reviewed: not declared fragrance (README limitation 3). Cinnamon bark extract (EU
+    # Annex III lists cassia LEAF oil, not bark extract), mint leaf extract (not an essential
+    # oil), phenethyl alcohol (a fragrance-grade alcohol and preservative booster, not in
+    # Annex III, not a drying alcohol), hexyl nicotinate (a warming agent).
+    "cinnamomum cassia bark extract",
+    "mentha arvensis leaf extract",
+    "phenethyl alcohol",
+    "hexyl nicotinate",
+    # Reviewed: antioxidants left out of the antioxidant class (like tocopherol): green tea
+    # polyphenol and coenzyme Q10 (decided in review, 2026-10-06), and the formula's own
+    # antioxidants.
+    "epigallocatechin gallate",
+    "ubiquinone",
+    "tocopheryl acetate",
+    "ascorbyl palmitate",
+    "butylated hydroxytoluene",
+    "sodium metabisulfite",
+    "dimethylmethoxy chromanol",
+    "pentaerythrityl tetra-di-t-butyl hydroxyhydrocinnamate",
+    # Reviewed: an antimicrobial deliberately NOT made a cutoff preservative (a new cutoff
+    # would dismiss more ambiguous members: less conservative).
+    "didecyldimonium chloride",
+    # Reviewed: a photostabiliser, not a UV filter (not in uv_organic)
+    "ethylhexyl methoxycrylene",
+    # Reviewed: hyaluronic acid derivatives, not merged into "hyaluronic acid" (not its salt)
+    "hydrolyzed hyaluronic acid",
+    "hydrolyzed sodium hyaluronate",
+    "sodium acetylated hyaluronate",
+    "sodium hyaluronate crosspolymer",
+    # Reviewed: hydrocarbon emollients, not in the oil class (oil = plant oils, butters and
+    # ester emollients)
+    "paraffinum liquidum",
+    "petrolatum",
+    "isododecane",
+    "isohexadecane",
+    "c13-14 isoparaffin",
+    "c13-15 alkane",
+    "hydrogenated polydecene",
+    "hydrogenated polyisobutene",
+    # Silicones and silanes
+    "caprylyl methicone",
+    "cetyl dimethicone",
+    "cetyl peg/ppg-10/1 dimethicone",
+    "cyclopentasiloxane",
+    "dimethiconol",
+    "ethyl methicone",
+    "phenyl trimethicone",
+    "simethicone",
+    "peg/ppg-18/18 dimethicone",
+    "polymethylsilsesquioxane",
+    "polysilicone-11",
+    "cetyl dimethicone/bis-vinyldimethicone crosspolymer",
+    "dimethicone/bis-isobutyl ppg-20 crosspolymer",
+    "dimethicone/vinyl dimethicone crosspolymer",
+    "peg-12 dimethicone/ppg-20 crosspolymer",
+    "triethoxycaprylylsilane",
+    "silanetriol",
+    # Other emollients, fatty alcohols and fatty acids (not drying alcohols)
+    "arachidyl alcohol",
+    "dicaprylyl ether",
+    "castoryl maleate",
+    "trihydroxystearin",
+    "isostearic acid",
+    "stearic acid",
+    "linolenic acid",
+    "polyhydroxystearic acid",
+    "phytosterols",
+    "glyceryl oleate",
+    # Reviewed: PEG solubilisers, not oils
+    "peg-40 hydrogenated castor oil",
+    "peg-60 hydrogenated castor oil",
+    # Surfactants (sulfosuccinates, isethionates, taurates and glutamates are not sulfates)
+    "cocamide dea",
+    "cocamidopropyl betaine",
+    "cocamidopropyl hydroxysultaine",
+    "cocamidopropyl pg-dimonium chloride phosphate",
+    "coco-glucoside",
+    "decyl glucoside",
+    "caprylyl/capryl glucoside",
+    "disodium cocoamphodiacetate",
+    "sodium cocoamphoacetate",
+    "disodium cocoyl glutamate",
+    "disodium laureth sulfosuccinate",
+    "sodium cocoyl isethionate",
+    "sodium lauroyl methyl isethionate",
+    "sodium methyl cocoyl taurate",
+    "peg-7 glyceryl cocoate",
+    "polyglyceryl-3 laurate",
+    # Emulsifiers and solubilisers
+    "ceteareth-20",
+    "cetearyl glucoside",
+    "arachidyl glucoside",
+    "c12-13 pareth-3",
+    "laureth-7",
+    "isoceteth-20",
+    "trideceth-6",
+    "trideceth-10",
+    "polysorbate 20",
+    "polysorbate 60",
+    "polysorbate 80",
+    "peg-100 stearate",
+    "peg-30 stearate",
+    "peg-120 methyl glucose dioleate",
+    "peg-150 pentaerythrityl tetrastearate",
+    "ppg-26-buteth-26",
+    "peg/ppg-17/6 copolymer",
+    "glyceryl stearate",
+    "glyceryl behenate",
+    "sucrose stearate",
+    "sorbitan isostearate",
+    "polyglyceryl-3 methylglucose distearate",
+    "polyglyceryl-3 polyricinoleate",
+    "polyglyceryl-4 isostearate",
+    "lecithin",
+    "hydrogenated lecithin",
+    "palmitamide mea",
+    "sodium stearoyl glutamate",
+    "sodium lauroyl lactylate",
+    "behentrimonium methosulfate",
+    "sodium peg-7 olive oil carboxylate",
+    "acetylated glycol stearate",
+    # Humectants, sugars and polyols
+    "diglycerin",
+    "betaine",
+    "glyceryl glucoside",
+    "methyl gluceth-20",
+    "xylitol",
+    "xylitylglucoside",
+    "anhydroxylitol",
+    "mannitol",
+    "mannose",
+    "rhamnose",
+    "fructose",
+    "glucose",
+    "maltose",
+    "sucrose",
+    "trehalose",
+    "fructooligosaccharides",
+    "dextrin",
+    "maltodextrin",
+    "hydrogenated starch hydrolysate",
+    "alpha-glucan oligosaccharide",
+    "pca",
+    "sodium pca",
+    "urea",
+    "sodium polyglutamate",
+    "pantolactone",
+    "hydroxypropyl cyclodextrin",
+    # Solvents and glycols (often above 1%: never a cutoff)
+    "methylpropanediol",
+    "dipropylene glycol",
+    "hexylene glycol",
+    "ethoxydiglycol",
+    "dimethyl isosorbide",
+    # Amino acids and proteins (no peptide class membership)
+    "alanine",
+    "arginine",
+    "aspartic acid",
+    "glutamic acid",
+    "glycine",
+    "histidine",
+    "isoleucine",
+    "phenylalanine",
+    "proline",
+    "serine",
+    "threonine",
+    "valine",
+    "carnosine",
+    "hydrolyzed wheat protein",
+    # Skin-conditioning and other actives with no class
+    "4-butylresorcinol",
+    "acetyl glucosamine",
+    "adenosine",
+    "beta-glucan",
+    "dipotassium glycyrrhizate",
+    "genistein",
+    "phospholipids",
+    "phytosphingosine",
+    "capryloyl glycine",
+    "saccharide isomerate",
+    # Reviewed: a pseudo-ceramide, not in the ceramide class
+    "cetyl-pg hydroxyethyl palmitamide",
+    # Thickeners, gums, polymers and film formers
+    "acacia senegal gum",
+    "acrylates copolymer",
+    "acrylates/c10-30 alkyl acrylate crosspolymer",
+    "acrylates/dimethicone copolymer",
+    "biosaccharide gum-1",
+    "cellulose",
+    "cellulose gum",
+    "gellan gum",
+    "hydroxyethyl acrylate/sodium acryloyldimethyl taurate copolymer",
+    "hydroxyethylcellulose",
+    "hydroxypropyl guar",
+    "octyldodecyl citrate crosspolymer",
+    "poly c10-30 alkyl acrylate",
+    "polyacrylamide",
+    "polyacrylate crosspolymer-6",
+    "polyquaternium-80",
+    "pullulan",
+    "sclerotium gum",
+    "sodium acrylates copolymer",
+    "sodium polyacrylate",
+    "sodium polyacryloyldimethyl taurate",
+    "styrene/acrylates copolymer",
+    "tamarindus indica seed gum",
+    "xanthan gum",
+    # Powders, fillers, minerals and colourants
+    "alumina",
+    "aluminum hydroxide",
+    "aluminum starch octenylsuccinate",
+    "cellulose beads",
+    "magnesium aluminium silicate",
+    "mica",
+    "nylon-12",
+    "polyethylene",
+    "tapioca starch",
+    "zea mays starch",
+    "24k gold flakes",  # inert; B34's first ingredient (so B34 is not an anhydrous oil)
+    "ci 14720",
+    "ci 19140",
+    "ci 42090",
+    "acid red 52",
+    "copper chlorophyll",
+    # pH adjusters, buffers, chelators and salts. Magnesium sulfate is a mineral salt, not a
+    # sulfate surfactant.
+    "aminomethyl propanol",
+    "sodium hydroxide",
+    "triethanolamine",
+    "tromethamine",
+    "hydroxyethylpiperazine ethane sulfonic acid",
+    "dipotassium phosphate",
+    "potassium phosphate",
+    "disodium edta",
+    "tetrasodium edta",
+    "trisodium ethylenediamine disuccinate",
+    "sodium chloride",
+    "magnesium sulfate",
+    "zinc gluconate",
+    "manganese gluconate",
+    # Reviewed: botanical extracts that are not essential oils, declared fragrance or plant
+    # waters. Camellia sinensis extract and camellia oleifera leaf extract stay out of the
+    # antioxidant class (its member is "camellia sinensis leaf extract").
+    "aloe barbadensis extract",
+    "aloe barbadensis leaf extract",
+    "avena sativa kernel extract",
+    "avena sativa meal extract",
+    "boerhavia diffusa root extract",
+    "camellia oleifera leaf extract",
+    "camellia sinensis extract",
+    "citrus aurantium dulcis fruit extract",
+    "citrus limon fruit extract",
+    "cocos nucifera fruit extract",
+    "curcuma longa root extract",
+    "glycyrrhiza glabra root extract",
+    "laminaria digitata extract",
+    "laminaria ochroleuca extract",
+    "macrocystis pyrifera extract",
+    "malachite extract",
+    "melia azadirachta flower extract",
+    "melia azadirachta leaf extract",
+    "oryza sativa extract",
+    "oryza sativa germ extract",
+    "panax ginseng root extract",
+    "peucedanum graveolens extract",
+    "physalis angulata extract",
+    "saccharum officinarum extract",
+    "sanguisorba officinalis root extract",
+    "secale cereale seed extract",
+    "tasmannia lanceolata fruit/leaf extract",
+    "undaria pinnatifida extract",
+    "vaccinium myrtillus fruit/leaf extract",
+    "vitis vinifera seed extract",
+    "zingiber officinale root extract",
+    # Ferments
+    "aspergillus ferment",
+    "aureobasidium pullulans ferment",
+    "bacillus/soybean ferment extract",
+    "lactobacillus",
+    "lactobacillus/pumpkin ferment extract",
+    "lactobacillus/rice ferment",
+    "lactococcus ferment lysate",
+    "monascus/rice ferment",
+    "saccharomyces/copper ferment",
+    "saccharomyces/rice ferment filtrate",
+    "vitreoscilla ferment",
 )
+
+# ======================================================================================
+# Cleaning (7c-iii): an ingredient list as printed on a product page -> ingredient names
+# ======================================================================================
+# clean.py applies these to catalog text before split_inci(). canonical() and split_inci()
+# never see raw page text, so no other caller is affected. Every step that changes the
+# text is logged per product (app/tests/snapshots/catalog_cleaning.json records the logs).
+# A product's own directives (products.json "cleaning") add per-row steps.
+
+# A UTF-8 non-breaking space read as Latin-1 ("Â" + NBSP). It becomes a space.
+MOJIBAKE = {"Â ": " "}
+# Printed between ingredients instead of a comma: line breaks and bullets.
+LIST_BREAKS = ("\n", "●")
+# A word broken by a line-end hyphen: "Acry- lates" -> "Acrylates". After a digit only
+# the space goes: "1,2- Hexanediol" -> "1,2-Hexanediol".
+BROKEN_WORD = r"(?<=[A-Za-z])- (?=[A-Za-z])"
+BROKEN_NUMBER = r"(?<=\d)- (?=[A-Za-z])"
+# A slash with spaces between alternative names ("AQUA / WATER / EAU") loses the spaces,
+# so the name meets one synonym. A slash without spaces is part of an INCI name
+# ("Caprylic/Capric Triglyceride") and is never touched.
+SPACED_SLASH = r"\s+/\s*|\s*/\s+"
+# INCI blend notation, split everywhere outside brackets ("Phenoxyethanol (and)
+# Ethylhexylglycerin" is two ingredients). The parts take consecutive positions.
+BLEND_SEPARATOR = "(and)"
+# Split only where a product's directive names them: they are ordinary words elsewhere.
+ROW_BLEND_SEPARATORS = (" & ", " and ")
+# Per-product formats: plain INCI text, or a US Drug Facts block (its labels below). A
+# Drug Facts block keeps the active ingredients, then the inactive ones; the Purpose line
+# is dropped.
+FORMATS = ("inci", "drug_facts")
+DRUG_FACTS_ACTIVE = r"Active Ingredients?\s+"
+DRUG_FACTS_PURPOSE = r"Purpose\b"
+DRUG_FACTS_INACTIVE = r"Inactive Ingredients\s+"
 
 # ======================================================================================
 # Review command (python -m app.services.ingredients.review)

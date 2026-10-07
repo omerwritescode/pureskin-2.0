@@ -260,7 +260,7 @@ a {
 }
 
 /* Shown on the catalog and routine pages until the placeholder products are replaced
-   by verified ones (roadmap step 7c-iii). */
+   by real ones with sourced ingredient lists (roadmap step 7c-iii). */
 .placeholder-note {
   max-width: 720px;
   margin: 0 0 16px;

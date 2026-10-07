@@ -12,8 +12,9 @@ one.
 > placeholders** (invented brands and short invented ingredient lists), so a routine
 > shows how the rules behave, not what to buy.
 
-**Status:** live since 7c-i (b); rules `routine-2.2.0`, ranker `recommendation-1.0.0`
-(since 7c-ii). The ranker's results are on the 24 placeholder products until 7c-iii
+**Status:** live since 7c-i (b); rules `routine-2.3.0` (7c-iii: the wrinkle step takes
+any retinoid; the sensitive fragrance reason names the kind of ingredient), ranker
+`recommendation-1.0.0` (since 7c-ii). The ranker's results are on the 24 placeholder products until 7c-iii
 replaces them. Pure functions: no database, no FastAPI (`app/api/routine.py` loads the
 rows and shapes the response).
 
@@ -47,7 +48,10 @@ normaliser, `app/services/ingredients/` (see its README).
      peroxide, an AHA or a BHA), **L-ascorbic acid** (the canonical token "ascorbic
      acid"; derivatives such as ascorbyl glucoside are separate tokens and stay allowed),
      or any declared **fragrance** (fragrance, a declared fragrance allergen, an essential
-     oil);
+     oil). The reason names which (routine-2.3.0): "It lists fragrance (declared
+     fragrance).", "It contains benzyl alcohol, a listed fragrance allergen.", "It contains
+     mentha piperita oil, an essential oil.", each followed by "Sensitive skin gets
+     fragrance-free products only.";
    - it would go in the morning but contains a **retinoid** (any product) or an **AHA**
      (any leave-on product; a cleanser is rinsed off). The reason says "Not used in the
      morning routine because it contains lactic acid (an AHA); AHAs are evening-only"
@@ -135,8 +139,9 @@ contain the rules' keywords).
 | spf 50 / spf 30 | the `spf` field is at least 50 / 30 |
 | mineral | every UV filter in the list is mineral (derived) |
 | facial oil | `texture` is oil **and** the list has no water and starts with an oil (derived) |
-| niacinamide, hyaluronic acid, salicylic acid, benzoyl peroxide, azelaic acid, alpha arbutin, tranexamic acid, retinol | that canonical ingredient is listed |
+| niacinamide, hyaluronic acid, salicylic acid, benzoyl peroxide, azelaic acid, alpha arbutin, tranexamic acid | that canonical ingredient is listed |
 | vitamin c, antioxidant, peptide, bha | an ingredient of that class counts (preservative cutoff) |
+| retinol (the wrinkle step) | an ingredient of the retinoid class counts (preservative cutoff): retinal and retinol too, a trace retinyl ester after the preservative not (routine-2.3.0; until then, retinol only) |
 
 `texture`, `foaming` and `spf` are product columns (migration `99aa1b05ae54`), filled
 when the catalog is seeded; an ingredient list can't give them reliably. The catalog
@@ -344,7 +349,7 @@ the constraints, not outcomes.
 <!-- evaluation:start -->
 > **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
 
-Config versions: recommendation-1.0.0, routine-2.2.0, ingredients-1.1.0, tags questionnaire-1.0.0.
+Config versions: recommendation-1.0.0, routine-2.3.0, ingredients-1.2.0, tags questionnaire-1.0.0.
 
 Catalog: 24 products, 11 conflict rows (seed.py). Base grid: 1,944 profiles (4 skin types × sensitive or not × 3 bands (15, 45, 80) for each of 5 scores; no tags). Tag grid: 3,072 profiles (12 current-product/avoid scenarios × 4 skin types × sensitive or not × 2 bands per score).
 
@@ -597,7 +602,7 @@ What a product in each thin slot would need (characteristics only):
   - targets it would rank on: redness: azelaic, centella, soothing, niacinamide; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
   - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, AHAs, retinoids, benzoyl peroxide, BHAs, niacinamide, azelaic acid
 - **PM serum: wrinkle High (retinol)**
-  - category serum; lists retinol
+  - category serum; lists an ingredient of the retinoid class
   - targets it would rank on: fine lines: peptide, vitamin C, humectant; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
   - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); nothing that clashes with a product these routines hold (in at least one profile): BHAs, ascorbic acid, AHAs, retinoids
 - **PM treatment: base (facial oil)**

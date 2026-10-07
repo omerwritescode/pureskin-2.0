@@ -14,9 +14,13 @@ routine-2.1.0 (7c-i c): the user's current products and avoid list (questionnair
 duplicates, conflicts with actives in use, the avoid list. Without tags, as 2.0.0.
 routine-2.2.0 (7c-ii): the low-severity note's wording (per-pair clauses); the sensitive
 acne substitution also applies when the catalog has no product for the step.
+routine-2.3.0 (7c-iii): the wrinkle step's "retinol" keyword matches the retinoid class
+(retinal, retinol, ...), not only the retinol token; the sensitive-skin fragrance reason
+names the kind of ingredient (declared fragrance, a listed fragrance allergen, an
+essential oil). Unchanged on the placeholder catalog (RULE_ORDER and RANKED digests).
 """
 
-ROUTINE_CONFIG_VERSION = "routine-2.2.0"
+ROUTINE_CONFIG_VERSION = "routine-2.3.0"
 
 AM, PM = "am", "pm"
 BOTH = (AM, PM)
@@ -73,6 +77,15 @@ SENSITIVE = "sensitive"  # the source of the steps it adds
 # step, core steps included. A step with no fragrance-free product stays empty, with a
 # warning.
 SENSITIVE_FRAGRANCE_FREE = True
+# The reason shown, by the class of the first such ingredient the product lists (in
+# ingredient_config.FRAGRANCE_CLASSES order). {token}: its canonical name.
+SENSITIVE_FRAGRANCE_REASONS = {
+    "fragrance": "It lists {token} (declared fragrance). Sensitive skin gets fragrance-free products only.",
+    "fragrance_allergen": (
+        "It contains {token}, a listed fragrance allergen. Sensitive skin gets fragrance-free products only."
+    ),
+    "essential_oil": "It contains {token}, an essential oil. Sensitive skin gets fragrance-free products only.",
+}
 # Preferred first, falling back to the skin type's own step (core categories only).
 SENSITIVE_STEPS = (
     ("sunscreen", ("mineral",), (AM,), None),
@@ -320,7 +333,9 @@ MATCHERS = {
     "azelaic acid": (("ingredient", "azelaic acid"),),
     "alpha arbutin": (("ingredient", "alpha arbutin"),),
     "tranexamic acid": (("ingredient", "tranexamic acid"),),
-    "retinol": (("ingredient", "retinol"),),
+    # The wrinkle step (7c-iii): any retinoid (retinal, retinol, a retinyl ester before the
+    # preservative cutoff), not only retinol. The keyword keeps its name.
+    "retinol": (("class", "retinoid"),),
     "peptide": (("class", "peptide"),),
     "bha": (("class", "bha"),),
 }

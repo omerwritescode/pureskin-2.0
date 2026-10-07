@@ -76,7 +76,17 @@ before auth, the DB schema, and the static frontend shell are working. Currently
           substitution also fires when no benzoyl-peroxide product exists). Evaluation:
           `python -m app.services.recommendation.evaluate`. Results are on the placeholder
           catalog until 7c-iii (IDF over 24 short lists is not meaningful).
-    - [ ] 7c-iii. Verified catalog expansion for thin slots; retire the placeholders.
+    - [ ] 7c-iii. A catalog of real products for the thin slots; retire the placeholders.
+      - [x] Unit 1: `backend/catalog/products.json` (37 products; lists copied from the cited
+            pages and checked by script as exact text: sourced from the cited pages;
+            spot-checked by a person: not yet), its loader (`services/catalog/`,
+            catalog-1.0.0), page-text cleaning (`services/ingredients/clean.py`),
+            ingredients-1.2.0 (additions only), routine-2.3.0 (the wrinkle step takes any
+            retinoid; sensitive fragrance reasons name the kind of ingredient). No DB
+            change yet.
+      - [ ] Unit 2: DB backup, provenance migration, `seed.py` on the loader, the 24
+            placeholders become a test-only fixture.
+      - [ ] Unit 3: evaluation on the real catalog, UI (market label), spec and status docs.
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
@@ -108,11 +118,22 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   (`*_config.py`), never as numbers in code. Bump the version string when a result can change.
 - Bump `CONFIG_VERSION` (questionnaire_config.py), `MERGE_CONFIG_VERSION`
   (skin_profile_config.py), `INGREDIENT_CONFIG_VERSION` (ingredient_config.py, now
-  ingredients-1.1.0), `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.2.0) or
-  `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.0)
-  whenever a value there changes. `app/tests/test_config_versions.py` fingerprints the
-  values and fails on any change without a bump; record the new version's fingerprint
-  there (a version not yet committed may have its fingerprint updated in place).
+  ingredients-1.2.0), `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.3.0),
+  `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.0) or
+  `CATALOG_CONFIG_VERSION` (catalog_config.py, now catalog-1.0.0) whenever a value there
+  changes. `app/tests/test_config_versions.py` fingerprints the values and fails on any
+  change without a bump; record the new version's fingerprint there (a version not yet
+  committed may have its fingerprint updated in place). `backend/catalog/products.json`
+  works the same way: bump its `version` and record its fingerprint in
+  `app/services/catalog/tests/test_loader.py`.
+- Catalog (7c-iii): products come only from `backend/catalog/products.json`. A row's
+  `ingredients_verbatim` is never edited (its hash is checked); cleaning happens at load
+  time, by rules in `ingredient_config.py` and reviewed per-row directives. Any problem in
+  any row stops the whole load. A failed `expected_constraints` value is recorded in
+  `known_mismatches` and reported, never fixed or weakened. Describe the lists as
+  "sourced from the cited pages; spot-checked by a person: not yet" (each was copied from
+  its cited page and checked by script as exact text against the staging copy); never
+  with a word that claims a person checked them.
 - Ingredients (7c): every ingredient decision goes through `services/ingredients/` (one
   canonical token per ingredient, never substrings) and the one membership function,
   `memberships(items, strict=...)`. AMBIGUOUS_MEMBERS (lactic/malic/tartaric acid, sodium
@@ -156,6 +177,10 @@ python -m app.services.skin_profile.merge_cases          # merge-case table (rep
 python -m app.services.skin_profile.time_analyze         # /api/scan/analyze timing (needs samples/)
 python -m app.services.image_analysis.check_funnel_resolution   # one photo at several upload sizes
 python -m app.services.ingredients.review    # ingredient review: unknown tokens, cutoff dismissals
+python -m app.services.ingredients.review --catalog                 # ... on backend/catalog/products.json
+python -m app.services.ingredients.review --staging ../catalog_staging   # ... on every staging row
+python -m app.services.catalog               # load products.json and print the load report
+python -m app.services.catalog.promote --staging ../catalog_staging   # exact-text check vs staging
 python -m app.services.recommendation.evaluate   # ranker evaluation report (~7 min; --no-timing)
 python -m app.services.recommendation.evaluate --update-readme   # rewrite the README's results
 UPDATE_SNAPSHOTS=1 python -m pytest app/tests # re-record routine behaviour snapshots (check the diff!)
@@ -168,3 +193,24 @@ Frontend pages are served by the same FastAPI app: http://localhost:8000/scan/, 
 **Windows gotcha:** `--reload` can silently hang when the server isn't attached to a real
 console. It logs "Reloading...", but the old worker keeps serving the old code (new routes
 404/405). If a change doesn't show up, stop the server and start it again.
+
+## Deferred verification
+
+Checks a person still has to do. Until they are done, the catalog's ingredient lists are
+"sourced from the cited pages; spot-checked by a person: not yet".
+
+- **Spot-check the catalog pages against the CSVs**: open each `source_url` and compare its
+  list with `catalog_staging/` and `products.json`. None of the 50 rows has been checked by
+  a person yet.
+- **B29** (Anua azelaic serum): the page credits blue tansy oil, which its printed list
+  doesn't have; the list has betaine salicylate (a BHA), so sensitive skin doesn't get it.
+- **B17** (Neutrogena Sheer Zinc): the list is the US Drug Facts formula; the product the
+  sheet's retailer link sells in India is a different one.
+- **B06** (Dermatouch salicylic face wash): the page's "Key Actives" name niacinamide and a
+  willowherb extract that its printed list doesn't have.
+- **Left neutral, to confirm**: B37's cinnamomum cassia bark extract and B17's phenethyl
+  alcohol (neither is in EU Annex III; cassia *leaf oil* is).
+- **B34 replacement**: B34 fails `anhydrous_oil` (its first ingredient is gold flakes), so
+  the dry-skin facial-oil step has no product. A replacement facial oil is needed.
+- **A second centella product** for the sensitive morning serum step.
+- **The real-phone scan** and **the manual checklist** (still outstanding).
