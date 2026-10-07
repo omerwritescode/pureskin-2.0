@@ -707,7 +707,7 @@ python -m pytest app/services/recommendation   # from backend/
 - `test_engine.py`: each rule on small synthetic catalogs (sensitivity as a modifier,
   fragrance as a hard rule, substitutions, band triggers, concern priority, evening-only
   actives, fallbacks keeping the hard rules, fail-closed unknowns, class conflicts,
-  cautions, determinism), and the invariants over 2,430 profiles on the seeded catalog:
+  cautions, determinism), and the invariants over 2,430 profiles on the fixture catalog:
   no conflicting pair in any session, no strong active or fragrance for sensitive skin,
   no retinoid or leave-on AHA in the morning, every core step filled, every left-out
   product with a reason.
@@ -718,11 +718,22 @@ python -m pytest app/services/recommendation   # from backend/
 - `test_ranked_grid.py`: over both grids (5,502 profiles), the ranked set is the eligible
   set, the sort keys hold for every pick, alternatives are safe swaps, no avoided
   ingredient or active-in-use conflict is ranked, determinism with a shuffled catalog,
-  and the rule-order digest.
+  the rule-order digest and the ranked-grid digest (both on the fixture catalog).
+- `test_find_conflict_equivalence.py` (7c-iii 2a): keeps the old pair-by-pair `find_conflict`
+  as the reference; the row-by-row one returns the same conflict and reason on every
+  ordered pair of the real and fixture catalogs, under random tables with ties, and on
+  random sessions.
+- `test_real_catalog.py` (7c-iii): on the real catalog (`backend/catalog/products.json`),
+  over both grids: the ranked set is the eligible set, no two products in a session
+  clash (core pairs included), no strong active, L-ascorbic acid or fragrance for
+  sensitive skin, no avoided ingredient, duplicate or clash with an active in use, no
+  retinoid or leave-on AHA in the morning, determinism; and a recorded snapshot of
+  eleven routines (`app/tests/snapshots/routine_real_catalog.json`). Slow (a few minutes).
 - `test_explain.py`: banned words in the templates and in every generated sentence, the
   rule text matching the rule that created the step, the ranking sentence, examples.
 - `test_evaluate.py`: the report is deterministic, carries the banner in every section,
   names no product in the gap report, and the README's results match the config.
 - App-level: `app/tests/test_routine_behaviour.py` (recorded snapshots, and the why and
   alternatives in the API), `test_scan_to_routine.py`, `test_seed.py`,
-  `test_migration_7c.py`.
+  `test_migration_7c.py`, `test_migration_7c_iii.py`. The test database holds the fixture
+  catalog (`app/tests/catalog_fixture.py`), never the real one.

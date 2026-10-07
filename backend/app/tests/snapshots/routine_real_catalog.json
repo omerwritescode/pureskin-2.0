@@ -1,0 +1,1928 @@
+{
+  "combination_wrinkle_45": {
+    "am": [
+      {
+        "alternatives": [
+          "Fruit AHA Face Wash",
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for combination skin.",
+          "Ranked 1st of 6 eligible cleansers: it lists Glycerin (2nd of 30 ingredients), matched for combination skin and fine lines (Moderate)."
+        ]
+      },
+      {
+        "alternatives": [
+          "Revitalift 1.5% Hyaluronic Acid Serum",
+          "10% Vitamin C Serum (Vitamin C Derivative)"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "vitamin c"
+        ],
+        "matched_keyword": "vitamin c",
+        "note": null,
+        "product": "Boost 10% Niacinamide Booster",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for combination skin.",
+          "Contains Ascorbyl Glucoside (4th of 25 ingredients).",
+          "Ranked 1st of 4 eligible serums: it lists Niacinamide (2nd of 25 ingredients), matched for combination skin; Sodium Hyaluronate (7th of 25 ingredients), matched for combination skin and fine lines (Moderate); Ascorbyl Glucoside (4th of 25 ingredients), matched for fine lines (Moderate)."
+        ]
+      },
+      {
+        "alternatives": [
+          "Clear Face Care Gel"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Water Bank Blue Hyaluronic Gel Moisturizer",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for combination skin.",
+          "Its texture is gel.",
+          "Ranked 1st of 2 eligible moisturisers: it lists Glycerin (3rd of 23 ingredients), matched for combination skin and fine lines (Moderate)."
+        ]
+      },
+      {
+        "alternatives": [
+          "Relief Sun : Rice + Niacinamide",
+          "Sheer Zinc Dry-Touch Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Multi-Vitamin Sunscreen",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for combination skin.",
+          "Ranked 1st of 6 eligible sunscreens: it lists Niacinamide (5th of 31 ingredients), matched for combination skin; Sodium Hyaluronate (17th of 31 ingredients), matched for combination skin and fine lines (Moderate)."
+        ]
+      }
+    ],
+    "base_set": "combination",
+    "left_out": [],
+    "pm": [
+      {
+        "alternatives": [
+          "Fruit AHA Face Wash",
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for combination skin.",
+          "Ranked 1st of 6 eligible cleansers: it lists Glycerin (2nd of 30 ingredients), matched for combination skin and fine lines (Moderate)."
+        ]
+      },
+      {
+        "alternatives": [
+          "Clear Face Care Gel"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Water Bank Blue Hyaluronic Gel Moisturizer",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for combination skin.",
+          "Its texture is gel.",
+          "Ranked 1st of 2 eligible moisturisers: it lists Glycerin (3rd of 23 ingredients), matched for combination skin and fine lines (Moderate)."
+        ]
+      }
+    ],
+    "unfilled": [],
+    "warnings": []
+  },
+  "dry_high": {
+    "am": [
+      {
+        "alternatives": [
+          "Salicylic Acid 2% Face Wash"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "salicylic acid"
+        ],
+        "matched_keyword": "salicylic acid",
+        "note": null,
+        "product": "True Clarity Oil & Acne Control Face Wash",
+        "rule": "acne_score",
+        "why": [
+          "Added because your acne score is High (75).",
+          "Contains Salicylic Acid (11th of 29 ingredients).",
+          "Ranked 1st of 2 eligible cleansers: it lists Niacinamide (17th of 29 ingredients), matched for breakouts (High), redness (High), pigmentation (High) and visible pores (High); Centella Asiatica extract (19th of 29 ingredients), matched for redness (High); Sodium Hyaluronate (21st of 29 ingredients), matched for dry skin and fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [
+          "10% Vitamin C Serum (Vitamin C Derivative)",
+          "Cica Calming Skin Renewing Night Gel Serum"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "hyaluronic acid"
+        ],
+        "matched_keyword": "hyaluronic acid",
+        "note": null,
+        "product": "Boost 10% Niacinamide Booster",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Contains Sodium Hyaluronate (7th of 25 ingredients).",
+          "Ranked 1st of 7 eligible serums: it lists Niacinamide (2nd of 25 ingredients), matched for breakouts (High), redness (High), pigmentation (High) and visible pores (High); Ascorbyl Glucoside (4th of 25 ingredients), matched for pigmentation (High) and fine lines (High); Sodium Hyaluronate (7th of 25 ingredients), matched for dry skin and fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "alpha arbutin"
+        ],
+        "matched_keyword": "alpha arbutin",
+        "note": null,
+        "product": "2% Alpha Arbutin + HA Serum",
+        "rule": "pigmentation_score",
+        "why": [
+          "Added because your pigmentation score is High (75).",
+          "Contains Alpha Arbutin (3rd of 19 ingredients).",
+          "It is the only eligible serum with alpha arbutin in the catalog."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "peptide"
+        ],
+        "matched_keyword": "peptide",
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "wrinkle_score",
+        "why": [
+          "Added because your wrinkle score is High (75).",
+          "Contains Palmitoyl Pentapeptide-4 (53rd of 53 ingredients).",
+          "It is the only eligible moisturiser with peptide in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Relief Sun : Rice + Niacinamide",
+          "Sheer Zinc Dry-Touch Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Multi-Vitamin Sunscreen",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Ranked 1st of 6 eligible sunscreens: it lists Niacinamide (5th of 31 ingredients), matched for breakouts (High), redness (High), pigmentation (High) and visible pores (High); Sodium Hyaluronate (17th of 31 ingredients), matched for dry skin and fine lines (High); Allantoin (15th of 31 ingredients), matched for redness (High)."
+        ]
+      }
+    ],
+    "base_set": "dry",
+    "left_out": [
+      [
+        "Azelaic Acid Suspension 10%",
+        [
+          "am"
+        ],
+        "It clashes with True Clarity Oil & Acne Control Face Wash: Layering two exfoliating acids can over-dry and irritate skin."
+      ],
+      [
+        "3% Tranexamic Acid + HPA Serum",
+        [
+          "pm"
+        ],
+        "It clashes with 2.5% Benzoyl Peroxide Spot Corrector: Benzoyl peroxide with AHAs is very drying and can irritate the skin."
+      ],
+      [
+        "Salicylic Acid 2%",
+        [
+          "pm"
+        ],
+        "It clashes with 2.5% Benzoyl Peroxide Spot Corrector: Two strong acne actives together can cause excessive dryness and peeling."
+      ]
+    ],
+    "pm": [
+      {
+        "alternatives": [],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "cream"
+        ],
+        "matched_keyword": "cream",
+        "note": null,
+        "product": "Creamy Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Its texture is cream.",
+          "It is the only eligible cream or milk cleanser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "10% Vitamin C Serum (Vitamin C Derivative)",
+          "Cica Calming Skin Renewing Night Gel Serum"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "hyaluronic acid"
+        ],
+        "matched_keyword": "hyaluronic acid",
+        "note": null,
+        "product": "Boost 10% Niacinamide Booster",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Contains Sodium Hyaluronate (7th of 25 ingredients).",
+          "Ranked 1st of 8 eligible serums: it lists Niacinamide (2nd of 25 ingredients), matched for breakouts (High), redness (High), pigmentation (High) and visible pores (High); Ascorbyl Glucoside (4th of 25 ingredients), matched for pigmentation (High) and fine lines (High); Sodium Hyaluronate (7th of 25 ingredients), matched for dry skin and fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "azelaic acid"
+        ],
+        "matched_keyword": "azelaic acid",
+        "note": null,
+        "product": "Azelaic Acid Suspension 10%",
+        "rule": "redness_score",
+        "why": [
+          "Added because your redness score is High (75).",
+          "Contains Azelaic Acid (4th of 17 ingredients).",
+          "Ranked 1st of 2 eligible serums: it lists Azelaic Acid (4th of 17 ingredients), matched for breakouts (High), redness (High) and pigmentation (High); Isodecyl Neopentanoate (2nd of 17 ingredients), matched for dry skin.",
+          "Azelaic Acid 10 Hyaluron was ranked lower because it lists Betaine Salicylate, a strong active this step doesn't call for."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "treatment",
+        "caution": null,
+        "keywords": [
+          "benzoyl peroxide"
+        ],
+        "matched_keyword": "benzoyl peroxide",
+        "note": null,
+        "product": "2.5% Benzoyl Peroxide Spot Corrector",
+        "rule": "acne_score",
+        "why": [
+          "Added because your acne score is High (75).",
+          "Contains Benzoyl Peroxide (7th of 24 ingredients).",
+          "It is the only eligible benzoyl peroxide treatment in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Moisturising Cream",
+          "Cicaplast Baume B5+"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "rich"
+        ],
+        "matched_keyword": "rich",
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Its texture is cream.",
+          "Ranked 1st of 5 eligible moisturisers: it lists Niacinamide (4th of 53 ingredients), matched for breakouts (High), redness (High), pigmentation (High) and visible pores (High); Glycerin (2nd of 53 ingredients), matched for dry skin and fine lines (High); Isopropyl Isostearate (6th of 53 ingredients), matched for dry skin."
+        ]
+      }
+    ],
+    "unfilled": [
+      [
+        "pm",
+        "treatment",
+        "base",
+        [
+          "facial oil"
+        ],
+        "none in catalog",
+        []
+      ],
+      [
+        "pm",
+        "serum",
+        "wrinkle_score",
+        [
+          "retinol"
+        ],
+        "none in catalog",
+        []
+      ]
+    ],
+    "warnings": [
+      "No treatment with facial oil found in the catalog for this step",
+      "No serum with retinol found in the catalog for this step"
+    ]
+  },
+  "dry_wrinkle_high": {
+    "am": [
+      {
+        "alternatives": [],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "cream"
+        ],
+        "matched_keyword": "cream",
+        "note": null,
+        "product": "Creamy Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Its texture is cream.",
+          "It is the only eligible cream or milk cleanser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Multi-Peptide + HA Serum",
+          "10% Vitamin C Serum (Vitamin C Derivative)"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "hyaluronic acid"
+        ],
+        "matched_keyword": "hyaluronic acid",
+        "note": null,
+        "product": "Revitalift 1.5% Hyaluronic Acid Serum",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Contains SODIUM HYALURONATE (4th of 14 ingredients).",
+          "Ranked 1st of 8 eligible serums: it lists DIPEPTIDE DIAMINOBUTYROYL BENZYLAMIDE DIACETATE (5th of 14 ingredients), matched for fine lines (High); GLYCERIN (2nd of 14 ingredients), matched for dry skin and fine lines (High); ASCORBYL GLUCOSIDE (8th of 14 ingredients), matched for fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "peptide"
+        ],
+        "matched_keyword": "peptide",
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "wrinkle_score",
+        "why": [
+          "Added because your wrinkle score is High (75).",
+          "Contains Palmitoyl Pentapeptide-4 (53rd of 53 ingredients).",
+          "It is the only eligible moisturiser with peptide in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Sheer Zinc Dry-Touch Sunscreen",
+          "Ultra Light Zinc Mineral Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Multi-Vitamin Sunscreen",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Ranked 1st of 6 eligible sunscreens: it lists Sodium Hyaluronate (17th of 31 ingredients), matched for dry skin and fine lines (High)."
+        ]
+      }
+    ],
+    "base_set": "dry",
+    "left_out": [],
+    "pm": [
+      {
+        "alternatives": [],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "cream"
+        ],
+        "matched_keyword": "cream",
+        "note": null,
+        "product": "Creamy Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Its texture is cream.",
+          "It is the only eligible cream or milk cleanser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Multi-Peptide + HA Serum",
+          "10% Vitamin C Serum (Vitamin C Derivative)"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "hyaluronic acid"
+        ],
+        "matched_keyword": "hyaluronic acid",
+        "note": null,
+        "product": "Revitalift 1.5% Hyaluronic Acid Serum",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Contains SODIUM HYALURONATE (4th of 14 ingredients).",
+          "Ranked 1st of 9 eligible serums: it lists DIPEPTIDE DIAMINOBUTYROYL BENZYLAMIDE DIACETATE (5th of 14 ingredients), matched for fine lines (High); GLYCERIN (2nd of 14 ingredients), matched for dry skin and fine lines (High); ASCORBYL GLUCOSIDE (8th of 14 ingredients), matched for fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [
+          "Atoderm Intensive Baume",
+          "Regenerist Micro-Sculpting Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "rich"
+        ],
+        "matched_keyword": "rich",
+        "note": null,
+        "product": "Moisturising Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for dry skin.",
+          "Its texture is cream.",
+          "Ranked 1st of 5 eligible moisturisers: it lists Glycerin (2nd of 24 ingredients), matched for dry skin and fine lines (High); Ceramide AP (10th of 24 ingredients), matched for dry skin; Caprylic/Capric Triglyceride (4th of 24 ingredients), matched for dry skin."
+        ]
+      }
+    ],
+    "unfilled": [
+      [
+        "pm",
+        "treatment",
+        "base",
+        [
+          "facial oil"
+        ],
+        "none in catalog",
+        []
+      ],
+      [
+        "pm",
+        "serum",
+        "wrinkle_score",
+        [
+          "retinol"
+        ],
+        "none in catalog",
+        []
+      ]
+    ],
+    "warnings": [
+      "No treatment with facial oil found in the catalog for this step",
+      "No serum with retinol found in the catalog for this step"
+    ]
+  },
+  "normal_acne_and_pigmentation": {
+    "am": [
+      {
+        "alternatives": [
+          "Salicylic Acid 2% Face Wash"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "salicylic acid"
+        ],
+        "matched_keyword": "salicylic acid",
+        "note": null,
+        "product": "True Clarity Oil & Acne Control Face Wash",
+        "rule": "acne_score",
+        "why": [
+          "Added because your acne score is High (61).",
+          "Contains Salicylic Acid (11th of 29 ingredients).",
+          "Ranked 1st of 2 eligible cleansers: it lists Niacinamide (17th of 29 ingredients), matched for breakouts (High) and pigmentation (High); Sodium Hyaluronate (21st of 29 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "10% Vitamin C Serum (Vitamin C Derivative)",
+          "Ascorbyl Glucoside Solution 12% Brightening Vitamin C Serum"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "antioxidant"
+        ],
+        "matched_keyword": "antioxidant",
+        "note": null,
+        "product": "Boost 10% Niacinamide Booster",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Contains Ascorbyl Glucoside (4th of 25 ingredients).",
+          "Ranked 1st of 5 eligible serums: it lists Ascorbyl Glucoside (4th of 25 ingredients), matched for normal skin and pigmentation (High); Niacinamide (2nd of 25 ingredients), matched for breakouts (High) and pigmentation (High); Sodium Hyaluronate (7th of 25 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "alpha arbutin"
+        ],
+        "matched_keyword": "alpha arbutin",
+        "note": null,
+        "product": "2% Alpha Arbutin + HA Serum",
+        "rule": "pigmentation_score",
+        "why": [
+          "Added because your pigmentation score is High (61).",
+          "Contains Alpha Arbutin (3rd of 19 ingredients).",
+          "It is the only eligible serum with alpha arbutin in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Moisturising Cream",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 7 eligible moisturisers: it lists Niacinamide (4th of 53 ingredients), matched for breakouts (High) and pigmentation (High); Glycerin (2nd of 53 ingredients), matched for normal skin; Camellia Sinensis Leaf Extract (44th of 53 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Multi-Vitamin Sunscreen",
+          "Sheer Zinc Dry-Touch Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Relief Sun : Rice + Niacinamide",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible sunscreens: it lists NIACINAMIDE (8th of 42 ingredients), matched for breakouts (High) and pigmentation (High); CAMELLIA SINENSIS LEAF EXTRACT (32nd of 42 ingredients), matched for normal skin; GLYCERIN (12th of 42 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "base_set": "normal",
+    "left_out": [
+      [
+        "3% Tranexamic Acid + HPA Serum",
+        [
+          "pm"
+        ],
+        "It clashes with 2.5% Benzoyl Peroxide Spot Corrector: Benzoyl peroxide with AHAs is very drying and can irritate the skin."
+      ]
+    ],
+    "pm": [
+      {
+        "alternatives": [
+          "Fruit AHA Face Wash",
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible cleansers: it lists Glycerin (2nd of 30 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "treatment",
+        "caution": null,
+        "keywords": [
+          "benzoyl peroxide"
+        ],
+        "matched_keyword": "benzoyl peroxide",
+        "note": null,
+        "product": "2.5% Benzoyl Peroxide Spot Corrector",
+        "rule": "acne_score",
+        "why": [
+          "Added because your acne score is High (61).",
+          "Contains Benzoyl Peroxide (7th of 24 ingredients).",
+          "It is the only eligible benzoyl peroxide treatment in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Moisturising Cream",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 7 eligible moisturisers: it lists Niacinamide (4th of 53 ingredients), matched for breakouts (High) and pigmentation (High); Glycerin (2nd of 53 ingredients), matched for normal skin; Camellia Sinensis Leaf Extract (44th of 53 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "unfilled": [],
+    "warnings": []
+  },
+  "normal_pigmentation_high": {
+    "am": [
+      {
+        "alternatives": [
+          "Fruit AHA Face Wash",
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible cleansers: it lists Glycerin (2nd of 30 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Boost 10% Niacinamide Booster",
+          "Ascorbyl Glucoside Solution 12% Brightening Vitamin C Serum"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "antioxidant"
+        ],
+        "matched_keyword": "antioxidant",
+        "note": null,
+        "product": "10% Vitamin C Serum (Vitamin C Derivative)",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Contains 3-O-Ethyl Ascorbic Acid (2nd of 22 ingredients).",
+          "Ranked 1st of 5 eligible serums: it lists 3-O-Ethyl Ascorbic Acid (2nd of 22 ingredients), matched for normal skin and pigmentation (High); Sodium Hyaluronate (11th of 22 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "alpha arbutin"
+        ],
+        "matched_keyword": "alpha arbutin",
+        "note": null,
+        "product": "2% Alpha Arbutin + HA Serum",
+        "rule": "pigmentation_score",
+        "why": [
+          "Added because your pigmentation score is High (75).",
+          "Contains Alpha Arbutin (3rd of 19 ingredients).",
+          "It is the only eligible serum with alpha arbutin in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Moisturising Cream",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 7 eligible moisturisers: it lists Niacinamide (4th of 53 ingredients), matched for pigmentation (High); Glycerin (2nd of 53 ingredients), matched for normal skin; Camellia Sinensis Leaf Extract (44th of 53 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Multi-Vitamin Sunscreen",
+          "Sheer Zinc Dry-Touch Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Relief Sun : Rice + Niacinamide",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible sunscreens: it lists CAMELLIA SINENSIS LEAF EXTRACT (32nd of 42 ingredients), matched for normal skin; NIACINAMIDE (8th of 42 ingredients), matched for pigmentation (High); GLYCERIN (12th of 42 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "base_set": "normal",
+    "left_out": [],
+    "pm": [
+      {
+        "alternatives": [
+          "Fruit AHA Face Wash",
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible cleansers: it lists Glycerin (2nd of 30 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "tranexamic acid"
+        ],
+        "matched_keyword": "tranexamic acid",
+        "note": null,
+        "product": "3% Tranexamic Acid + HPA Serum",
+        "rule": "pigmentation_score",
+        "why": [
+          "Added because your pigmentation score is High (75).",
+          "Contains Tranexamic Acid (5th of 24 ingredients).",
+          "It is the only eligible serum with tranexamic acid in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Moisturising Cream",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 7 eligible moisturisers: it lists Niacinamide (4th of 53 ingredients), matched for pigmentation (High); Glycerin (2nd of 53 ingredients), matched for normal skin; Camellia Sinensis Leaf Extract (44th of 53 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "unfilled": [],
+    "warnings": []
+  },
+  "normal_pores": {
+    "am": [
+      {
+        "alternatives": [
+          "Fruit AHA Face Wash",
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible cleansers: it lists Glycerin (2nd of 30 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "10% Vitamin C Serum (Vitamin C Derivative)",
+          "Cica Calming Skin Renewing Night Gel Serum"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "antioxidant"
+        ],
+        "matched_keyword": "antioxidant",
+        "note": null,
+        "product": "Boost 10% Niacinamide Booster",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Contains Ascorbyl Glucoside (4th of 25 ingredients).",
+          "Ranked 1st of 6 eligible serums: it lists Ascorbyl Glucoside (4th of 25 ingredients), matched for normal skin; Niacinamide (2nd of 25 ingredients), matched for visible pores (High); Sodium Hyaluronate (7th of 25 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Moisturising Cream",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 7 eligible moisturisers: it lists Niacinamide (4th of 53 ingredients), matched for visible pores (High); Glycerin (2nd of 53 ingredients), matched for normal skin; Camellia Sinensis Leaf Extract (44th of 53 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Multi-Vitamin Sunscreen",
+          "Sheer Zinc Dry-Touch Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Relief Sun : Rice + Niacinamide",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible sunscreens: it lists NIACINAMIDE (8th of 42 ingredients), matched for visible pores (High); CAMELLIA SINENSIS LEAF EXTRACT (32nd of 42 ingredients), matched for normal skin; GLYCERIN (12th of 42 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "base_set": "normal",
+    "left_out": [],
+    "pm": [
+      {
+        "alternatives": [
+          "Fruit AHA Face Wash",
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 6 eligible cleansers: it lists Glycerin (2nd of 30 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Skin Perfecting 2% BHA Liquid Exfoliant"
+        ],
+        "category": "exfoliant",
+        "caution": null,
+        "keywords": [
+          "bha"
+        ],
+        "matched_keyword": "bha",
+        "note": "Twice a week",
+        "product": "Salicylic Acid 2%",
+        "rule": "pore_score",
+        "why": [
+          "Added because your pore score is High (80).",
+          "Contains Salicylic Acid (4th of 12 ingredients).",
+          "Ranked 1st of 2 eligible exfoliants: it lists Glycerin (5th of 12 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Moisturising Cream",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Regenerist Micro-Sculpting Cream",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 7 eligible moisturisers: it lists Niacinamide (4th of 53 ingredients), matched for visible pores (High); Glycerin (2nd of 53 ingredients), matched for normal skin; Camellia Sinensis Leaf Extract (44th of 53 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "unfilled": [],
+    "warnings": []
+  },
+  "normal_sensitive_high": {
+    "am": [
+      {
+        "alternatives": [
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 2 eligible cleansers: it lists Panthenol (11th of 30 ingredients), matched for redness (High) and sensitive skin; Glycerin (2nd of 30 ingredients), matched for normal skin and fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [
+          "Madagascar Centella Ampoule"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "centella"
+        ],
+        "matched_keyword": "centella",
+        "note": null,
+        "product": "10% Vitamin C Serum (Vitamin C Derivative)",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin. For sensitive skin, this step looks for a centella serum instead of an antioxidant serum.",
+          "Contains Centella Asiatica Leaf Extract (1st of 22 ingredients).",
+          "Ranked 1st of 2 eligible serums: it lists 3-O-Ethyl Ascorbic Acid (2nd of 22 ingredients), matched for pigmentation (High), fine lines (High) and normal skin; Centella Asiatica Leaf Extract (1st of 22 ingredients), matched for redness (High) and sensitive skin; Sodium Hyaluronate (11th of 22 ingredients), matched for normal skin and fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "azelaic acid"
+        ],
+        "matched_keyword": "azelaic acid",
+        "note": null,
+        "product": "Azelaic Acid Suspension 10%",
+        "rule": "redness_score",
+        "why": [
+          "Added because your redness score is High (75).",
+          "Contains Azelaic Acid (4th of 17 ingredients).",
+          "It is the only eligible azelaic acid serum in the catalog."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "alpha arbutin"
+        ],
+        "matched_keyword": "alpha arbutin",
+        "note": null,
+        "product": "2% Alpha Arbutin + HA Serum",
+        "rule": "pigmentation_score",
+        "why": [
+          "Added because your pigmentation score is High (75).",
+          "Contains Alpha Arbutin (3rd of 19 ingredients).",
+          "It is the only eligible serum with alpha arbutin in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Clear Face Care Gel",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Cicaplast Baume B5+",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 4 eligible moisturisers: it lists PANTHENOL (6th of 33 ingredients), matched for redness (High) and sensitive skin; MADECASSOSIDE (15th of 33 ingredients), matched for redness (High) and sensitive skin; GLYCERIN (4th of 33 ingredients), matched for normal skin and fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [
+          "Ultra Light Zinc Mineral Sunscreen",
+          "Rosy Ritual Glow Mineral Matte Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [
+          "mineral"
+        ],
+        "matched_keyword": "mineral",
+        "note": null,
+        "product": "Sheer Zinc Dry-Touch Sunscreen",
+        "rule": "sensitive",
+        "why": [
+          "Added for sensitive skin: a mineral sunscreen comes first.",
+          "All its UV filters are mineral.",
+          "Ranked 1st of 3 eligible sunscreens: it lists Glycerin (9th of 23 ingredients), matched for normal skin and fine lines (High)."
+        ]
+      }
+    ],
+    "base_set": "normal",
+    "left_out": [
+      [
+        "2.5% Benzoyl Peroxide Spot Corrector",
+        [
+          "pm"
+        ],
+        "It contains benzoyl peroxide. Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Skin Perfecting 2% BHA Liquid Exfoliant",
+        [
+          "pm"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Salicylic Acid 2%",
+        [
+          "pm"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Salicylic Acid 2% Face Wash",
+        [
+          "am"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "True Clarity Oil & Acne Control Face Wash",
+        [
+          "am"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Regenerist Micro-Sculpting Cream",
+        [
+          "am"
+        ],
+        "It lists fragrance (declared fragrance). Sensitive skin gets fragrance-free products only."
+      ],
+      [
+        "Azelaic Acid 10 Hyaluron",
+        [
+          "am",
+          "pm"
+        ],
+        "It contains betaine salicylate, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "3% Tranexamic Acid + HPA Serum",
+        [
+          "pm"
+        ],
+        "It contains mandelic acid, an alpha hydroxy acid (AHA). Strong actives are left out for sensitive skin."
+      ]
+    ],
+    "pm": [
+      {
+        "alternatives": [
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 2 eligible cleansers: it lists Panthenol (11th of 30 ingredients), matched for redness (High) and sensitive skin; Glycerin (2nd of 30 ingredients), matched for normal skin and fine lines (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "azelaic acid"
+        ],
+        "matched_keyword": "azelaic acid",
+        "note": null,
+        "product": "Azelaic Acid Suspension 10%",
+        "rule": "redness_score",
+        "why": [
+          "Added because your redness score is High (75).",
+          "Contains Azelaic Acid (4th of 17 ingredients).",
+          "It is the only eligible azelaic acid serum in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Clear Face Care Gel",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Cicaplast Baume B5+",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 4 eligible moisturisers: it lists PANTHENOL (6th of 33 ingredients), matched for redness (High) and sensitive skin; MADECASSOSIDE (15th of 33 ingredients), matched for redness (High) and sensitive skin; GLYCERIN (4th of 33 ingredients), matched for normal skin and fine lines (High)."
+        ]
+      }
+    ],
+    "unfilled": [
+      [
+        "am",
+        "cleanser",
+        "acne_score",
+        [
+          "salicylic acid"
+        ],
+        "excluded",
+        [
+          "strong_active"
+        ]
+      ],
+      [
+        "am",
+        "moisturiser",
+        "wrinkle_score",
+        [
+          "peptide"
+        ],
+        "excluded",
+        [
+          "fragrance"
+        ]
+      ],
+      [
+        "pm",
+        "serum",
+        "pigmentation_score",
+        [
+          "tranexamic acid"
+        ],
+        "excluded",
+        [
+          "strong_active"
+        ]
+      ],
+      [
+        "pm",
+        "serum",
+        "wrinkle_score",
+        [
+          "retinol"
+        ],
+        "none in catalog",
+        []
+      ]
+    ],
+    "warnings": [
+      "For sensitive skin, the morning serum step uses centella instead of an antioxidant serum.",
+      "For sensitive skin, the breakouts step uses azelaic acid instead of benzoyl peroxide, which is left out for sensitive skin.",
+      "No pore step: every product for it is left out for sensitive skin.",
+      "No suitable cleanser with salicylic acid for this step \u2014 using a standard one instead",
+      "No suitable moisturiser with peptide for this step \u2014 using a standard one instead",
+      "No suitable serum with tranexamic acid for this step",
+      "No serum with retinol found in the catalog for this step"
+    ]
+  },
+  "normal_sensitive_redness": {
+    "am": [
+      {
+        "alternatives": [
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 2 eligible cleansers: it lists Panthenol (11th of 30 ingredients), matched for redness (High) and sensitive skin; Glycerin (2nd of 30 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Madagascar Centella Ampoule"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "centella"
+        ],
+        "matched_keyword": "centella",
+        "note": null,
+        "product": "10% Vitamin C Serum (Vitamin C Derivative)",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin. For sensitive skin, this step looks for a centella serum instead of an antioxidant serum.",
+          "Contains Centella Asiatica Leaf Extract (1st of 22 ingredients).",
+          "Ranked 1st of 2 eligible serums: it lists Centella Asiatica Leaf Extract (1st of 22 ingredients), matched for redness (High) and sensitive skin; 3-O-Ethyl Ascorbic Acid (2nd of 22 ingredients), matched for normal skin; Sodium Hyaluronate (11th of 22 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "azelaic acid"
+        ],
+        "matched_keyword": "azelaic acid",
+        "note": null,
+        "product": "Azelaic Acid Suspension 10%",
+        "rule": "redness_score",
+        "why": [
+          "Added because your redness score is High (70).",
+          "Contains Azelaic Acid (4th of 17 ingredients).",
+          "It is the only eligible azelaic acid serum in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Clear Face Care Gel",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Cicaplast Baume B5+",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 4 eligible moisturisers: it lists PANTHENOL (6th of 33 ingredients), matched for redness (High) and sensitive skin; MADECASSOSIDE (15th of 33 ingredients), matched for redness (High) and sensitive skin; GLYCERIN (4th of 33 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Ultra Light Zinc Mineral Sunscreen",
+          "Rosy Ritual Glow Mineral Matte Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [
+          "mineral"
+        ],
+        "matched_keyword": "mineral",
+        "note": null,
+        "product": "Sheer Zinc Dry-Touch Sunscreen",
+        "rule": "sensitive",
+        "why": [
+          "Added for sensitive skin: a mineral sunscreen comes first.",
+          "All its UV filters are mineral.",
+          "Ranked 1st of 3 eligible sunscreens: it lists Glycerin (9th of 23 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "base_set": "normal",
+    "left_out": [
+      [
+        "Azelaic Acid 10 Hyaluron",
+        [
+          "am",
+          "pm"
+        ],
+        "It contains betaine salicylate, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ]
+    ],
+    "pm": [
+      {
+        "alternatives": [
+          "Creamy Cleanser"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 2 eligible cleansers: it lists Panthenol (11th of 30 ingredients), matched for redness (High) and sensitive skin; Glycerin (2nd of 30 ingredients), matched for normal skin."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "azelaic acid"
+        ],
+        "matched_keyword": "azelaic acid",
+        "note": null,
+        "product": "Azelaic Acid Suspension 10%",
+        "rule": "redness_score",
+        "why": [
+          "Added because your redness score is High (70).",
+          "Contains Azelaic Acid (4th of 17 ingredients).",
+          "It is the only eligible azelaic acid serum in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Clear Face Care Gel",
+          "Moisturising Cream"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [],
+        "matched_keyword": null,
+        "note": null,
+        "product": "Cicaplast Baume B5+",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for normal skin.",
+          "Ranked 1st of 4 eligible moisturisers: it lists PANTHENOL (6th of 33 ingredients), matched for redness (High) and sensitive skin; MADECASSOSIDE (15th of 33 ingredients), matched for redness (High) and sensitive skin; GLYCERIN (4th of 33 ingredients), matched for normal skin."
+        ]
+      }
+    ],
+    "unfilled": [],
+    "warnings": [
+      "For sensitive skin, the morning serum step uses centella instead of an antioxidant serum."
+    ]
+  },
+  "oily_acne_high_avoid_fragrance_salicylic_in_use": {
+    "am": [
+      {
+        "alternatives": [],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "foaming"
+        ],
+        "matched_keyword": "foaming",
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "It is a foaming cleanser.",
+          "It is the only eligible foaming cleanser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Boost 10% Niacinamide Booster"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "niacinamide"
+        ],
+        "matched_keyword": "niacinamide",
+        "note": null,
+        "product": "Niacinamide 10% + Zinc 1%",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Contains Niacinamide (2nd of 11 ingredients).",
+          "Ranked 1st of 2 eligible serums: it lists Niacinamide (2nd of 11 ingredients), matched for oily skin and breakouts (High); Zinc PCA (4th of 11 ingredients), matched for oily skin and breakouts (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Clear Face Care Gel",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its texture is gel.",
+          "It is the only eligible lightweight moisturiser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Relief Sun : Rice + Niacinamide",
+          "Ultra Light Zinc Mineral Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [
+          "spf 50",
+          "spf 30"
+        ],
+        "matched_keyword": "spf 50",
+        "note": null,
+        "product": "Multi-Vitamin Sunscreen",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its label says SPF 50.",
+          "Ranked 1st of 5 eligible sunscreens: it lists Niacinamide (5th of 31 ingredients), matched for oily skin and breakouts (High)."
+        ]
+      }
+    ],
+    "base_set": "oily",
+    "left_out": [
+      [
+        "2.5% Benzoyl Peroxide Spot Corrector",
+        [
+          "pm"
+        ],
+        "It clashes with salicylic acid, which you already use: Two strong acne actives together can cause excessive dryness and peeling."
+      ]
+    ],
+    "pm": [
+      {
+        "alternatives": [],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "foaming"
+        ],
+        "matched_keyword": "foaming",
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "It is a foaming cleanser.",
+          "It is the only eligible foaming cleanser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Boost 10% Niacinamide Booster"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "niacinamide"
+        ],
+        "matched_keyword": "niacinamide",
+        "note": null,
+        "product": "Niacinamide 10% + Zinc 1%",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Contains Niacinamide (2nd of 11 ingredients).",
+          "Ranked 1st of 2 eligible serums: it lists Niacinamide (2nd of 11 ingredients), matched for oily skin and breakouts (High); Zinc PCA (4th of 11 ingredients), matched for oily skin and breakouts (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Clear Face Care Gel",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its texture is gel.",
+          "It is the only eligible lightweight moisturiser in the catalog."
+        ]
+      }
+    ],
+    "unfilled": [
+      [
+        "pm",
+        "treatment",
+        "acne_score",
+        [
+          "benzoyl peroxide"
+        ],
+        "excluded",
+        [
+          "existing_conflict"
+        ]
+      ]
+    ],
+    "warnings": [
+      "No cleanser with salicylic acid was added because you already use salicylic acid.",
+      "No suitable treatment with benzoyl peroxide for this step"
+    ]
+  },
+  "oily_low": {
+    "am": [
+      {
+        "alternatives": [
+          "Salicylic Acid 2% Face Wash",
+          "Green Tea Pore Cleansing Face Wash"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "foaming"
+        ],
+        "matched_keyword": "foaming",
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "It is a foaming cleanser.",
+          "Ranked 1st of 3 eligible cleansers: no target ingredients matched; kept rule order."
+        ]
+      },
+      {
+        "alternatives": [
+          "Boost 10% Niacinamide Booster",
+          "Cica Calming Skin Renewing Night Gel Serum"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "niacinamide"
+        ],
+        "matched_keyword": "niacinamide",
+        "note": null,
+        "product": "Niacinamide 10% + Zinc 1%",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Contains Niacinamide (2nd of 11 ingredients).",
+          "Ranked 1st of 4 eligible serums: it lists Niacinamide (2nd of 11 ingredients), matched for oily skin; Zinc PCA (4th of 11 ingredients), matched for oily skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Water Bank Blue Hyaluronic Gel Moisturizer"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Clear Face Care Gel",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its texture is gel.",
+          "Ranked 1st of 2 eligible moisturisers: no target ingredients matched; kept rule order."
+        ]
+      },
+      {
+        "alternatives": [
+          "Relief Sun : Rice + Niacinamide",
+          "Ultra Light Zinc Mineral Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [
+          "spf 50",
+          "spf 30"
+        ],
+        "matched_keyword": "spf 50",
+        "note": null,
+        "product": "Multi-Vitamin Sunscreen",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its label says SPF 50.",
+          "Ranked 1st of 6 eligible sunscreens: it lists Niacinamide (5th of 31 ingredients), matched for oily skin."
+        ]
+      }
+    ],
+    "base_set": "oily",
+    "left_out": [],
+    "pm": [
+      {
+        "alternatives": [
+          "Salicylic Acid 2% Face Wash",
+          "Green Tea Pore Cleansing Face Wash"
+        ],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "foaming"
+        ],
+        "matched_keyword": "foaming",
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "It is a foaming cleanser.",
+          "Ranked 1st of 3 eligible cleansers: no target ingredients matched; kept rule order."
+        ]
+      },
+      {
+        "alternatives": [
+          "Boost 10% Niacinamide Booster",
+          "Cica Calming Skin Renewing Night Gel Serum"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "niacinamide"
+        ],
+        "matched_keyword": "niacinamide",
+        "note": null,
+        "product": "Niacinamide 10% + Zinc 1%",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Contains Niacinamide (2nd of 11 ingredients).",
+          "Ranked 1st of 5 eligible serums: it lists Niacinamide (2nd of 11 ingredients), matched for oily skin; Zinc PCA (4th of 11 ingredients), matched for oily skin."
+        ]
+      },
+      {
+        "alternatives": [
+          "Water Bank Blue Hyaluronic Gel Moisturizer"
+        ],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Clear Face Care Gel",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its texture is gel.",
+          "Ranked 1st of 2 eligible moisturisers: no target ingredients matched; kept rule order."
+        ]
+      }
+    ],
+    "unfilled": [],
+    "warnings": []
+  },
+  "oily_sensitive_acne_high": {
+    "am": [
+      {
+        "alternatives": [],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "foaming"
+        ],
+        "matched_keyword": "foaming",
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "It is a foaming cleanser.",
+          "It is the only eligible foaming cleanser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Boost 10% Niacinamide Booster"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "niacinamide"
+        ],
+        "matched_keyword": "niacinamide",
+        "note": null,
+        "product": "Niacinamide 10% + Zinc 1%",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Contains Niacinamide (2nd of 11 ingredients).",
+          "Ranked 1st of 2 eligible serums: it lists Niacinamide (2nd of 11 ingredients), matched for oily skin and breakouts (High); Zinc PCA (4th of 11 ingredients), matched for oily skin and breakouts (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "azelaic acid"
+        ],
+        "matched_keyword": "azelaic acid",
+        "note": null,
+        "product": "Azelaic Acid Suspension 10%",
+        "rule": "acne_score",
+        "why": [
+          "Added because your acne score is High (75). For sensitive skin, this step looks for an azelaic acid serum instead of a benzoyl peroxide serum.",
+          "Contains Azelaic Acid (4th of 17 ingredients).",
+          "It is the only eligible azelaic acid serum in the catalog."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Clear Face Care Gel",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its texture is gel.",
+          "It is the only eligible lightweight moisturiser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Rosy Ritual Glow Mineral Matte Sunscreen",
+          "Sheer Zinc Dry-Touch Sunscreen"
+        ],
+        "category": "sunscreen",
+        "caution": null,
+        "keywords": [
+          "mineral"
+        ],
+        "matched_keyword": "mineral",
+        "note": null,
+        "product": "Ultra Light Zinc Mineral Sunscreen",
+        "rule": "sensitive",
+        "why": [
+          "Added for sensitive skin: a mineral sunscreen comes first.",
+          "All its UV filters are mineral.",
+          "Ranked 1st of 3 eligible sunscreens: no target ingredients matched; kept rule order."
+        ]
+      }
+    ],
+    "base_set": "oily",
+    "left_out": [
+      [
+        "2.5% Benzoyl Peroxide Spot Corrector",
+        [
+          "pm"
+        ],
+        "It contains benzoyl peroxide. Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Salicylic Acid 2% Face Wash",
+        [
+          "am"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "True Clarity Oil & Acne Control Face Wash",
+        [
+          "am"
+        ],
+        "It contains salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ],
+      [
+        "Azelaic Acid 10 Hyaluron",
+        [
+          "am",
+          "pm"
+        ],
+        "It contains betaine salicylate, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin."
+      ]
+    ],
+    "pm": [
+      {
+        "alternatives": [],
+        "category": "cleanser",
+        "caution": null,
+        "keywords": [
+          "foaming"
+        ],
+        "matched_keyword": "foaming",
+        "note": null,
+        "product": "Aquaporin Booster 05% Cleanser",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "It is a foaming cleanser.",
+          "It is the only eligible foaming cleanser in the catalog."
+        ]
+      },
+      {
+        "alternatives": [
+          "Boost 10% Niacinamide Booster"
+        ],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "niacinamide"
+        ],
+        "matched_keyword": "niacinamide",
+        "note": null,
+        "product": "Niacinamide 10% + Zinc 1%",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Contains Niacinamide (2nd of 11 ingredients).",
+          "Ranked 1st of 2 eligible serums: it lists Niacinamide (2nd of 11 ingredients), matched for oily skin and breakouts (High); Zinc PCA (4th of 11 ingredients), matched for oily skin and breakouts (High)."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "serum",
+        "caution": null,
+        "keywords": [
+          "azelaic acid"
+        ],
+        "matched_keyword": "azelaic acid",
+        "note": null,
+        "product": "Azelaic Acid Suspension 10%",
+        "rule": "acne_score",
+        "why": [
+          "Added because your acne score is High (75). For sensitive skin, this step looks for an azelaic acid serum instead of a benzoyl peroxide serum.",
+          "Contains Azelaic Acid (4th of 17 ingredients).",
+          "It is the only eligible azelaic acid serum in the catalog."
+        ]
+      },
+      {
+        "alternatives": [],
+        "category": "moisturiser",
+        "caution": null,
+        "keywords": [
+          "lightweight"
+        ],
+        "matched_keyword": "lightweight",
+        "note": null,
+        "product": "Clear Face Care Gel",
+        "rule": "base",
+        "why": [
+          "Part of the base routine for oily skin.",
+          "Its texture is gel.",
+          "It is the only eligible lightweight moisturiser in the catalog."
+        ]
+      }
+    ],
+    "unfilled": [
+      [
+        "am",
+        "cleanser",
+        "acne_score",
+        [
+          "salicylic acid"
+        ],
+        "excluded",
+        [
+          "strong_active"
+        ]
+      ]
+    ],
+    "warnings": [
+      "For sensitive skin, the breakouts step uses azelaic acid instead of benzoyl peroxide, which is left out for sensitive skin.",
+      "No suitable cleanser with salicylic acid for this step \u2014 using a standard one instead"
+    ]
+  }
+}

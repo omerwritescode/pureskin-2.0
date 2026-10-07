@@ -8,17 +8,20 @@ from sqlalchemy.orm import sessionmaker
 import seed
 from app.api import auth, profile, routine, scan_analyze
 from app.api.deps import get_db
+from app.tests import catalog_fixture
 from app.tests.db import throwaway_database, upgrade
 
 
 @pytest.fixture(scope="session")
 def migrated_db():
-    """A throwaway database at the latest migration, with the product catalog seeded."""
+    """A throwaway database at the latest migration, with the test-only fixture catalog
+    (app/tests/catalog_fixture.py: the 24 step 6 placeholders, ids 1..24, which the routine
+    snapshots were recorded on) and the real conflict table."""
     with throwaway_database() as engine:
         upgrade(engine)
         Session = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
         with Session() as db:
-            seed.seed_products(db)
+            catalog_fixture.insert_products(db)
             seed.seed_conflicts(db)
             db.commit()
         yield engine

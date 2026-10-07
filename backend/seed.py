@@ -1,18 +1,21 @@
 """Seed the product catalog and ingredient-conflict rules.
 
 Run from backend/:  python seed.py
-Idempotent: products are matched on (name, brand) and conflicts on their normalized
+Idempotent: products are matched on (brand, name) and conflicts on their normalized
 ingredient pair, so re-running updates existing rows instead of duplicating them.
 
-THE 24 PRODUCTS ARE SYNTHETIC PLACEHOLDERS: invented brands and short, invented ingredient
-lists, written in step 6 to exercise the routine rules. They are not real products. Step
-7c-iii replaces them with verified products (ingredient lists from brand pages).
+Products come only from backend/catalog/products.json, through the catalog loader
+(app/services/catalog/): every row is cleaned, normalised and checked, and a problem in
+any row stops the seed before anything is written. seed_products() makes the products
+table exactly the catalog, printing every product it inserts, updates or prunes. The
+step 6 placeholder products are pruned the first time it runs; they live on only as the
+tests' fixture (app/tests/catalog_fixture.py), which this module never imports.
 
-Ingredient names go through the shared normaliser (app/services/ingredients/) before any
-rule sees them, and conflict rows may name a whole class ("class:retinoid"). Descriptions
-are display text only: since 7c-i (b) no rule matches them. Texture, foaming and SPF are
-product fields (PLACEHOLDER_FORMAT below).
+The ingredient lists are sourced from the cited pages; spot-checked by a person: not yet
+(backend/catalog/README.md). Conflict rows may name a whole class ("class:retinoid").
 """
+
+from datetime import date
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
@@ -20,115 +23,8 @@ from sqlalchemy.dialects.postgresql import insert
 from app.core.database import SessionLocal
 from app.core.utils import normalize_ingredient_pair
 from app.models import IngredientConflict, Product
+from app.services.catalog import Catalog, CatalogError, CatalogProduct, load_catalog
 from app.services.ingredients import check_conflict_name
-from app.services.recommendation.routine_config import MIN_SUNSCREEN_SPF
-
-# (name, brand, category, description, ingredients)
-PRODUCTS = [
-    # --- Cleansers ---
-    ("Clear Balance Foaming Cleanser", "Dermaveil", "cleanser",
-     "Oil-free foaming gel cleanser that lifts excess sebum without stripping.",
-     ["water", "sodium cocoyl glycinate", "glycerin", "zinc pca", "panthenol"]),
-    ("Hydra Cream Cleanser", "Lumea", "cleanser",
-     "Non-foaming cream cleanser with ceramides for dry, tight-feeling skin.",
-     ["water", "glycerin", "ceramide np", "sodium hyaluronate", "cetearyl alcohol"]),
-    ("Calm Skin Gentle Cleanser", "Puraleaf", "cleanser",
-     "Fragrance-free, soap-free milky wash for sensitive and reactive skin.",
-     ["water", "glycerin", "panthenol", "allantoin", "caprylic/capric triglyceride"]),
-    ("Blemish Control Cleanser", "Dermaveil", "cleanser",
-     "Daily gel wash with 2% salicylic acid to unclog pores and reduce breakouts.",
-     ["water", "salicylic acid", "sodium lauroyl sarcosinate", "glycerin", "zinc pca"]),
-
-    # --- Serums ---
-    ("Niacinamide 10% + Zinc Serum", "Formulab", "serum",
-     "Water-light serum that visibly balances oil and refines texture.",
-     ["water", "niacinamide", "zinc pca", "pentylene glycol"]),
-    ("Hyaluronic Acid 2% + B5 Serum", "Formulab", "serum",
-     "Multi-weight hyaluronic acid serum for deep, plumping hydration.",
-     ["water", "sodium hyaluronate", "hyaluronic acid", "panthenol"]),
-    ("Vitamin C 15% Brightening Serum", "Lumea", "serum",
-     "Stabilised vitamin C serum with ferulic acid to brighten dull skin.",
-     ["water", "ascorbic acid", "ferulic acid", "tocopherol", "propylene glycol"]),
-    ("Retinol 0.5% Night Serum", "Formulab", "serum",
-     "Encapsulated retinol in squalane to smooth fine lines overnight.",
-     ["squalane", "retinol", "caprylic/capric triglyceride", "tocopherol"]),
-    ("Green Tea Antioxidant Serum", "Puraleaf", "serum",
-     "Antioxidant serum with green tea and resveratrol to defend against daily stressors.",
-     ["water", "camellia sinensis leaf extract", "resveratrol", "tocopherol", "glycerin"]),
-    ("Centella Calming Serum", "Puraleaf", "serum",
-     "Centella asiatica serum that soothes visible redness and supports recovery.",
-     ["water", "centella asiatica extract", "madecassoside", "panthenol"]),
-    ("Azelaic Acid 10% Suspension", "Formulab", "serum",
-     "Lightweight azelaic acid suspension that calms redness and evens tone.",
-     ["water", "azelaic acid", "dimethicone", "isodecyl neopentanoate"]),
-    ("Alpha Arbutin 2% + HA Serum", "Formulab", "serum",
-     "Targets dark spots and uneven tone with alpha arbutin.",
-     ["water", "alpha arbutin", "sodium hyaluronate", "lactic acid"]),
-    ("Tranexamic Acid 5% Serum", "Lumea", "serum",
-     "Night serum with tranexamic acid to fade stubborn discolouration.",
-     ["water", "tranexamic acid", "glycerin", "allantoin"]),
-
-    # --- Moisturisers ---
-    ("Oil-Free Gel Moisturiser", "Dermaveil", "moisturiser",
-     "Lightweight, oil-free water-gel that hydrates without shine.",
-     ["water", "glycerin", "sodium hyaluronate", "dimethicone", "zinc pca"]),
-    ("Rich Repair Cream", "Lumea", "moisturiser",
-     "Rich, hydrating cream with shea butter and ceramides for very dry skin.",
-     ["water", "butyrospermum parkii butter", "ceramide np", "squalane", "glycerin"]),
-    ("Barrier Support Moisturiser", "Puraleaf", "moisturiser",
-     "Fragrance-free barrier cream with ceramides, cholesterol and fatty acids.",
-     ["water", "ceramide np", "cholesterol", "linoleic acid", "glycerin"]),
-    ("Peptide Firming Moisturiser", "Formulab", "moisturiser",
-     "Peptide moisturiser that supports firmness and smooths the look of fine lines.",
-     ["water", "palmitoyl pentapeptide-4", "glycerin", "squalane", "sodium hyaluronate"]),
-    ("Daily Balance Moisturiser", "Dermaveil", "moisturiser",
-     "Everyday lotion for normal skin that keeps moisture levels steady.",
-     ["water", "glycerin", "caprylic/capric triglyceride", "panthenol"]),
-
-    # --- Sunscreens ---
-    ("Invisible Fluid SPF 50", "Lumea", "sunscreen",
-     "Broad-spectrum SPF 50 fluid that leaves no white cast.",
-     ["water", "homosalate", "avobenzone", "octisalate", "silica"]),
-    ("Mineral Shield SPF 30", "Puraleaf", "sunscreen",
-     "Fragrance-free mineral sunscreen, broad-spectrum SPF 30, with zinc oxide.",
-     ["zinc oxide", "titanium dioxide", "caprylic/capric triglyceride", "tocopherol"]),
-
-    # --- Treatments ---
-    ("Benzoyl Peroxide 5% Spot Gel", "Dermaveil", "treatment",
-     "Targeted benzoyl peroxide gel that clears active breakouts overnight.",
-     ["water", "benzoyl peroxide", "carbomer", "glycerin"]),
-    ("Squalane Facial Oil", "Lumea", "treatment",
-     "Weightless squalane and rosehip facial oil to seal in moisture at night.",
-     ["squalane", "rosa canina seed oil", "tocopherol"]),
-
-    # --- Exfoliants ---
-    ("2% BHA Liquid Exfoliant", "Formulab", "exfoliant",
-     "Leave-on BHA exfoliant with salicylic acid to clear and minimise pores.",
-     ["water", "salicylic acid", "camellia sinensis leaf extract", "butylene glycol"]),
-    ("10% AHA Glycolic Toner", "Lumea", "exfoliant",
-     "Resurfacing AHA toner with glycolic acid for smoother, brighter skin.",
-     ["water", "glycolic acid", "aloe barbadensis leaf juice", "glycerin"]),
-]
-
-# Texture, foaming and SPF of the placeholder products, filled once (7c-i b) from the
-# words in each one's description above ("foaming gel", "cream", "milky", "lotion",
-# "SPF 50"). One-time seed data, not matching logic: descriptions are no longer matched.
-# A product missing here has no texture word in its description. The verified-product
-# template (7c-iii) asks for these fields directly.
-PLACEHOLDER_FORMAT = {
-    "Clear Balance Foaming Cleanser": {"texture": "gel", "foaming": "foaming"},
-    "Hydra Cream Cleanser": {"texture": "cream", "foaming": "non_foaming"},
-    "Calm Skin Gentle Cleanser": {"texture": "milk"},
-    "Blemish Control Cleanser": {"texture": "gel"},
-    "Oil-Free Gel Moisturiser": {"texture": "gel"},
-    "Rich Repair Cream": {"texture": "cream"},
-    "Barrier Support Moisturiser": {"texture": "cream"},
-    "Daily Balance Moisturiser": {"texture": "lotion"},
-    "Invisible Fluid SPF 50": {"texture": "fluid", "spf": 50},
-    "Mineral Shield SPF 30": {"spf": 30},
-    "Benzoyl Peroxide 5% Spot Gel": {"texture": "gel"},
-    "Squalane Facial Oil": {"texture": "oil"},
-}
 
 # (ingredient_a, ingredient_b, severity, reason) — order doesn't matter; normalized on insert.
 # A name is a canonical ingredient token, or a whole class as "class:<name>" (7c-i b): the
@@ -165,34 +61,50 @@ CONFLICTS = [
 ]
 
 
-def product_values(name: str, category: str, description: str, ingredients: list[str]) -> dict:
-    """The column values for one seeded product. Refuses a sunscreen without an SPF of
-    at least MIN_SUNSCREEN_SPF."""
-    fmt = PLACEHOLDER_FORMAT.get(name, {})
-    spf = fmt.get("spf")
-    if category == "sunscreen" and (spf is None or spf < MIN_SUNSCREEN_SPF):
-        raise ValueError(f"Sunscreen {name!r} needs a labelled SPF of at least {MIN_SUNSCREEN_SPF}")
+def product_values(product: CatalogProduct) -> dict:
+    """The column values for one catalog product (besides its brand and name). The
+    ingredients are the cleaned names, as printed; the verbatim text stays in products.json."""
     return {
-        "category": category, "description": description, "ingredients": ingredients,
-        "texture": fmt.get("texture"), "foaming": fmt.get("foaming"), "spf": spf,
+        "category": product.category, "description": None, "ingredients": list(product.ingredient_names),
+        "texture": product.texture, "foaming": product.foaming, "spf": product.spf,
+        "source_url": product.source_url, "market": product.market, "fetch_status": product.fetch_status,
+        "date_checked": date.fromisoformat(product.date_checked), "original_name": product.original_name,
     }
 
 
-def seed_products(db) -> tuple[int, int]:
+def seed_products(db, catalog: Catalog | None = None) -> tuple[int, int, int]:
+    """Make products exactly the catalog: upsert each product (matched on brand and name),
+    in file order, then delete every other product. Prints each row it inserts, updates
+    (with the fields that changed) or prunes. Returns (inserted, updated, pruned)."""
+    catalog = load_catalog() if catalog is None else catalog
+    existing = {(p.brand, p.name): p for p in db.scalars(select(Product).order_by(Product.id))}
+    wanted = set()
     inserted = updated = 0
-    for name, brand, category, description, ingredients in PRODUCTS:
-        product = db.scalars(
-            select(Product).where(Product.name == name, Product.brand == brand)
-        ).first()
-        values = product_values(name, category, description, ingredients)
-        if product is None:
-            db.add(Product(name=name, brand=brand, **values))
+    for product in catalog.products:
+        key = (product.brand, product.name)
+        wanted.add(key)
+        values = product_values(product)
+        row = existing.get(key)
+        label = f"{product.catalog_id} {product.brand} - {product.name}"
+        if row is None:
+            row = Product(name=product.name, brand=product.brand, **values)
+            db.add(row)
+            db.flush()  # one at a time, so new ids follow the file order
+            print(f"Inserted product: {label} ({product.category}, {product.market}, id {row.id})")
             inserted += 1
-        elif any(getattr(product, k) != v for k, v in values.items()):
-            for k, v in values.items():
-                setattr(product, k, v)
+            continue
+        changed = [field for field, value in values.items() if getattr(row, field) != value]
+        if changed:
+            for field in changed:
+                setattr(row, field, values[field])
+            print(f"Updated product: {label} ({', '.join(changed)})")
             updated += 1
-    return inserted, updated
+    pruned = [row for key, row in existing.items() if key not in wanted]
+    for row in pruned:
+        print(f"Pruned product: {row.brand} - {row.name} (id {row.id})")
+        db.delete(row)
+    db.flush()
+    return inserted, updated, len(pruned)
 
 
 def seed_conflicts(db) -> tuple[int, int, int]:
@@ -227,15 +139,25 @@ def seed_conflicts(db) -> tuple[int, int, int]:
 
 
 def main() -> None:
+    try:
+        catalog = load_catalog()
+    except CatalogError as error:
+        print("Catalog load stopped; nothing was seeded. Rows refused:")
+        for problem in error.problems:
+            print(f"- {problem}")
+        raise SystemExit(1)
     with SessionLocal() as db:
-        p_inserted, p_updated = seed_products(db)
+        p_inserted, p_updated, p_pruned = seed_products(db, catalog)
         c_inserted, c_updated, c_pruned = seed_conflicts(db)
         db.commit()
 
-        categories = sorted({p[2] for p in PRODUCTS})
+        total = len(catalog.products)
+        categories = sorted({p.category for p in catalog.products})
+        global_lists = sum(p.market == "global" for p in catalog.products)
         print(f"Products:  {p_inserted} inserted, {p_updated} updated, "
-              f"{len(PRODUCTS) - p_inserted - p_updated} unchanged "
-              f"({len(PRODUCTS)} total across {len(categories)} categories: {', '.join(categories)})")
+              f"{total - p_inserted - p_updated} unchanged, {p_pruned} pruned - {total} total "
+              f"({catalog.version}; {global_lists} global-market lists; {len(categories)} categories: "
+              f"{', '.join(categories)})")
         print(f"Conflicts: {c_inserted} inserted, {c_updated} already present "
               f"(re-applied severity/reason), {c_pruned} pruned - {len(CONFLICTS)} pairs total")
 

@@ -3,7 +3,8 @@ import pytest
 from app.services.questionnaire import questionnaire_config as cfg
 from app.services.questionnaire.lexicon import extract_products, extract_sensitivities
 
-# The catalog's ingredient names (seed.py), which extracted actives must match.
+# The fixture catalog's ingredient names (app/tests/catalog_fixture.py), which extracted
+# actives must match.
 CATALOG_ACTIVES = {
     "retinol", "benzoyl peroxide", "salicylic acid", "glycolic acid", "lactic acid",
     "ascorbic acid", "niacinamide", "azelaic acid", "alpha arbutin", "tranexamic acid",
@@ -13,10 +14,10 @@ CATALOG_ACTIVES = {
 
 def test_active_names_match_the_catalog():
     import seed
-
     from app.services.ingredients import CLASS_PREFIX, ingredient_config
+    from app.tests import catalog_fixture
 
-    catalog_ingredients = {i for *_, ingredients in seed.PRODUCTS for i in ingredients}
+    catalog_ingredients = {i for *_, ingredients in catalog_fixture.PRODUCTS for i in ingredients}
     conflict_names = {x for a, b, *_ in seed.CONFLICTS for x in (a, b)}
     classes = {x.removeprefix(CLASS_PREFIX) for x in conflict_names if x.startswith(CLASS_PREFIX)}
     assert set(cfg.ACTIVE_TERMS) == CATALOG_ACTIVES

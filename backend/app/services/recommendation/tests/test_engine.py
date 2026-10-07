@@ -1,7 +1,8 @@
 """The routine builder: hard rules, substitutions, conflicts, fallbacks and reasons.
 
 Rules are tested on small synthetic catalogs (exact cases), and the safety invariants
-over every profile in a grid on the seeded catalog.
+over every profile in a grid on the fixture catalog (app/tests/catalog_fixture.py, the 24
+step 6 placeholders; the real catalog's grid is in test_real_catalog.py).
 """
 
 import itertools
@@ -14,6 +15,7 @@ import seed
 from app.services.ingredients import fragrance_free, in_class
 from app.services.recommendation import engine, routine_config as cfg
 from app.services.recommendation.engine import build_routine, conflict_table, find_conflict, kept_in_order, product_record
+from app.tests import catalog_fixture
 
 SCORES = ("acne_score", "redness_score", "wrinkle_score", "pigmentation_score", "pore_score")
 
@@ -27,10 +29,8 @@ def P(id, name, category, ingredients, texture=None, foaming=None, spf=None):
     return product_record(id, name, category, ingredients, texture, foaming, spf)
 
 
-SEED_PRODUCTS = [
-    P(i, name, category, ingredients, **seed.PLACEHOLDER_FORMAT.get(name, {}))
-    for i, (name, _brand, category, _description, ingredients) in enumerate(seed.PRODUCTS, 1)
-]
+# The fixture catalog (until 7c-iii, the seeded one; the name is kept), ids 1..24.
+SEED_PRODUCTS = catalog_fixture.records()
 SEED_CONFLICTS = conflict_table(seed.CONFLICTS)
 
 # A minimal synthetic core: one cleanser, moisturiser and sunscreen anyone can use.
@@ -351,7 +351,7 @@ def test_the_output_does_not_depend_on_catalog_order():
 
 
 # --------------------------------------------------------------------------------------
-# Invariants over every profile in a grid, on the seeded catalog
+# Invariants over every profile in a grid, on the fixture catalog
 # --------------------------------------------------------------------------------------
 
 GRID = [

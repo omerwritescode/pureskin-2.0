@@ -7,7 +7,7 @@ each ingredient belongs to. Pure Python, no dependencies, no I/O.
 
 > **A vocabulary, not a model.** Every synonym, class member and list below is a
 > reviewed judgement written into `ingredient_config.py`. Nothing was learned from data.
-> The vocabulary covers the seeded catalog and the real catalog (`backend/catalog/`)
+> The vocabulary covers the tests' fixture catalog and the real catalog (`backend/catalog/`)
 > completely; anything outside it is reported for review instead of guessed.
 
 **Status:** live since 7c-i (a). The routine matches its ingredient keywords through it.
@@ -217,8 +217,8 @@ a Drug Facts block without its labels) raises `CleaningError`.
 ## Review command
 
 ```bash
-python -m app.services.ingredients.review                  # from backend/: the seeded catalog
-python -m app.services.ingredients.review --catalog        # backend/catalog/products.json
+python -m app.services.ingredients.review                  # from backend/: backend/catalog/products.json
+python -m app.services.ingredients.review --catalog FILE   # another catalog file
 python -m app.services.ingredients.review --staging ../catalog_staging   # every staging row
 ```
 
@@ -238,7 +238,7 @@ It prints a markdown report with:
 
 **Fail closed:** an unknown or invalid ingredient name is never guessed. A product with
 one is not loaded (7c-iii) and never recommended until a person has reviewed the token
-and added it to the vocabulary. On the seeded catalog, every section is empty. On the
+and added it to the vocabulary. On the fixture catalog, every section is empty. On the
 real catalog (1.2.0): no unknown or invalid names; B10 is not fragrance-free only because
 of benzyl alcohol; B01's lactic acid is dismissed (after phenoxyethanol).
 
@@ -263,7 +263,7 @@ python -m pytest app/services/ingredients     # from backend/
 
 ## Known limitations
 
-1. **The vocabulary is hand-written and finite.** It covers the seeded catalog and the
+1. **The vocabulary is hand-written and finite.** It covers the fixture catalog and the
    reviewed families, not the full INCI dictionary. Real catalogs will hit unknown
    tokens; the review command and fail-closed loading are how that is handled.
 2. **The fragrance allergens are the EU 26.** The EU's current list (Regulation (EC)

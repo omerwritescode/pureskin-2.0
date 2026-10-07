@@ -1,11 +1,11 @@
-"""The review report, on synthetic products, on the seeded catalog (which must be clean),
+"""The review report, on synthetic products, on the fixture catalog (which must be clean),
 and on backend/catalog/products.json (clean apart from the two recorded flags)."""
 
 import csv
 
-import seed
 from app.services.catalog.loader import CATALOG_FILE
 from app.services.ingredients.review import catalog_products, format_report, main, review, second_look
+from app.tests import catalog_fixture
 
 
 def test_unknown_tokens_are_counted_per_product_and_flagged_for_a_second_look():
@@ -52,8 +52,8 @@ def test_dismissed_ambiguous_memberships_are_listed_per_product():
     assert "| Late lactic | lactic acid | aha | 4 | phenoxyethanol (3) |" in text
 
 
-def test_the_seeded_catalog_has_nothing_to_review():
-    report = review((p[0], p[4]) for p in seed.PRODUCTS)
+def test_the_fixture_catalog_has_nothing_to_review():
+    report = review((p[0], p[4]) for p in catalog_fixture.PRODUCTS)
     assert report.products == 24
     assert report.clean
     assert report.benzyl_alcohol_only == () and report.dismissed == ()
@@ -71,6 +71,8 @@ def test_the_product_catalog_has_only_the_two_recorded_flags():
 
 
 def test_the_command_reviews_the_catalog_or_a_staging_directory(tmp_path, capsys):
+    main([])  # the default: products.json
+    assert "# Ingredient review: catalog (products.json) (37 products" in capsys.readouterr().out
     main(["--catalog"])
     assert "# Ingredient review: catalog (products.json) (37 products" in capsys.readouterr().out
     # A staging directory: rows cleaned with their catalog directives, others with none

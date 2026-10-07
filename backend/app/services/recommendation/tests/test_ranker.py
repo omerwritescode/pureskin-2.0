@@ -9,7 +9,6 @@ from types import SimpleNamespace
 
 import pytest
 
-import seed
 from app.services.ingredients import normalise_ingredients
 from app.services.recommendation import recommendation_config as rcfg
 from app.services.recommendation.engine import (
@@ -23,6 +22,7 @@ from app.services.recommendation.engine import (
     step_targets_strong,
 )
 from app.services.recommendation.explain import explain
+from app.tests import catalog_fixture
 from app.services.recommendation.ranker import Scorer, targets
 from app.services.recommendation.rules import Requirement
 from app.services.recommendation.tests.test_current_products import tags
@@ -183,8 +183,8 @@ FILLERS = ["Dimethicone", "Carbomer", "Butylene Glycol", "Propanediol"]  # in no
 def test_adding_filler_ingredients_never_changes_a_score():
     """A weighted dot product, not cosine: a longer list can't lose or gain score."""
     padded = [
-        P(i, name, category, [*ingredients, *FILLERS], **seed.PLACEHOLDER_FORMAT.get(name, {}))
-        for i, (name, _brand, category, _description, ingredients) in enumerate(seed.PRODUCTS, 1)
+        P(i, name, category, [*ingredients, *FILLERS], **catalog_fixture.PLACEHOLDER_FORMAT.get(name, {}))
+        for i, (name, _brand, category, _description, ingredients) in enumerate(catalog_fixture.PRODUCTS, 1)
     ]
     goals = [None, *rcfg.STATED_CONCERN_SCORES]
     for i, p in enumerate(GRID):

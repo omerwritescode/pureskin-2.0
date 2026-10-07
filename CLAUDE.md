@@ -84,8 +84,14 @@ before auth, the DB schema, and the static frontend shell are working. Currently
             ingredients-1.2.0 (additions only), routine-2.3.0 (the wrinkle step takes any
             retinoid; sensitive fragrance reasons name the kind of ingredient). No DB
             change yet.
-      - [ ] Unit 2: DB backup, provenance migration, `seed.py` on the loader, the 24
-            placeholders become a test-only fixture.
+      - [x] Unit 2: migration 1bb224b28584 (`products.source_url`, `market`,
+            `fetch_status`, `date_checked`, `original_name`: set together or not at all);
+            `seed.py` seeds `products.json` through the loader, making `products` exactly the
+            catalog (it pruned the 24 placeholders); the placeholders are now the test-only
+            fixture `app/tests/catalog_fixture.py` (test DB, digests, routine snapshots;
+            `seed.py` never imports it); safety invariants and a snapshot on the real catalog
+            (`recommendation/tests/test_real_catalog.py`, a few minutes). Backup
+            `backups/pureskin_dev_20261007_before_7c-iii.dump`.
       - [ ] Unit 3: evaluation on the real catalog, UI (market label), spec and status docs.
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
@@ -167,7 +173,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload                # API on http://localhost:8000, GET /health
 alembic revision -m "msg"                    # new migration (add --autogenerate once models exist)
 alembic upgrade head                         # apply migrations
-python seed.py                               # load/refresh product catalog + ingredient conflicts (idempotent)
+python seed.py                               # products = backend/catalog/products.json (prunes the rest) + conflicts (idempotent)
 pip install -r requirements-dev.txt          # + pytest, httpx2 (tests)
 python -m app.services.image_analysis.download_models   # MediaPipe face model (gitignored, once)
 python -m pytest                             # everything (DB tests need Docker; they use throwaway DBs)
@@ -176,8 +182,7 @@ python -m pytest app/services/questionnaire app/services/skin_profile   # 7b-i s
 python -m app.services.skin_profile.merge_cases          # merge-case table (report)
 python -m app.services.skin_profile.time_analyze         # /api/scan/analyze timing (needs samples/)
 python -m app.services.image_analysis.check_funnel_resolution   # one photo at several upload sizes
-python -m app.services.ingredients.review    # ingredient review: unknown tokens, cutoff dismissals
-python -m app.services.ingredients.review --catalog                 # ... on backend/catalog/products.json
+python -m app.services.ingredients.review    # ingredient review of products.json: unknown tokens, cutoff dismissals
 python -m app.services.ingredients.review --staging ../catalog_staging   # ... on every staging row
 python -m app.services.catalog               # load products.json and print the load report
 python -m app.services.catalog.promote --staging ../catalog_staging   # exact-text check vs staging

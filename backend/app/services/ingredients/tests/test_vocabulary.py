@@ -1,5 +1,6 @@
-"""The vocabulary in ingredient_config.py is consistent, covers the seeded catalog, and
-only grew after ingredients-1.1.0 (the 7c-iii guard)."""
+"""The vocabulary in ingredient_config.py is consistent, covers the fixture catalog (the
+real catalog is covered by its loader), and only grew after ingredients-1.1.0 (the 7c-iii
+guard)."""
 
 import json
 import re
@@ -7,10 +8,10 @@ from pathlib import Path
 
 import pytest
 
-import seed
 from app.services.ingredients import canonical, ingredient_config as cfg, normalise_ingredients
 from app.services.ingredients.normalise import KNOWN, TOKEN_CLASSES
 from app.services.questionnaire import questionnaire_config as qcfg
+from app.tests import catalog_fixture
 
 MEMBERS = {token for tokens in cfg.CLASSES.values() for token in tokens}
 EVERY_NAME = (
@@ -147,8 +148,8 @@ def test_questionnaire_actives_are_known_canonical_tokens(active):
     assert active in KNOWN
 
 
-@pytest.mark.parametrize("product", seed.PRODUCTS, ids=lambda p: p[0])
-def test_every_seeded_product_is_fully_known(product):
+@pytest.mark.parametrize("product", catalog_fixture.PRODUCTS, ids=lambda p: p[0])
+def test_every_fixture_product_is_fully_known(product):
     name, _brand, _category, _description, ingredients = product
     result = normalise_ingredients(ingredients)
     assert result.fully_known, (name, result.unknown, result.invalid)

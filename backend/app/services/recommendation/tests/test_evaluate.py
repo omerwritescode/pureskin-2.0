@@ -1,4 +1,7 @@
-"""The evaluation module: deterministic output from the real functions, with the banner."""
+"""The evaluation module: deterministic output from the real functions, with the banner.
+
+The report's tests run on the fixture catalog (app/tests/catalog_fixture.py); the default
+(seeded) catalog is backend/catalog/products.json."""
 
 import re
 
@@ -9,15 +12,17 @@ from app.services.recommendation import evaluate
 from app.services.recommendation import recommendation_config as rcfg
 from app.services.recommendation import routine_config as cfg
 from app.services.recommendation.evaluate import Settings, report
-from app.services.recommendation.tests.test_engine import SEED_PRODUCTS
+from app.services.recommendation.tests.test_engine import SEED_CONFLICTS, SEED_PRODUCTS
+from app.tests import catalog_fixture
 
+FIXTURE = (SEED_PRODUCTS, SEED_CONFLICTS)
 SMALL = Settings(skin_types=("oily", "dry"), levels=(15, 80), scenario_levels=(80,),
                  scenarios=("none answered", "retinol"), random_seeds=2, timing=False)
 
 
 @pytest.fixture(scope="module")
 def text() -> str:
-    return report(SMALL)
+    return report(SMALL, catalog=FIXTURE)
 
 
 def sections(text: str) -> dict[str, str]:
@@ -26,7 +31,7 @@ def sections(text: str) -> dict[str, str]:
 
 
 def test_the_report_is_deterministic(text):
-    assert report(SMALL) == text
+    assert report(SMALL, catalog=FIXTURE) == text
 
 
 def test_every_section_and_the_header_carry_the_placeholder_banner(text):
@@ -49,7 +54,7 @@ def test_timing_is_a_separate_optional_section(text):
     assert "Build time" not in text  # timing=False
     tiny = Settings(skin_types=("dry",), levels=(80,), scenario_levels=(80,), scenarios=("none answered",),
                     random_seeds=0, timing=True)
-    assert "## 9. Build time (not deterministic)" in report(tiny)
+    assert "## 9. Build time (not deterministic)" in report(tiny, catalog=FIXTURE)
 
 
 def test_the_readme_results_are_generated_for_the_current_versions():
@@ -82,12 +87,12 @@ def test_a_goal_whose_score_is_low_changes_no_pick(text):
 
 def test_the_gap_report_names_no_product(text):
     gaps = sections(text)["8. Catalog gaps: slots with fewer than 5 eligible products (base grid)"]
-    for name, *_ in seed.PRODUCTS:
+    for name, *_ in catalog_fixture.PRODUCTS:
         assert name not in gaps
 
 
 def test_the_unfilled_breakdown_adds_up_and_names_a_cause_for_each_requirement():
-    catalog, conflicts = evaluate.seed_catalog()
+    catalog, conflicts = FIXTURE
     grids = {"base": (evaluate.base_grid(SMALL), None), "tags": (evaluate.scenario_grid(SMALL), None)}
     grids = {g: (cases, evaluate.run(cases, catalog, conflicts)) for g, (cases, _) in grids.items()}
     rows = evaluate.unfilled_breakdown(grids, SMALL.scenarios)
@@ -100,11 +105,13 @@ def test_the_unfilled_breakdown_adds_up_and_names_a_cause_for_each_requirement()
                                          for u in routine.unfilled for code in u.codes}
 
 
-def test_the_catalog_is_the_seeded_one_in_seed_order():
+def test_the_default_catalog_is_the_seeded_one_in_file_order():
+    from app.services.catalog import load_catalog, product_records
+
     catalog, conflicts = evaluate.seed_catalog()
     assert [(p.id, p.name, p.ingredients, p.texture, p.foaming, p.spf) for p in catalog] == [
-        (p.id, p.name, p.ingredients, p.texture, p.foaming, p.spf) for p in SEED_PRODUCTS]
-    assert len(conflicts) == len(seed.CONFLICTS)
+        (p.id, p.name, p.ingredients, p.texture, p.foaming, p.spf) for p in product_records(load_catalog())]
+    assert len(catalog) == 37 and len(conflicts) == len(seed.CONFLICTS)
 
 
 def test_neighbours_differ_in_one_score_by_one_band():
@@ -134,7 +141,7 @@ def test_every_known_gap_names_a_real_rule_step():
 
 
 def test_rule_order_never_differs_from_itself_and_ranked_picks_are_attributed():
-    catalog, conflicts = evaluate.seed_catalog()
+    catalog, conflicts = FIXTURE
     cases = evaluate.base_grid(SMALL)
     rule = evaluate.run(cases, catalog, conflicts, evaluate.RULE_ORDER)
     for routine in rule.routines:

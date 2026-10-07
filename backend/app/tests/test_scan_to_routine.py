@@ -91,7 +91,8 @@ def test_todays_funnel_answers_keep_the_self_reported_type(scan_to_routine):
     assert profile["pigmentation_score"] == 66  # no questionnaire evidence: image only
     assert ("pm_routine", "tranexamic acid") in keywords(routine)
     # The only arbutin serum lists lactic acid (an AHA), and AHAs are evening-only, so the
-    # morning step is skipped with a visible reason (a placeholder-catalog gap). It isn't
+    # morning step is skipped with a visible reason (a gap of the fixture catalog the test
+    # database holds). It isn't
     # in the evening routine either, so the reason says "left out".
     (arbutin,) = [lo for lo in routine["left_out"] if lo["product_name"] == "Alpha Arbutin 2% + HA Serum"]
     assert arbutin["sessions"] == ["am"]

@@ -1,6 +1,6 @@
 """The user's current products and avoid list (questionnaire_tags) in the routine engine.
 
-Each rule on the seeded catalog or a small synthetic one, the avoid-list vocabulary, and
+Each rule on the fixture catalog or a small synthetic one, the avoid-list vocabulary, and
 the invariants over a grid of profiles x tag scenarios. NULL tags must give exactly the
 routine without tags.
 """
@@ -229,7 +229,7 @@ def test_the_avoid_list_is_hard_for_core_steps_with_a_visible_reason():
 
 
 # --------------------------------------------------------------------------------------
-# Invariants over profiles x tag scenarios, on the seeded catalog
+# Invariants over profiles x tag scenarios, on the fixture catalog
 # --------------------------------------------------------------------------------------
 
 SCENARIOS = {

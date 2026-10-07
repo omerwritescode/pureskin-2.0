@@ -5,7 +5,8 @@
     python -m app.services.recommendation.evaluate --update-readme  # rewrite README's results
 
 Every number comes from the real functions (build_routine, the ranker, explain) on the
-seeded catalog (seed.py, in seed order, so ids match a freshly seeded database). Nothing
+seeded catalog (backend/catalog/products.json through the catalog loader, in file order, so
+ids match a freshly seeded database; tests pass the fixture catalog instead). Nothing
 is entered by hand. The output is deterministic markdown, apart from the build-time
 section, which --no-timing leaves out. While recommendation_config.CATALOG_IS_PLACEHOLDER
 is set, every table carries the placeholder banner: the numbers describe the method on 24
@@ -138,15 +139,12 @@ TAG_SCENARIOS = {
 
 
 def seed_catalog():
-    """The seeded catalog as product records (ids in seed order) and the conflict table."""
-    import seed  # backend/seed.py: data only here, no database connection is made
+    """The catalog seed.py seeds (backend/catalog/products.json, through the catalog loader)
+    as product records (ids in file order) and the conflict table."""
+    import seed  # backend/seed.py: its CONFLICTS only; no database connection is made
+    from app.services.catalog import load_catalog, product_records
 
-    products = [
-        product_record(i, name, category, ingredients,
-                       *(seed.PLACEHOLDER_FORMAT.get(name, {}).get(k) for k in ("texture", "foaming", "spf")))
-        for i, (name, _brand, category, _description, ingredients) in enumerate(seed.PRODUCTS, 1)
-    ]
-    return products, conflict_table(seed.CONFLICTS)
+    return product_records(load_catalog()), conflict_table(seed.CONFLICTS)
 
 
 @dataclass(frozen=True)
@@ -758,8 +756,9 @@ def gaps(cases: list[Case], conflicts, ranked: Run) -> tuple[list[list], list[st
 # ======================================================================================
 
 
-def report(settings: Settings = FULL, out=None) -> str:
-    catalog, conflicts = seed_catalog()
+def report(settings: Settings = FULL, out=None, catalog=None) -> str:
+    """The report on the seeded catalog, or on `catalog`: (product records, conflict table)."""
+    catalog, conflicts = catalog if catalog is not None else seed_catalog()
     cases = base_grid(settings)
     scen = scenario_grid(settings)
     ranked, rule = run(cases, catalog, conflicts), run(cases, catalog, conflicts, RULE_ORDER)

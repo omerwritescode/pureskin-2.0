@@ -1,12 +1,13 @@
 """Ingredient review report: what a person must check before products can be loaded.
 
-    python -m app.services.ingredients.review                  # from backend/: the seeded catalog
-    python -m app.services.ingredients.review --catalog        # backend/catalog/products.json
+    python -m app.services.ingredients.review                  # from backend/: products.json
+    python -m app.services.ingredients.review --catalog FILE   # another catalog file
     python -m app.services.ingredients.review --staging ../catalog_staging   # every staging row
 
---catalog and --staging review the cleaned names (app/services/ingredients/clean.py), as
-the catalog loader sees them. A staging row that is also in products.json is cleaned
-with that row's directives; any other staging row with none.
+Both review the cleaned names (app/services/ingredients/clean.py), as the catalog loader
+sees them. A staging row that is also in products.json is cleaned with that row's
+directives; any other staging row with none. (The tests' fixture catalog is reviewed by
+its tests.)
 
 Reports, as markdown:
 1. unknown ingredient tokens, with how many products use each. Tokens containing a word
@@ -145,19 +146,16 @@ def main(argv=None) -> None:
 
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     source = parser.add_mutually_exclusive_group()
-    source.add_argument("--catalog", nargs="?", const=CATALOG_FILE, type=Path, help="review products.json")
+    source.add_argument("--catalog", nargs="?", const=CATALOG_FILE, type=Path,
+                        help="review a catalog file (default: products.json)")
     source.add_argument("--staging", type=Path, help="review every row of the staging CSVs")
     args = parser.parse_args(argv)
     sys.stdout.reconfigure(encoding="utf-8")
-    if args.catalog:
-        print(format_report(review(catalog_products(args.catalog)), f"catalog ({args.catalog.name})"))
-    elif args.staging:
+    if args.staging:
         print(format_report(review(staging_products(args.staging, CATALOG_FILE)), f"staging ({args.staging})"))
     else:
-        import seed  # backend/seed.py; imported here so the module stays importable without it
-
-        report = review((name, ingredients) for name, _brand, _cat, _desc, ingredients in seed.PRODUCTS)
-        print(format_report(report, "seeded catalog (seed.py)"))
+        path = args.catalog or CATALOG_FILE
+        print(format_report(review(catalog_products(path)), f"catalog ({path.name})"))
 
 
 if __name__ == "__main__":

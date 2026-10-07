@@ -67,7 +67,8 @@ essential oils (A12). A row can't be both in the catalog and not promoted.
 
 ```bash
 python -m app.services.catalog                                   # load products.json, print the load report
-python -m app.services.ingredients.review --catalog              # unreviewed or invalid names, flags
+python -m app.services.ingredients.review                        # unreviewed or invalid names, flags
+python seed.py                                                   # products = this file (prunes any other product)
 python -m app.services.ingredients.review --staging ../catalog_staging   # every staging row
 python -m app.services.catalog.promote --staging ../catalog_staging      # exact-text check against staging
 python -m app.services.catalog.promote --staging ../catalog_staging --new B38   # a skeleton row
