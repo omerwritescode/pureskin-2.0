@@ -16,6 +16,7 @@ from app.api.catalog import ProductOut
 from app.api.deps import get_current_user, get_db
 from app.api.profile import latest_profile
 from app.models import IngredientConflict, Product, User
+from app.services.catalog.loader import catalog_version
 from app.services.ingredients import INGREDIENT_CONFIG_VERSION
 from app.services.recommendation.engine import Step, build_routine, conflict_table, kept_in_order, product_record
 from app.services.recommendation.explain import explain, explain_alternative
@@ -23,6 +24,10 @@ from app.services.recommendation.recommendation_config import RECOMMENDATION_CON
 from app.services.recommendation.routine_config import ROUTINE_CONFIG_VERSION
 
 router = APIRouter(prefix="/api/routine", tags=["routine"])
+
+# The version of backend/catalog/products.json this code ships; seed.py makes the products
+# table exactly that file. (The database itself stores no version.)
+CATALOG_VERSION = catalog_version()
 
 
 class WhyTerm(BaseModel):
@@ -49,6 +54,7 @@ class Alternative(BaseModel):
     name: str
     brand: str
     text: str
+    market: str | None = None  # "global": the product's ingredient list is from a non-India page
 
 
 class RoutineStep(BaseModel):
@@ -100,7 +106,7 @@ def to_response(steps: list[Step], rows: dict[int, Product], profile, base_set: 
                     top_terms=[WhyTerm(**vars(t)) for t in why.top_terms], text=list(why.text)),
             alternatives=[
                 Alternative(id=a.product.id, name=a.product.name, brand=rows[a.product.id].brand,
-                            text=explain_alternative(a))
+                            text=explain_alternative(a), market=rows[a.product.id].market)
                 for a in s.alternatives
             ],
         ))
@@ -145,5 +151,6 @@ def get_routine(user: User = Depends(get_current_user), db: Session = Depends(ge
             "routine": ROUTINE_CONFIG_VERSION,
             "ingredients": INGREDIENT_CONFIG_VERSION,
             "recommendation": RECOMMENDATION_CONFIG_VERSION,
+            "catalog": CATALOG_VERSION,
         },
     )

@@ -2,7 +2,7 @@
 // Filters are mirrored into the URL (?search=&category=&page=) so Back from a
 // product page returns to the same results.
 
-const { el, statusMessage, capitalize } = PureSkinUI;
+const { el, statusMessage, capitalize, marketBadge } = PureSkinUI;
 
 const PAGE_SIZE = 12;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -41,6 +41,7 @@ function productCard(product) {
       el("span", { className: "product-card__category", text: capitalize(product.category) }),
       el("span", { className: "product-card__name", text: product.name }),
       el("span", { className: "product-card__brand", text: product.brand }),
+      marketBadge(product.market),
       el("span", { className: "product-card__description", text: product.description || "" })));
 }
 

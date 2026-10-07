@@ -7,14 +7,9 @@ remove or reintroduce a product. Any change that can alter a ranking must bump
 RECOMMENDATION_CONFIG_VERSION (app/tests/test_config_versions.py checks).
 """
 
-RECOMMENDATION_CONFIG_VERSION = "recommendation-1.0.0"
-
-# The catalog is the 24 synthetic placeholders until roadmap step 7c-iii, which removes
-# this flag. While it is set, every evaluation table and the README results carry the banner.
-CATALOG_IS_PLACEHOLDER = True
-PLACEHOLDER_BANNER = (
-    "Catalog: 24 synthetic placeholders (development only). These numbers are not report results."
-)
+# 1.0.1 (7c-iii): the placeholder-catalog flag and banner removed (the catalog is real);
+# no weight, group, scope or template changed.
+RECOMMENDATION_CONFIG_VERSION = "recommendation-1.0.1"
 
 # ======================================================================================
 # Scoring

@@ -2,7 +2,7 @@
 // notes on top. Each step can open a "Why this product" panel (the API's fixed-template
 // sentences) and list up to two conflict-free alternatives.
 
-const { el, scanCta, statusMessage, capitalize, sensitiveIndicator } = PureSkinUI;
+const { el, scanCta, statusMessage, capitalize, sensitiveIndicator, marketBadge } = PureSkinUI;
 const content = document.getElementById("content");
 const SESSION_LABELS = { am: "morning", pm: "evening" };
 
@@ -22,6 +22,7 @@ function alternatives(step) {
       ...step.alternatives.map((alt) => el("li", {},
         el("a", { href: `/app/catalog/${alt.id}/`, text: alt.name }),
         el("span", { className: "routine-step__brand", text: ` (${alt.brand})` }),
+        marketBadge(alt.market),
         el("span", { className: "routine-alternatives__text", text: alt.text })))));
 }
 
@@ -37,6 +38,7 @@ function stepItem(step) {
       el("span", { className: "routine-step__category", text: capitalize(product.category) }),
       el("a", { className: "routine-step__name", href: `/app/catalog/${product.id}/`, text: product.name }),
       el("span", { className: "routine-step__brand", text: product.brand }),
+      marketBadge(product.market),
       notes.length ? el("span", { className: "routine-step__note", text: notes.join(" · ") }) : null,
       step.caution ? el("span", { className: "routine-step__caution", role: "note", text: step.caution }) : null,
       why(step),

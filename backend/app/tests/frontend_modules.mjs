@@ -83,4 +83,10 @@ for (const [fetchImpl, expected] of cases) {
   if (expected.issues) check(() => assert.deepEqual(result.issues, expected.issues));
 }
 
+// ---- The market badge's label (7c-iii): only a global-market list gets one ----
+check(() => assert.equal(UI.marketLabel("global"), "Global ingredient list"));
+for (const market of ["india", null, undefined, "", "GLOBAL"]) {
+  check(() => assert.equal(UI.marketLabel(market), null));
+}
+
 console.log(`ok ${checks}`);

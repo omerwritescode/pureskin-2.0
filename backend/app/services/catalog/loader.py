@@ -239,6 +239,11 @@ def load_catalog(path: Path = CATALOG_FILE) -> Catalog:
     return Catalog(data["version"], tuple(products), tuple((e["catalog_id"], e["reason"]) for e in entries))
 
 
+def catalog_version(path: Path = CATALOG_FILE) -> str:
+    """The catalog file's version (e.g. "products-1.0.0"), without loading the rows."""
+    return json.loads(Path(path).read_text(encoding="utf-8"))["version"]
+
+
 def product_records(catalog: Catalog):
     """The catalog as the routine engine's product records, with ids 1..N in file order
     (the ids a freshly seeded database assigns)."""

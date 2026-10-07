@@ -231,12 +231,48 @@ def test_pages_after_the_photo_steps_drop_the_photo(path):
     assert guard and "data-outside-funnel" in guard.group(0), path
 
 
+MARKET_NOTE = ("Global ingredient list: the list comes from the brand's non-India website; the "
+               "version sold in India may differ.")
+LISTS_NOTE = "Ingredient lists are copied from brand pages and may differ by market or batch."
+
+
+def visible_text(html: str) -> str:
+    """The page's text without tags or attributes, whitespace collapsed (so an input's
+    placeholder="..." attribute isn't wording)."""
+    return " ".join(re.sub(r"<[^>]+>", " ", html).split())
+
+
 @pytest.mark.parametrize("path", ["pages/app/catalog/index.html", "pages/app/routine/index.html"])
-def test_placeholder_note_until_verified_products_replace_them(path):
-    """The seeded products are synthetic placeholders (step 7c-iii replaces them)."""
+def test_catalog_and_routine_pages_carry_the_list_notes_and_no_placeholder_wording(path):
+    """7c-iii: the catalog is real. No placeholder note; one page note with the two lines.
+    "Spot-checked by a person: not yet" belongs in the docs, not the UI."""
     source = page(path)
-    assert 'class="placeholder-note"' in source
-    assert "placeholders" in source and "not real products" in source
+    text = visible_text(source)
+    assert "placeholder" not in text.lower() and "placeholder-note" not in source
+    assert "illustrative products" not in text.lower() and "not real products" not in text
+    assert source.count('class="page-note"') == 1
+    assert LISTS_NOTE in text and MARKET_NOTE in text
+    assert "spot-checked" not in text.lower() and "verified" not in text.lower()
+
+
+def test_the_placeholder_note_style_is_gone_and_the_badge_is_styled():
+    css = page("static/css/main.css")
+    assert ".placeholder-note" not in css
+    assert ".page-note {" in css and ".market-badge {" in css
+
+
+def test_catalog_and_routine_scripts_render_the_market_badge():
+    """Catalog cards, routine steps and alternatives show "Global ingredient list" where
+    market is "global" (PureSkinUI.marketBadge; the label logic is checked in Node)."""
+    ui = page("static/js/ui.js")
+    assert 'market === "global" ? "Global ingredient list" : null' in ui
+    assert "marketLabel, marketBadge" in ui
+    catalog = page("pages/app/catalog/catalog.js")
+    assert "marketBadge(product.market)" in catalog
+    routine = page("pages/app/routine/routine.js")
+    assert "marketBadge(product.market)" in routine and "marketBadge(alt.market)" in routine
+    for source in (catalog, routine):
+        assert "placeholder" not in source.lower()
 
 
 def test_routine_page_shows_reasons_and_detects_no_profile_by_message():

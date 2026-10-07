@@ -65,6 +65,17 @@ const PureSkinUI = (() => {
     });
   }
 
+  // A product whose ingredient list was copied from the brand's non-India website (the
+  // catalog's market "global"). India rows get no badge. The label is text, not colour alone.
+  function marketLabel(market) {
+    return market === "global" ? "Global ingredient list" : null;
+  }
+
+  function marketBadge(market) {
+    const label = marketLabel(market);
+    return label ? el("span", { className: "market-badge", text: label }) : null;
+  }
+
   function sensitiveIndicator() {
     return el("p", { className: "sensitive-indicator" },
       el("strong", { text: "Sensitive skin" }),
@@ -93,6 +104,6 @@ const PureSkinUI = (() => {
 
   return {
     SCORE_FIELDS, el, scoreBars, skinTypeText, assumedSkinTypeNote, sensitiveIndicator,
-    formatDate, scanCta, statusMessage, capitalize,
+    formatDate, scanCta, statusMessage, capitalize, marketLabel, marketBadge,
   };
 })();

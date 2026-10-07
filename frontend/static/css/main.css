@@ -259,9 +259,9 @@ a {
   margin-top: 4px;
 }
 
-/* Shown on the catalog and routine pages until the placeholder products are replaced
-   by real ones with sourced ingredient lists (roadmap step 7c-iii). */
-.placeholder-note {
+/* A one-line note at the top of a page (the catalog and routine pages: where the
+   ingredient lists come from). */
+.page-note {
   max-width: 720px;
   margin: 0 0 16px;
   padding: 10px 14px;
@@ -269,6 +269,20 @@ a {
   border-left: 4px solid var(--accent);
   border-radius: var(--radius);
   font-size: 0.9rem;
+}
+
+/* "Global ingredient list" (PureSkinUI.marketBadge): the product's list was copied from
+   the brand's non-India website. Text, not colour alone; India rows get no badge. */
+.market-badge {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 /* ---- Score bars (/scan/report/, Dashboard, Skin Profile) --------------- */

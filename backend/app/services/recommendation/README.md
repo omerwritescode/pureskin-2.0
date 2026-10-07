@@ -8,14 +8,15 @@ one.
 
 > **Not medical advice, and not validated.** Every rule here is a hand-set judgement in
 > `routine_config.py`. There is no outcome data (no feedback, no purchases, no follow-up)
-> to fit or check them against. **The 24 products in the catalog are synthetic
-> placeholders** (invented brands and short invented ingredient lists), so a routine
-> shows how the rules behave, not what to buy.
+> to fit or check them against. The 37 catalog products are real
+> (`backend/catalog/products.json`), but their ingredient lists are sourced from the cited
+> pages; spot-checked by a person: not yet, and the catalog is not a complete market. A
+> routine shows how the rules behave on these products, not what anyone should buy.
 
 **Status:** live since 7c-i (b); rules `routine-2.3.0` (7c-iii: the wrinkle step takes
 any retinoid; the sensitive fragrance reason names the kind of ingredient), ranker
-`recommendation-1.0.0` (since 7c-ii). The ranker's results are on the 24 placeholder products until 7c-iii
-replaces them. Pure functions: no database, no FastAPI (`app/api/routine.py` loads the
+`recommendation-1.0.1` (since 7c-ii; 1.0.1 only removed the placeholder-catalog flag). The
+evaluation runs on the real catalog since 7c-iii. Pure functions: no database, no FastAPI (`app/api/routine.py` loads the
 rows and shapes the response).
 
 | File | What it holds |
@@ -149,12 +150,15 @@ loader refuses a sunscreen without a labelled SPF of at least 30.
 
 ## The ranker (7c-ii)
 
+In one sentence: IDF × rank-decay weighting over rule-eligible sets: each target ingredient a product lists counts by its inverse document frequency over the catalog times a decay for its position in the ingredient list (1 / log2(position + 1)), weighted by the profile's hand-set target groups; the ranker only orders the products the rules made eligible. It is not ML-trained and not classic TF-IDF (no term
+frequency, no cosine): there is no outcome data to train or validate on.
+
 A content-based ranker that **only orders the products the rules made eligible** for a
 step. Hard exclusions (unknown ingredients, sensitive-skin rules, the evening-only rules,
 the avoid list, actives in use, a prescription retinoid) are applied first and are its
 input: it can never add, remove or bring back a product (a test checks, over the whole
 grid, that every step's ranked set is its eligible set). Config: `recommendation_config.py`
-(`recommendation-1.0.0`). **Every weight was set a priori, as a documented domain
+(`recommendation-1.0.1`). **Every weight was set a priori, as a documented domain
 judgement, and is never tuned to improve the evaluation below.**
 
 ### Score
@@ -311,7 +315,7 @@ effective, miracle, cure-all, and their forms).
 ## Evaluation
 
 ```bash
-python -m app.services.recommendation.evaluate                  # full report, a few minutes
+python -m app.services.recommendation.evaluate                  # full report (about 12 minutes here; machine-dependent)
 python -m app.services.recommendation.evaluate --no-timing      # deterministic part only
 python -m app.services.recommendation.evaluate --update-readme  # rewrite the results below
 ```
@@ -329,7 +333,8 @@ What it measures:
 - **What each ordering rule changes:** ablations, each switching one rule off, compared
   with the full ranker.
 - **Baselines:** rule order (7c-i) and a seeded random pick from the eligible set (100
-  seeds, mean ± sd).
+  seeds, mean ± sd). A seed fixes one random product order per step for every profile, so
+  the random baseline's neighbour consistency is high by construction and not comparable.
 - **Face validity**, which is **circular by construction**: targets come from our own
   config, so a high share is expected and is not accuracy.
 - **Consistency:** profiles that differ in one score by one band (Jaccard index of the
@@ -337,9 +342,10 @@ What it measures:
 - **Stability:** leave one unchosen product out of the catalog and rebuild. Rule order is
   the control.
 - **The stated goal's effect** by band; **coverage**, with the requirements no eligible
-  product met broken down by cause on both grids; and **catalog gaps** (slots with fewer
-  than 5, and fewer than 3, eligible products, who they fail to serve, and the
-  characteristics a product there would need).
+  product met broken down by cause on both grids, the steps dropped for an in-routine
+  conflict by severity and conflict row, and the products never picked; and **catalog
+  gaps** (slots with fewer than 5, and fewer than 3, eligible products, who they fail to
+  serve, and the characteristics a product there would need).
 
 What it doesn't measure: benefit to anyone's skin. The measures describe behaviour under
 the constraints, not outcomes.
@@ -347,244 +353,247 @@ the constraints, not outcomes.
 ### Results
 
 <!-- evaluation:start -->
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
+Catalog: backend/catalog/products.json, products-1.0.0: 37 real products, 13 of them with a global-market ingredient list (ingredient lists sourced from the cited pages; spot-checked by a person: not yet).
 
-Config versions: recommendation-1.0.0, routine-2.3.0, ingredients-1.2.0, tags questionnaire-1.0.0.
+Config versions: recommendation-1.0.1, routine-2.3.0, ingredients-1.2.0, tags questionnaire-1.0.0.
 
-Catalog: 24 products, 11 conflict rows (seed.py). Base grid: 1,944 profiles (4 skin types × sensitive or not × 3 bands (15, 45, 80) for each of 5 scores; no tags). Tag grid: 3,072 profiles (12 current-product/avoid scenarios × 4 skin types × sensitive or not × 2 bands per score).
+Catalog: 37 products, 11 conflict rows (seed.py). Base grid: 1,944 profiles (4 skin types × sensitive or not × 3 bands (15, 45, 80) for each of 5 scores; no tags). Tag grid: 3,072 profiles (12 current-product/avoid scenarios × 4 skin types × sensitive or not × 2 bands per score).
 
 The ranker's weights were set before this evaluation and are never tuned to it. Nothing here measures benefit to skin: there is no outcome data.
 
 ### 1. Responsiveness: where the ranker changes a pick
 
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
-
 Per kept step, the ranker's pick against the same step's rule-order pick (single-candidate steps counted separately), then whole routines against RULE_ORDER. A pick is attributed to the first sort key that moved it away from the rule-order pick; a key that keeps the rule-order pick first (e.g. demoting a higher-scoring strong active) shows in section 2 instead.
 
 | Base grid | Count |
 |---|---|
-| Kept steps | 16,026 |
-| … with one eligible product (no choice) | 8,655 / 16,026 (54.0%) |
-| … with 2 or more eligible products | 7,371 / 16,026 (46.0%) |
-|    every candidate scores zero: rule order kept | 972 / 7,371 (13.2%) |
-|    scores differ, the rule-order pick still ranks first | 3,216 / 7,371 (43.6%) |
-|    pick differs from the step's rule-order pick: higher score | 3,183 / 7,371 (43.2%) |
-|    pick differs: strong active outside its step ranked last | 0 / 7,371 (0.0%) |
-|    pick differs: conflict-safe first | 0 / 7,371 (0.0%) |
-| Profiles whose routine differs from the rule-order routine | 1,382 / 1,944 (71.1%) |
+| Kept steps | 15,468 |
+| … with one eligible product (no choice) | 4,869 / 15,468 (31.5%) |
+| … with 2 or more eligible products | 10,599 / 15,468 (68.5%) |
+|    every candidate scores zero: rule order kept | 143 / 10,599 (1.3%) |
+|    scores differ, the rule-order pick still ranks first | 4,497 / 10,599 (42.4%) |
+|    pick differs from the step's rule-order pick: higher score | 5,419 / 10,599 (51.1%) |
+|    pick differs: strong active outside its step ranked last | 540 / 10,599 (5.1%) |
+|    pick differs: conflict-safe first | 0 / 10,599 (0.0%) |
+| Profiles whose routine differs from the rule-order routine | 1,896 / 1,944 (97.5%) |
 
 | Tag grid | Count |
 |---|---|
-| Kept steps | 25,920 |
-| … with one eligible product (no choice) | 15,040 / 25,920 (58.0%) |
-| … with 2 or more eligible products | 10,880 / 25,920 (42.0%) |
-|    every candidate scores zero: rule order kept | 1,536 / 10,880 (14.1%) |
-|    scores differ, the rule-order pick still ranks first | 4,776 / 10,880 (43.9%) |
-|    pick differs from the step's rule-order pick: higher score | 4,568 / 10,880 (42.0%) |
-|    pick differs: strong active outside its step ranked last | 0 / 10,880 (0.0%) |
-|    pick differs: conflict-safe first | 0 / 10,880 (0.0%) |
-| Profiles whose routine differs from the rule-order routine | 2,140 / 3,072 (69.7%) |
+| Kept steps | 25,184 |
+| … with one eligible product (no choice) | 9,888 / 25,184 (39.3%) |
+| … with 2 or more eligible products | 15,296 / 25,184 (60.7%) |
+|    every candidate scores zero: rule order kept | 406 / 15,296 (2.7%) |
+|    scores differ, the rule-order pick still ranks first | 6,348 / 15,296 (41.5%) |
+|    pick differs from the step's rule-order pick: higher score | 7,966 / 15,296 (52.1%) |
+|    pick differs: strong active outside its step ranked last | 576 / 15,296 (3.8%) |
+|    pick differs: conflict-safe first | 0 / 15,296 (0.0%) |
+| Profiles whose routine differs from the rule-order routine | 2,957 / 3,072 (96.3%) |
 
 ### 2. What each ordering rule changes (base grid)
-
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
 
 Each row switches one rule off and compares the routines with RANKED. "Steps dropped for a conflict": steps conflict resolution removed (a lost step).
 
 | Variant | Profiles with a different routine | Slot picks that differ | Steps dropped for a conflict |
 |---|---|---|---|
-| RANKED (all rules on) | – | – | 444 |
-| without strong-active demotion | 44 / 1,944 (2.3%) | 44 | 444 |
-| without conflict-safe first | 0 / 1,944 (0.0%) | 0 | 444 |
-| without concern-priority choosing order | 0 / 1,944 (0.0%) | 0 | 444 |
-| rule order (7c-i) | 1,382 / 1,944 (71.1%) | 3,183 | 444 |
+| RANKED (all rules on) | – | – | 516 |
+| without strong-active demotion | 625 / 1,944 (32.2%) | 1,094 | 516 |
+| without conflict-safe first | 0 / 1,944 (0.0%) | 0 | 516 |
+| without concern-priority choosing order | 0 / 1,944 (0.0%) | 0 | 516 |
+| rule order (7c-i) | 1,896 / 1,944 (97.5%) | 5,959 | 624 |
 
 ### 3. Baselines (base grid)
-
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
 
 Face validity: share of picks, in steps with 2 or more eligible products, that list at least one of the profile's target ingredients. **Circular by construction: targets come from our own config. This is not accuracy.** The mean target score is circular for the same reason.
 
 | Ordering | Face validity (circular) | Mean target score (circular) | Steps dropped for a conflict | Products picked | Neighbour Jaccard |
 |---|---|---|---|---|---|
-| ranked | 6,399 / 7,371 (86.8%) | 1.966 | 444 | 22 / 24 | 0.856 |
-| rule order (7c-i) | 6,399 / 7,371 (86.8%) | 1.703 | 444 | 18 / 24 | 0.918 |
-| random pick, 100 seeds (mean ± sd) | 86.3 ± 0.3% | 1.630 ± 0.060 | 629.3 ± 183.0 | 20.9 ± 1.0 / 24 | 0.921 ± 0.005 |
+| ranked | 10,411 / 10,599 (98.2%) | 2.551 | 516 | 23 / 37 | 0.870 |
+| rule order (7c-i) | 10,134 / 10,491 (96.6%) | 2.226 | 624 | 16 / 37 | 0.927 |
+| random pick, 100 seeds (mean ± sd) | 85.3 ± 6.7% | 1.736 ± 0.162 | 1059.5 ± 266.5 | 24.5 ± 1.5 / 37 | 0.934 ± 0.005 |
 
 ### 4. Consistency: neighbouring profiles (base grid)
-
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
 
 Pairs of profiles that differ in one score by one band. S = {(session, category, product)}; Jaccard |S∩S'| / |S∪S'|; slot agreement: same product in the slots both routines have. Steps are added only in the High band, so in rule order a Low↔Moderate change never changes a routine.
 
 | Score | Change | Pairs | Ranked mean J | Ranked J = 1 | Ranked slot agreement | Rule-order mean J | Rule-order J = 1 | Rule-order slot agreement |
 |---|---|---|---|---|---|---|---|---|
-| acne | Low↔Moderate | 648 | 0.910 | 78.7% | 94.9% | 1.000 | 100.0% | 100.0% |
-| acne | Moderate↔High | 648 | 0.678 | 13.9% | 94.7% | 0.739 | 16.7% | 100.0% |
-| redness | Low↔Moderate | 648 | 0.843 | 62.5% | 90.1% | 1.000 | 100.0% | 100.0% |
-| redness | Moderate↔High | 648 | 0.778 | 13.4% | 95.9% | 0.830 | 16.7% | 100.0% |
-| wrinkle | Low↔Moderate | 648 | 0.931 | 85.6% | 95.9% | 1.000 | 100.0% | 100.0% |
-| wrinkle | Moderate↔High | 648 | 0.736 | 2.8% | 97.6% | 0.743 | 0.0% | 100.0% |
-| pigmentation | Low↔Moderate | 648 | 0.990 | 95.8% | 99.5% | 1.000 | 100.0% | 100.0% |
-| pigmentation | Moderate↔High | 648 | 0.886 | 0.0% | 100.0% | 0.886 | 0.0% | 100.0% |
-| pore | Low↔Moderate | 648 | 0.914 | 78.7% | 95.0% | 1.000 | 100.0% | 100.0% |
-| pore | Moderate↔High | 648 | 0.893 | 64.8% | 94.8% | 0.981 | 85.2% | 100.0% |
-| all | Low↔Moderate | 3,240 | 0.918 | 80.3% | 95.1% | 1.000 | 100.0% | 100.0% |
-| all | Moderate↔High | 3,240 | 0.794 | 19.0% | 96.6% | 0.836 | 23.7% | 100.0% |
-| all | all | 6,480 | 0.856 | 49.6% | 95.8% | 0.918 | 61.9% | 100.0% |
+| acne | Low↔Moderate | 648 | 0.954 | 87.2% | 97.1% | 1.000 | 100.0% | 100.0% |
+| acne | Moderate↔High | 648 | 0.702 | 16.2% | 96.5% | 0.721 | 16.7% | 100.0% |
+| redness | Low↔Moderate | 648 | 0.816 | 52.3% | 88.2% | 1.000 | 100.0% | 100.0% |
+| redness | Moderate↔High | 648 | 0.774 | 15.9% | 96.5% | 0.834 | 33.3% | 100.0% |
+| wrinkle | Low↔Moderate | 648 | 0.911 | 73.9% | 94.4% | 1.000 | 100.0% | 100.0% |
+| wrinkle | Moderate↔High | 648 | 0.902 | 67.9% | 97.1% | 0.886 | 50.0% | 100.0% |
+| pigmentation | Low↔Moderate | 648 | 0.930 | 82.6% | 95.4% | 1.000 | 100.0% | 100.0% |
+| pigmentation | Moderate↔High | 648 | 0.824 | 0.0% | 97.8% | 0.851 | 0.0% | 100.0% |
+| pore | Low↔Moderate | 648 | 0.954 | 87.2% | 97.2% | 1.000 | 100.0% | 100.0% |
+| pore | Moderate↔High | 648 | 0.934 | 75.3% | 97.0% | 0.980 | 85.2% | 100.0% |
+| all | Low↔Moderate | 3,240 | 0.913 | 76.6% | 94.5% | 1.000 | 100.0% | 100.0% |
+| all | Moderate↔High | 3,240 | 0.827 | 35.1% | 97.0% | 0.854 | 37.0% | 100.0% |
+| all | all | 6,480 | 0.870 | 55.8% | 95.7% | 0.927 | 68.5% | 100.0% |
 
 ### 5. Stability under catalog perturbation: leave one out (base grid)
-
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
 
 Remove one product the profile's routine did not choose, rebuild, and compare the picks. In ranked mode IDF moves (N and document frequencies change). Rule order is the control: its changes come from the rules themselves (a sensitive-skin substitution applies only when some product meets the step and every one is left out, so removing the only such product turns the substitution off). The last row is what the ranker adds.
 
 | Ordering | (removed product, profile) pairs with changed picks | Profiles changed by at least one removal | Removals that change any routine | Most profiles changed by one removal |
 |---|---|---|---|---|
-| ranked | 971 / 35,100 (2.8%) | 271 / 1,944 (13.9%) | 23 / 24 | 123 / 1,944 (6.3%) |
-| rule order (7c-i) | 0 / 34,938 (0.0%) | 0 / 1,944 (0.0%) | 0 / 24 | 0 / 1,944 (0.0%) |
-| ranked only (changes rule order doesn't make) | 971 / 35,100 (2.8%) | 271 / 1,944 (13.9%) | 23 / 24 | 123 / 1,944 (6.3%) |
+| ranked | 651 / 61,181 (1.1%) | 171 / 1,944 (8.8%) | 35 / 37 | 63 / 1,944 (3.2%) |
+| rule order (7c-i) | 0 / 61,020 (0.0%) | 0 / 1,944 (0.0%) | 0 / 37 | 0 / 1,944 (0.0%) |
+| ranked only (changes rule order doesn't make) | 651 / 61,181 (1.1%) | 171 / 1,944 (8.8%) | 35 / 37 | 63 / 1,944 (3.2%) |
 
 ### 6. The stated goal (base grid)
-
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
 
 Share of profiles whose picks change when the questionnaire goal names a concern. The goal multiplies that concern's weights after the band scale, so a goal whose score is Low has no effect, by design.
 
 | Goal | Band of its score | Profiles whose picks change |
 |---|---|---|
 | acne (acne score) | Low | 0 / 648 (0.0%) |
-| acne (acne score) | Moderate | 75 / 648 (11.6%) |
-| acne (acne score) | High | 99 / 648 (15.3%) |
+| acne (acne score) | Moderate | 46 / 648 (7.1%) |
+| acne (acne score) | High | 85 / 648 (13.1%) |
 | redness (redness score) | Low | 0 / 648 (0.0%) |
-| redness (redness score) | Moderate | 42 / 648 (6.5%) |
-| redness (redness score) | High | 171 / 648 (26.4%) |
+| redness (redness score) | Moderate | 72 / 648 (11.1%) |
+| redness (redness score) | High | 59 / 648 (9.1%) |
 | wrinkles (wrinkle score) | Low | 0 / 648 (0.0%) |
-| wrinkles (wrinkle score) | Moderate | 78 / 648 (12.0%) |
-| wrinkles (wrinkle score) | High | 15 / 648 (2.3%) |
+| wrinkles (wrinkle score) | Moderate | 35 / 648 (5.4%) |
+| wrinkles (wrinkle score) | High | 67 / 648 (10.3%) |
 | pigmentation (pigmentation score) | Low | 0 / 648 (0.0%) |
-| pigmentation (pigmentation score) | Moderate | 0 / 648 (0.0%) |
-| pigmentation (pigmentation score) | High | 0 / 648 (0.0%) |
+| pigmentation (pigmentation score) | Moderate | 35 / 648 (5.4%) |
+| pigmentation (pigmentation score) | High | 21 / 648 (3.2%) |
 | pores (pore score) | Low | 0 / 648 (0.0%) |
-| pores (pore score) | Moderate | 75 / 648 (11.6%) |
-| pores (pore score) | High | 99 / 648 (15.3%) |
+| pores (pore score) | Moderate | 46 / 648 (7.1%) |
+| pores (pore score) | High | 85 / 648 (13.1%) |
 
 ### 7. Coverage
 
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
-
 | Grid | Measure | Value |
 |---|---|---|
-| base | products picked at least once | 22 / 24 (91.7%) |
-| base | … also counting alternatives | 23 / 24 (95.8%) |
-| base | eligible products per kept step (min / median / max) | 1 / 1 / 5 |
-| base | profiles with a kept step under 5 eligible products | 1,944 / 1,944 (100.0%) |
-| base | profiles with a kept step under 3 eligible products | 1,944 / 1,944 (100.0%) |
-| base | requirements no eligible product met (each with a warning) | 648 |
-| tags | products picked at least once | 22 / 24 (91.7%) |
-| tags | … also counting alternatives | 23 / 24 (95.8%) |
-| tags | eligible products per kept step (min / median / max) | 1 / 1 / 5 |
-| tags | profiles with a kept step under 5 eligible products | 3,072 / 3,072 (100.0%) |
-| tags | profiles with a kept step under 3 eligible products | 3,072 / 3,072 (100.0%) |
-| tags | requirements no eligible product met (each with a warning) | 3,072 |
+| base | products picked at least once | 23 / 37 (62.2%) |
+| base | … also counting alternatives | 34 / 37 (91.9%) |
+| base | eligible products per kept step (min / median / max) | 1 / 2 / 9 |
+| base | profiles with a kept step under 5 eligible products | 1,912 / 1,944 (98.4%) |
+| base | profiles with a kept step under 3 eligible products | 1,912 / 1,944 (98.4%) |
+| base | requirements no eligible product met (each with a warning) | 2,106 |
+| tags | products picked at least once | 26 / 37 (70.3%) |
+| tags | … also counting alternatives | 34 / 37 (91.9%) |
+| tags | eligible products per kept step (min / median / max) | 1 / 2 / 9 |
+| tags | profiles with a kept step under 5 eligible products | 3,067 / 3,072 (99.8%) |
+| tags | profiles with a kept step under 3 eligible products | 3,037 / 3,072 (98.9%) |
+| tags | requirements no eligible product met (each with a warning) | 6,192 |
 
 Requirements no eligible product met, by cause (per session):
 
-base: 648 over 1,944 profiles (0.33 per profile), 0 of them caused by a rule that needs tags; tags: 3,072 over 3,072 profiles (1.00 per profile), 1,984 of them caused by a rule that needs tags. A score is High in 33% of base-grid profiles and 50% of tag-grid profiles (band midpoints per score), so the steps only a High score adds, including those that often have no eligible product, come up more often per profile on the tag grid. Causes that need tags (the avoid list, a duplicate of an active in use, a clash with one) exist only there. Each product counts under its first hard-rule reason (an active in use is checked before the morning rules).
+base: 2,106 over 1,944 profiles (1.08 per profile), 0 of them caused by a rule that needs tags; tags: 6,192 over 3,072 profiles (2.02 per profile), 2,032 of them caused by a rule that needs tags. A score is High in 33% of base-grid profiles and 50% of tag-grid profiles (band midpoints per score), so the steps only a High score adds, including those that often have no eligible product, come up more often per profile on the tag grid. Causes that need tags (the avoid list, a duplicate of an active in use, a clash with one) exist only there. Each product counts under its first hard-rule reason (an active in use is checked before the morning rules).
 
 | Requirement | Cause | Then | Base grid | Tag grid | Tag scenarios |
 |---|---|---|---|---|---|
+| PM serum: wrinkle High (retinol) | no product in the catalog meets it | no step | 648 | 1,152 | none answered, salicylic acid, benzoyl peroxide, vitamin C, niacinamide, exfoliant checkbox, avoid fragrance, avoid acids, avoid alcohol, sulfates, parabens, lanolin |
+| PM treatment: base (facial oil) | no product in the catalog meets it | no step | 486 | 768 | all |
+| AM moisturiser: wrinkle High (peptide) | every product meeting it is left out: fragrance (sensitive skin) | the core step fell back | 324 | 768 | all |
+| PM serum: pigmentation High (tranexamic acid) | every product meeting it is left out: a strong active (sensitive skin) | no step | 324 | 768 | all |
 | AM cleanser: acne High (salicylic acid) | every product meeting it is left out: a strong active (sensitive skin) | the core step fell back | 324 | 704 | none answered, retinol, prescription retinoid, retinoid checkbox, benzoyl peroxide, vitamin C, niacinamide, exfoliant checkbox, avoid fragrance, avoid acids, avoid alcohol, sulfates, parabens, lanolin |
-| AM serum: pigmentation High (alpha arbutin) | every product meeting it is left out: an evening-only active (morning) | no step | 324 | 384 | none answered, vitamin C, niacinamide, exfoliant checkbox, avoid fragrance, avoid alcohol, sulfates, parabens, lanolin |
-| AM serum: pigmentation High (alpha arbutin) | every product meeting it is left out: clashes with an active in use | no step | 0 | 320 | retinol, prescription retinoid, retinoid checkbox, salicylic acid, benzoyl peroxide |
 | PM treatment: acne High (benzoyl peroxide) | every product meeting it is left out: clashes with an active in use | no step | 0 | 320 | retinol, prescription retinoid, retinoid checkbox, salicylic acid, vitamin C |
 | AM cleanser: acne High (salicylic acid) | every product meeting it is left out: clashes with an active in use | the core step fell back | 0 | 256 | retinol, prescription retinoid, retinoid checkbox, benzoyl peroxide |
 | PM exfoliant: pore High (bha) | every product meeting it is left out: clashes with an active in use | no step | 0 | 256 | retinol, prescription retinoid, retinoid checkbox, benzoyl peroxide |
-| PM serum: wrinkle High (retinol) | every product meeting it is left out: clashes with an active in use | no step | 0 | 192 | salicylic acid, benzoyl peroxide, vitamin C |
-| AM serum: base (vitamin c) | every product meeting it is left out: clashes with an active in use | no step | 0 | 128 | retinol, prescription retinoid, retinoid checkbox, benzoyl peroxide |
-| AM serum: redness High (azelaic acid) | every product meeting it is left out: clashes with an active in use | no step | 0 | 128 | salicylic acid |
-| PM serum: redness High (azelaic acid) | every product meeting it is left out: clashes with an active in use | no step | 0 | 128 | salicylic acid |
+| PM serum: pigmentation High (tranexamic acid) | every product meeting it is left out: clashes with an active in use | no step | 0 | 256 | retinol, prescription retinoid, retinoid checkbox, benzoyl peroxide |
+| AM moisturiser: wrinkle High (peptide) | every product meeting it is left out: the avoid list | the core step fell back | 0 | 128 | avoid fragrance, avoid alcohol, sulfates, parabens, lanolin |
 | AM cleanser: acne High (salicylic acid) | every product meeting it is left out: the avoid list | the core step fell back | 0 | 64 | avoid acids |
-| AM serum: pigmentation High (alpha arbutin) | every product meeting it is left out: the avoid list | no step | 0 | 64 | avoid acids |
+| AM serum: redness High (azelaic acid) | every product meeting it is left out: already uses one of its family; clashes with an active in use | no step | 0 | 64 | salicylic acid |
+| AM serum: redness High (azelaic acid) | every product meeting it is left out: clashes with an active in use; a strong active (sensitive skin) | no step | 0 | 64 | salicylic acid |
+| PM cleanser: base (cream) | every product meeting it is left out: the avoid list | the core step fell back | 0 | 64 | avoid alcohol, sulfates, parabens, lanolin |
 | PM exfoliant: pore High (bha) | every product meeting it is left out: the avoid list | no step | 0 | 64 | avoid acids |
-| AM serum: acne High (azelaic acid) | every product meeting it is left out: clashes with an active in use | no step | 0 | 32 | salicylic acid |
-| PM serum: acne High (azelaic acid) | every product meeting it is left out: clashes with an active in use | no step | 0 | 32 | salicylic acid |
-| Total |  |  | 648 | 3,072 |  |
+| PM serum: pigmentation High (tranexamic acid) | every product meeting it is left out: already uses one of its family | no step | 0 | 64 | salicylic acid |
+| PM serum: pigmentation High (tranexamic acid) | every product meeting it is left out: the avoid list | no step | 0 | 64 | avoid acids |
+| PM serum: redness High (azelaic acid) | every product meeting it is left out: already uses one of its family; clashes with an active in use | no step | 0 | 64 | salicylic acid |
+| PM serum: redness High (azelaic acid) | every product meeting it is left out: clashes with an active in use; a strong active (sensitive skin) | no step | 0 | 64 | salicylic acid |
+| AM cleanser: base (cream) | every product meeting it is left out: the avoid list | the core step fell back | 0 | 48 | avoid alcohol, sulfates, parabens, lanolin |
+| AM cleanser: base (foaming) | every product meeting it is left out: the avoid list | the core step fell back | 0 | 32 | avoid acids |
+| AM cleanser: base (foaming) | every product meeting it is left out: the avoid list; a strong active (sensitive skin) | the core step fell back | 0 | 32 | avoid acids |
+| AM serum: acne High (azelaic acid) | every product meeting it is left out: clashes with an active in use; a strong active (sensitive skin) | no step | 0 | 32 | salicylic acid |
+| PM cleanser: base (foaming) | every product meeting it is left out: the avoid list | the core step fell back | 0 | 32 | avoid acids |
+| PM cleanser: base (foaming) | every product meeting it is left out: the avoid list; a strong active (sensitive skin) | the core step fell back | 0 | 32 | avoid acids |
+| PM serum: acne High (azelaic acid) | every product meeting it is left out: clashes with an active in use; a strong active (sensitive skin) | no step | 0 | 32 | salicylic acid |
+| Total |  |  | 2,106 | 6,192 |  |
+
+Steps dropped for an in-routine conflict (conflict resolution removed an optional step's product because it clashes with another product in the same session), by severity and conflict row. Each (profile, session) a product lost counts once. Every severity is resolved, low included.
+
+| Severity | Conflict row | Base grid | Tag grid |
+|---|---|---|---|
+| high | total | 0 | 0 |
+| medium | azelaic acid + BHAs | 252 | 400 |
+| medium | benzoyl peroxide + AHAs | 108 | 160 |
+| medium | benzoyl peroxide + BHAs | 108 | 128 |
+| medium | AHAs + BHAs | 48 | 48 |
+| medium | total | 516 | 736 |
+| low | total | 0 | 0 |
+
+Products no kept step picked in the grid ("(an alternative)": offered as one at least once).
+
+| Grid | Never picked | Products |
+|---|---|---|
+| base | 14 / 37 | Green Tea Pore Cleansing Face Wash (an alternative); Fruit AHA Face Wash (an alternative); Salicylic Acid 2% Face Wash (an alternative); Moisturising Cream (an alternative); Atoderm Intensive Baume (an alternative); Rosy Ritual Glow Mineral Matte Sunscreen (an alternative); Ultra Matte Dry Touch Sunscreen Gel; 2% Hyaluronic Acid + PGA Serum (an alternative); Ascorbyl Glucoside Solution 12% Brightening Vitamin C Serum (an alternative); Madagascar Centella Ampoule (an alternative); Azelaic Acid 10 Hyaluron (an alternative); Multi-Peptide + HA Serum (an alternative); 24K Rose Gold Beauty Oil; Glycolic Acid 7% Exfoliating Toner |
+| tags | 11 / 37 | Green Tea Pore Cleansing Face Wash (an alternative); Atoderm Intensive Baume (an alternative); Rosy Ritual Glow Mineral Matte Sunscreen (an alternative); Ultra Matte Dry Touch Sunscreen Gel; 2% Hyaluronic Acid + PGA Serum (an alternative); Ascorbyl Glucoside Solution 12% Brightening Vitamin C Serum (an alternative); Madagascar Centella Ampoule (an alternative); Azelaic Acid 10 Hyaluron (an alternative); Multi-Peptide + HA Serum (an alternative); 24K Rose Gold Beauty Oil; Glycolic Acid 7% Exfoliating Toner |
 
 ### 8. Catalog gaps: slots with fewer than 5 eligible products (base grid)
-
-> **Catalog: 24 synthetic placeholders (development only). These numbers are not report results.**
 
 Who a slot fails to serve is the profiles for which it had fewer than 5 eligible products, none, or lost its product to conflict resolution; the under-3 column counts the same with fewer than 3. Eligible: min / median / max over the steps it filled.
 
 | Slot | Fails to serve | Under 5 / requiring it | Under 3 / requiring it | Eligible | Removed for a conflict | Empty: hard rule | Empty: none in catalog | Dropped for sensitive skin |
 |---|---|---|---|---|---|---|---|---|
-| AM/PM cleanser: base (any) | combination, normal; sensitive or not | 972 / 972 (100.0%) | 0 / 972 (0.0%) | 3 / 3 / 4 | 0 | 0 | 0 | 0 |
-| AM/PM cleanser: base (cream) | dry; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 2 / 2 / 2 | 0 | 0 | 0 | 0 |
-| AM/PM cleanser: base (foaming) | oily; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
-| AM cleanser: acne High (salicylic acid) | oily, dry, combination, normal; sensitive or not; acne High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 0 | 324 | 0 | 0 |
-| PM exfoliant: pore High (bha) | oily, dry, combination, normal; sensitive or not; pore High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 228 | 0 | 0 | 324 |
-| AM serum: base (antioxidant) | normal; not sensitive | 243 / 243 (100.0%) | 243 / 243 (100.0%) | 2 / 2 / 2 | 0 | 0 | 0 | 0 |
-| AM serum: base (centella) | combination, normal; sensitive only | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
-| AM/PM serum: base (hyaluronic acid) | dry; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 1 / 1 / 2 | 0 | 0 | 0 | 0 |
-| AM/PM serum: base (niacinamide) | oily; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
-| AM serum: base (vitamin c) | combination; not sensitive | 243 / 243 (100.0%) | 243 / 243 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
+| AM/PM cleanser: base (any) | combination, normal; sensitive only | 486 / 972 (50.0%) | 486 / 972 (50.0%) | 2 / 2 / 6 | 0 | 0 | 0 | 0 |
+| AM/PM cleanser: base (cream) | dry; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
+| AM/PM cleanser: base (foaming) | oily; sensitive or not | 486 / 486 (100.0%) | 243 / 486 (50.0%) | 1 / 1 / 3 | 0 | 0 | 0 | 0 |
+| AM cleanser: acne High (salicylic acid) | oily, dry, combination, normal; sensitive or not; acne High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 2 / 2 / 2 | 0 | 324 | 0 | 0 |
+| PM exfoliant: pore High (bha) | oily, dry, combination, normal; sensitive or not; pore High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 2 / 2 / 2 | 228 | 0 | 0 | 324 |
+| AM serum: base (centella) | combination, normal; sensitive only | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 2 / 2 / 2 | 0 | 0 | 0 | 0 |
+| AM/PM serum: base (niacinamide) | oily; sensitive or not | 486 / 486 (100.0%) | 243 / 486 (50.0%) | 2 / 3 / 5 | 0 | 0 | 0 | 0 |
+| AM serum: base (vitamin c) | combination; not sensitive | 243 / 243 (100.0%) | 0 / 243 (0.0%) | 4 / 4 / 4 | 0 | 0 | 0 | 0 |
 | AM/PM serum: acne High (azelaic acid) | oily, dry, combination, normal; sensitive only; acne High | 216 / 216 (100.0%) | 216 / 216 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
-| AM serum: pigmentation High (alpha arbutin) | oily, dry, combination, normal; sensitive or not; pigmentation High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | none filled | 0 | 324 | 0 | 324 |
-| PM serum: pigmentation High (tranexamic acid) | oily, dry, combination, normal; sensitive or not; pigmentation High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
-| AM/PM serum: redness High (azelaic acid) | oily, dry, combination, normal; sensitive or not; redness High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 108 | 0 | 0 | 0 |
-| PM serum: wrinkle High (retinol) | oily, dry, combination, normal; sensitive or not; wrinkle High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 108 | 0 | 0 | 324 |
-| PM treatment: base (facial oil) | dry; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
+| AM serum: pigmentation High (alpha arbutin) | oily, dry, combination, normal; sensitive or not; pigmentation High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
+| PM serum: pigmentation High (tranexamic acid) | oily, dry, combination, normal; sensitive or not; pigmentation High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 180 | 324 | 0 | 0 |
+| AM/PM serum: redness High (azelaic acid) | oily, dry, combination, normal; sensitive or not; redness High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1.5 / 2 | 108 | 0 | 0 | 0 |
+| PM serum: wrinkle High (retinol) | oily, dry, combination, normal; sensitive or not; wrinkle High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | none filled | 0 | 0 | 648 | 0 |
+| PM treatment: base (facial oil) | dry; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | none filled | 0 | 0 | 486 | 0 |
 | PM treatment: acne High (benzoyl peroxide) | oily, dry, combination, normal; not sensitive; acne High | 324 / 324 (100.0%) | 324 / 324 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
-| AM/PM moisturiser: base (lightweight) | oily, combination; sensitive or not | 972 / 972 (100.0%) | 972 / 972 (100.0%) | 2 / 2 / 2 | 0 | 0 | 0 | 0 |
-| AM/PM moisturiser: base (rich) | dry; sensitive or not | 486 / 486 (100.0%) | 486 / 486 (100.0%) | 2 / 2 / 2 | 0 | 0 | 0 | 0 |
-| AM moisturiser: wrinkle High (peptide) | oily, dry, combination, normal; sensitive or not; wrinkle High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
-| AM sunscreen: base (any) | dry, combination, normal; not sensitive | 729 / 729 (100.0%) | 729 / 729 (100.0%) | 2 / 2 / 2 | 0 | 0 | 0 | 0 |
-| AM sunscreen: base (spf 50 or spf 30) | oily; not sensitive | 243 / 243 (100.0%) | 243 / 243 (100.0%) | 2 / 2 / 2 | 0 | 0 | 0 | 0 |
-| AM sunscreen: sensitive (mineral) | oily, dry, combination, normal; sensitive only | 972 / 972 (100.0%) | 972 / 972 (100.0%) | 1 / 1 / 1 | 0 | 0 | 0 | 0 |
+| AM/PM moisturiser: base (any) | normal; sensitive only | 243 / 486 (50.0%) | 0 / 486 (0.0%) | 4 / 4 / 7 | 0 | 0 | 0 | 0 |
+| AM/PM moisturiser: base (lightweight) | oily, combination; sensitive or not | 972 / 972 (100.0%) | 972 / 972 (100.0%) | 1 / 1 / 2 | 0 | 0 | 0 | 0 |
+| AM/PM moisturiser: base (rich) | dry; sensitive only | 243 / 486 (50.0%) | 0 / 486 (0.0%) | 3 / 3 / 5 | 0 | 0 | 0 | 0 |
+| AM moisturiser: wrinkle High (peptide) | oily, dry, combination, normal; sensitive or not; wrinkle High | 648 / 648 (100.0%) | 648 / 648 (100.0%) | 1 / 1 / 1 | 0 | 324 | 0 | 0 |
+| AM sunscreen: sensitive (mineral) | oily, dry, combination, normal; sensitive only | 972 / 972 (100.0%) | 0 / 972 (0.0%) | 3 / 3 / 3 | 0 | 0 | 0 | 0 |
 
 What a product in each thin slot would need (characteristics only):
 
 - **AM/PM cleanser: base (any)**
   - category cleanser; any cleanser
   - targets it would rank on: combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, AHAs, retinoids, benzoyl peroxide, niacinamide, ascorbic acid, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM/PM cleanser: base (cream)**
   - category cleanser; texture cream, milk, balm
   - targets it would rank on: dry skin: humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, AHAs, ascorbic acid, retinoids, benzoyl peroxide, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM/PM cleanser: base (foaming)**
   - category cleanser; foaming: foaming
   - targets it would rank on: oily skin: niacinamide, zinc; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, AHAs, retinoids, benzoyl peroxide, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM cleanser: acne High (salicylic acid)**
   - category cleanser; lists salicylic acid
   - targets it would rank on: breakouts: niacinamide, azelaic, zinc; oily skin: niacinamide, zinc; dry skin: humectant; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; nothing that clashes with a product these routines hold (in at least one profile): benzoyl peroxide, AHAs, retinoids, niacinamide, ascorbic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid; nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid
 - **PM exfoliant: pore High (bha)**
   - category exfoliant; lists an ingredient of the bha class
   - targets it would rank on: visible pores: niacinamide, zinc; oily skin: niacinamide, zinc; dry skin: humectant; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); nothing that clashes with a product these routines hold (in at least one profile): BHAs, ascorbic acid, AHAs, retinoids, benzoyl peroxide
-- **AM serum: base (antioxidant)**
-  - category serum; lists an ingredient of the antioxidant class
-  - targets it would rank on: normal skin: antioxidant, humectant
-  - exclusions: in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): azelaic acid, benzoyl peroxide, AHAs, retinoids, BHAs
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM serum: base (centella)**
   - category serum; lists an ingredient of the centella class
   - targets it would rank on: combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
   - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs
-- **AM/PM serum: base (hyaluronic acid)**
-  - category serum; lists hyaluronic acid
-  - targets it would rank on: dry skin: humectant, barrier lipids, emollient; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, AHAs, retinoids, benzoyl peroxide, ascorbic acid, azelaic acid
 - **AM/PM serum: base (niacinamide)**
   - category serum; lists niacinamide
   - targets it would rank on: oily skin: niacinamide, zinc; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, AHAs, retinoids, benzoyl peroxide, ascorbic acid, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM serum: base (vitamin c)**
   - category serum; lists an ingredient of the vitamin c class
   - targets it would rank on: combination skin: niacinamide, humectant
-  - exclusions: in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): azelaic acid, benzoyl peroxide, AHAs, retinoids, BHAs
+  - exclusions: in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, azelaic acid, benzoyl peroxide, AHAs, retinoids, BHAs
 - **AM/PM serum: acne High (azelaic acid)**
   - category serum; lists azelaic acid
   - targets it would rank on: breakouts: niacinamide, azelaic, zinc; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
@@ -592,47 +601,43 @@ What a product in each thin slot would need (characteristics only):
 - **AM serum: pigmentation High (alpha arbutin)**
   - category serum; lists alpha arbutin
   - targets it would rank on: pigmentation: arbutin, tranexamic, vitamin C, azelaic, niacinamide; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step)
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, azelaic acid, benzoyl peroxide, AHAs, retinoids
 - **PM serum: pigmentation High (tranexamic acid)**
   - category serum; lists tranexamic acid
   - targets it would rank on: pigmentation: arbutin, tranexamic, vitamin C, azelaic, niacinamide; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, ascorbic acid, AHAs, retinoids, benzoyl peroxide, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, AHAs, retinoids
 - **AM/PM serum: redness High (azelaic acid)**
   - category serum; lists azelaic acid
   - targets it would rank on: redness: azelaic, centella, soothing, niacinamide; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, AHAs, retinoids, benzoyl peroxide, BHAs, niacinamide, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, AHAs, retinoids, azelaic acid, benzoyl peroxide, BHAs
 - **PM serum: wrinkle High (retinol)**
   - category serum; lists an ingredient of the retinoid class
   - targets it would rank on: fine lines: peptide, vitamin C, humectant; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); nothing that clashes with a product these routines hold (in at least one profile): BHAs, ascorbic acid, AHAs, retinoids
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank)
 - **PM treatment: base (facial oil)**
   - category treatment; texture oil and an oil with no water
   - targets it would rank on: dry skin: humectant, barrier lipids, emollient; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, AHAs, ascorbic acid, retinoids, benzoyl peroxide, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); ideally no strong active (it would rank last in this step)
 - **PM treatment: acne High (benzoyl peroxide)**
   - category treatment; lists benzoyl peroxide
   - targets it would rank on: breakouts: niacinamide, azelaic, zinc; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant
-  - exclusions: nothing that clashes with a product these routines hold (in at least one profile): BHAs, ascorbic acid
+  - exclusions: nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs
+- **AM/PM moisturiser: base (any)**
+  - category moisturiser; any moisturiser
+  - targets it would rank on: normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, ascorbic acid, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM/PM moisturiser: base (lightweight)**
   - category moisturiser; texture liquid, gel, gel-cream, fluid, lotion
   - targets it would rank on: oily skin: niacinamide, zinc; combination skin: niacinamide, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, AHAs, retinoids, benzoyl peroxide, niacinamide, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM/PM moisturiser: base (rich)**
   - category moisturiser; texture cream, balm
   - targets it would rank on: dry skin: humectant, barrier lipids, emollient; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): BHAs, AHAs, retinoids, ascorbic acid, benzoyl peroxide, azelaic acid
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, BHAs, retinoids, AHAs, benzoyl peroxide, azelaic acid
 - **AM moisturiser: wrinkle High (peptide)**
   - category moisturiser; lists an ingredient of the peptide class
   - targets it would rank on: fine lines: peptide, vitamin C, humectant; oily skin: niacinamide, zinc; dry skin: humectant, barrier lipids, emollient; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
-  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): benzoyl peroxide, AHAs, retinoids, BHAs, ascorbic acid, niacinamide, azelaic acid
-- **AM sunscreen: base (any)**
-  - category sunscreen; any sunscreen
-  - targets it would rank on: dry skin: humectant; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant
-  - exclusions: in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): benzoyl peroxide, AHAs, retinoids, niacinamide, azelaic acid, BHAs
-- **AM sunscreen: base (spf 50 or spf 30)**
-  - category sunscreen; SPF 50 or higher or SPF 30 or higher
-  - targets it would rank on: oily skin: niacinamide, zinc
-  - exclusions: in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, azelaic acid, benzoyl peroxide, AHAs, retinoids, BHAs
+  - exclusions: for sensitive skin: no retinoid, benzoyl peroxide, AHA or BHA; no L-ascorbic acid; fragrance-free; ideally no drying alcohol or chemical UV filter (it lowers the rank); in the morning: no retinoid or AHA; ideally no strong active (it would rank last in this step); nothing that clashes with a product these routines hold (in at least one profile): ascorbic acid, azelaic acid, benzoyl peroxide, AHAs, retinoids, BHAs
 - **AM sunscreen: sensitive (mineral)**
   - category sunscreen; mineral UV filters only
   - targets it would rank on: oily skin: niacinamide, zinc; dry skin: humectant; combination skin: niacinamide, humectant; normal skin: antioxidant, humectant; sensitive skin: soothing, centella, barrier lipids (sensitive)
@@ -644,11 +649,11 @@ Each status counts only the profiles the gap concerns (events are per session).
 
 | Gap | Slot | Profiles concerned | On this grid |
 |---|---|---|---|
-| Morning pigmentation product without AHAs | AM serum: pigmentation High (alpha arbutin) | pigmentation High: 648 | required by 648 / 648 (100.0%); never filled; empty 324 times (324 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 324 times |
-| A non-retinoid wrinkle option for sensitive skin | PM serum: wrinkle High (retinol) | sensitive, wrinkle High: 324 | required by 324 / 324 (100.0%); never filled; empty 0 times (0 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 324 times |
-| A non-retinoid wrinkle option for sensitive skin | AM moisturiser: wrinkle High (peptide) | sensitive, wrinkle High: 324 | required by 324 / 324 (100.0%); filled 324 times (eligible min 1, max 1), 0 of them removed for a conflict; empty 0 times (0 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 0 times |
-| Gentle non-foaming cleansers | AM/PM cleanser: base (cream) | all: 1,944 | required by 486 / 1,944 (25.0%); filled 891 times (eligible min 2, max 2), 0 of them removed for a conflict; empty 0 times (0 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 0 times |
-| The empty morning dark-spot step | AM serum: pigmentation High (alpha arbutin) | pigmentation High: 648 | required by 648 / 648 (100.0%); never filled; empty 324 times (324 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 324 times |
+| Morning pigmentation product without AHAs | AM serum: pigmentation High (alpha arbutin) | pigmentation High: 648 | required by 648 / 648 (100.0%); filled 648 times (eligible min 1, max 1), 0 of them removed for a conflict; empty 0 times (0 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 0 times |
+| A non-retinoid wrinkle option for sensitive skin | PM serum: wrinkle High (retinol) | sensitive, wrinkle High: 324 | required by 324 / 324 (100.0%); never filled; empty 324 times (0 every product left out by a hard rule, 324 none in the catalog); dropped for sensitive skin 0 times |
+| A non-retinoid wrinkle option for sensitive skin | AM moisturiser: wrinkle High (peptide) | sensitive, wrinkle High: 324 | required by 324 / 324 (100.0%); never filled; empty 324 times (324 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 0 times |
+| Gentle non-foaming cleansers | AM/PM cleanser: base (cream) | all: 1,944 | required by 486 / 1,944 (25.0%); filled 891 times (eligible min 1, max 1), 0 of them removed for a conflict; empty 0 times (0 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 0 times |
+| The empty morning dark-spot step | AM serum: pigmentation High (alpha arbutin) | pigmentation High: 648 | required by 648 / 648 (100.0%); filled 648 times (eligible min 1, max 1), 0 of them removed for a conflict; empty 0 times (0 every product left out by a hard rule, 0 none in the catalog); dropped for sensitive skin 0 times |
 <!-- evaluation:end -->
 
 ## Known limitations
@@ -656,30 +661,28 @@ Each status counts only the profiles the gap concerns (events are per session).
 1. **Hand-set rules and targets, no outcome data.** Nothing here was fitted or
    validated. The ranker's weights are domain judgements set before the evaluation, and
    the evaluation can't say whether a ranked routine is better for anyone.
-2. **Synthetic placeholder catalog** (24 products, 1-2 candidates for most steps). The
-   evaluation's catalog-gap section lists every thin slot. Gaps it causes today
-   (catalog characteristics to fill in 7c-iii):
-   - **a morning pigmentation product without AHAs**: the only alpha-arbutin serum lists
-     lactic acid, so the **morning dark-spot step is empty for everyone**;
-   - **a non-retinoid wrinkle option for sensitive skin**: the evening retinol step is
-     dropped for them;
-   - **gentle (non-foaming) cleansers**: only 4 cleansers exist;
-   - sensitive users with High acne or pores get a substitution or no step, because the
-     placeholder products for those steps contain strong actives.
-3. **IDF over 3–5-ingredient lists is not meaningful.** The placeholder lists are 3 to 5
-   ingredients long, and 33 of the 46 distinct ingredients appear in exactly one product,
-   so IDF mostly reflects which invented product happened to list what. The formula is
-   kept so that real, full-length labels (7c-iii) need no code change; the results must
-   be re-run then.
+2. **A small real catalog with thin slots** (37 products, 7c-iii). Most steps have one
+   or two eligible products for a given profile; section 8 of the results lists every
+   slot with fewer than 5, and fewer than 3. Gaps today: no retinoid serum (the evening
+   wrinkle step is never filled); no facial oil that passes the anhydrous-oil check (the
+   one facial oil lists gold flakes first); one benzoyl-peroxide product; one
+   tranexamic-acid serum, which also lists an AHA and a BHA (so sensitive skin gets
+   none); one peptide moisturiser, fragranced (none for sensitive skin); one cream
+   cleanser. CLAUDE.md's "Deferred verification" list tracks them.
+3. **IDF over a small catalog.** IDF is computed over 37 products (7 to 53 ingredients
+   each), so adding or removing a product shifts it; section 5 of the results measures
+   how much that moves the picks. It describes this catalog, not the market.
 4. **Ingredient presence and position, not concentration.** The ranker can't see
    percentages, formulation or pH; list position is a weak proxy for concentration, and
    none below about 1%.
 5. **Face validity is circular**, and the other measures describe behaviour under the
    rules, not user benefit.
 6. **A stated goal whose score is Low has no effect** (intended; see "Weights").
-7. **The conflict table doesn't distinguish rinse-off from leave-on.** A salicylic-acid
-   cleanser and a leave-on BHA count the same. (Only the evening-only AHA rule treats
-   cleansers as rinse-off.)
+7. **The conflict table treats rinse-off products as leave-on.** A salicylic-acid face
+   wash counts like a leave-on BHA: as a core cleanser it always stays, so it evicts a
+   leave-on azelaic-acid serum from the same session, although the wash is rinsed off.
+   This is conservative: it can drop a step, never add a clash. (Only the evening-only
+   AHA rule treats cleansers as rinse-off.)
 8. **Conflicts are per session, not per day.** A pair split between morning and evening
    is not flagged.
 9. **The retinoid + benzoyl peroxide row is deliberately conservative for adapalene**,
@@ -728,7 +731,8 @@ python -m pytest app/services/recommendation   # from backend/
   clash (core pairs included), no strong active, L-ascorbic acid or fragrance for
   sensitive skin, no avoided ingredient, duplicate or clash with an active in use, no
   retinoid or leave-on AHA in the morning, determinism; and a recorded snapshot of
-  eleven routines (`app/tests/snapshots/routine_real_catalog.json`). Slow (a few minutes).
+  eleven routines (`app/tests/snapshots/routine_real_catalog.json`). Its grid takes about
+  a minute (machine-dependent).
 - `test_explain.py`: banned words in the templates and in every generated sentence, the
   rule text matching the rule that created the step, the ranking sentence, examples.
 - `test_evaluate.py`: the report is deterministic, carries the banner in every section,

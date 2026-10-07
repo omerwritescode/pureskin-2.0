@@ -123,13 +123,14 @@ def test_every_step_explains_its_pick_and_lists_safe_alternatives(api, auth_head
         TOP_TERMS,
     )
     from app.services.recommendation.routine_config import ROUTINE_CONFIG_VERSION
+    from app.services.catalog.loader import catalog_version
 
     for name in ("dry_high", "sensitive_high"):
         assert api.post("/api/profile", json=ROUTINE_CASES[name], headers=auth_headers).status_code == 201
         routine = api.get("/api/routine", headers=auth_headers).json()
         assert routine["config_versions"] == {
             "routine": ROUTINE_CONFIG_VERSION, "ingredients": INGREDIENT_CONFIG_VERSION,
-            "recommendation": RECOMMENDATION_CONFIG_VERSION,
+            "recommendation": RECOMMENDATION_CONFIG_VERSION, "catalog": catalog_version(),
         }
         for session in ("am_routine", "pm_routine"):
             ids = {s["product"]["id"] for s in routine[session]}
@@ -139,8 +140,28 @@ def test_every_step_explains_its_pick_and_lists_safe_alternatives(api, auth_head
                 assert 1 <= why["rule_order_rank"] <= why["candidates"]
                 assert len(why["top_terms"]) <= TOP_TERMS
                 assert all(t["contribution"] > 0 for t in why["top_terms"])
+                # 7c-iii: provenance in the payload (the test database's fixture has none)
+                assert {"market", "source_url", "date_checked"} <= set(step["product"])
                 for alt in step["alternatives"]:
                     assert alt["id"] not in ids and alt["brand"] and alt["text"].startswith(alt["name"])
+                    assert "market" in alt
+
+
+def test_the_product_payload_carries_a_catalog_products_provenance():
+    """ProductOut (catalog and routine responses) exposes market, source_url and date_checked
+    from the provenance columns, for a real catalog row as seed.py stores it."""
+    import seed
+    from app.api.catalog import ProductOut
+    from app.models import Product
+    from app.services.catalog import load_catalog
+
+    by_id = {p.catalog_id: p for p in load_catalog().products}
+    for pid, market in (("B09", "global"), ("B08", "india")):
+        product = by_id[pid]
+        row = Product(id=1, name=product.name, brand=product.brand, **seed.product_values(product))
+        out = ProductOut.model_validate(row).model_dump(mode="json")
+        assert (out["market"], out["source_url"], out["date_checked"]) == (
+            market, product.source_url, product.date_checked)
 
 
 # --------------------------------------------------------------------------------------

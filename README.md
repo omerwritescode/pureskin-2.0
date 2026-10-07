@@ -22,19 +22,21 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
 - **Routine.** A rule-based AM/PM routine built from the latest Skin Profile, using
   products in the catalog. It checks for conflicting ingredients (e.g. retinoids +
   benzoyl peroxide) between the products in each session, leaves strong actives and
-  fragrance out for sensitive skin, and shows why any product was left out.
-- **Product catalog.** Searchable and filterable by category. **The 24 products are
-  synthetic placeholders** (invented brands and short invented ingredient lists, made up
-  to exercise the routine rules), not real products. The catalog and routine pages say
-  so. Roadmap step 7c-iii replaces them with real products whose ingredient lists are
-  sourced from the cited pages; spot-checked by a person: not yet.
+  fragrance out for sensitive skin, takes the user's current products and avoided
+  ingredients into account, and shows why any product was left out. A content-based
+  ranker (hand-set weights, not ML-trained) orders each step's eligible products, with a
+  "why" and up to two alternatives.
+- **Product catalog.** Searchable and filterable by category: 37 real products
+  (`backend/catalog/products.json`). Their ingredient lists are sourced from the cited
+  pages; spot-checked by a person: not yet. 13 lists come from a brand's non-India
+  website and are labelled "Global ingredient list" in the app. It is not a complete
+  market; some routine steps still have no product (see the
+  [recommendation README](backend/app/services/recommendation/README.md)).
 - **Accounts.** Sign up and log in. The Dashboard and Skin Profile pages show the latest
   scan.
 
 **Planned, not implemented yet:**
 
-- Ranked recommendations within each routine step (7c-ii). (Since 7c-i the routine
-  already takes the user's current products and the ingredients they avoid into account.)
 - A conflict check for a single scanned or looked-up product. The product page says
   "coming soon".
 - Conversational guidance: a chatbot grounded in the user's Skin Profile, using a local
@@ -66,6 +68,10 @@ What is in the repo today:
 - **Questionnaire:** a rule-based scorer with a small lexicon extractor for the free-text
   answers. No ML classifier.
 - **Skin Profile:** a documented, rule-based merge of the two.
+- **Recommendations:** documented rules decide which products each step may use; a
+  content-based ranker orders them (IDF × rank-decay weighting over rule-eligible sets; hand-set weights, not
+  ML-trained). The product catalog is `backend/catalog/products.json`, loaded through a
+  checked loader (every ingredient name reviewed, provenance required).
 - **Auth:** JWT (python-jose), passwords hashed with bcrypt (passlib). No OAuth or social
   login.
 
@@ -168,12 +174,12 @@ Tracking against the roadmap in [`docs/spec.md`](docs/spec.md) §8:
   - [x] 7b. Questionnaire/NLP + Skin Profile, wired into the scan funnel
     - [x] 7b-i. Questionnaire scorer, Skin Profile merge, schema (backend)
     - [x] 7b-ii. Funnel: new questions, photo check, real analysis, bands (frontend)
-  - [ ] 7c. Recommendation Engine
+  - [x] 7c. Recommendation Engine
     - [x] 7c-i (a). Shared ingredient normaliser; routine matching on whole tokens
     - [x] 7c-i (b). Rule fixes, product format fields, class-level conflicts, visible reasons
     - [x] 7c-i (c). The user's current products and avoid list (questionnaire tags)
-    - [ ] 7c-ii. Content-based ranker, explanations, evaluation
-    - [ ] 7c-iii. Catalog expansion (sourced ingredient lists)
+    - [x] 7c-ii. Content-based ranker, explanations, evaluation
+    - [x] 7c-iii. Catalog expansion (sourced ingredient lists)
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
@@ -198,12 +204,19 @@ an addendum at its end records these deviations:
 - **No on-device inference option.** Since 7b-ii the funnel sends the photo to the server
   for analysis (in memory, never stored); the on-device/in-browser choice in the spec is
   not built.
+- **The product catalog is 37 real products** whose ingredient lists are sourced from the
+  cited pages; spot-checked by a person: not yet (13 from non-India pages). Not a complete
+  market.
+- **The recommendation ranker is not ML-trained**: IDF × rank-decay weighting over
+  rule-eligible sets, with hand-set weights; there is no outcome data to train or
+  validate on.
 
 ## Documentation
 
 - [`docs/spec.md`](docs/spec.md) — original project spec: features, sitemap, architecture, NFRs, evaluation plan (addendum at the end)
 - [`CLAUDE.md`](CLAUDE.md) — conventions and hard constraints for Claude Code sessions
-- Service READMEs: [`image_analysis`](backend/app/services/image_analysis/README.md), [`questionnaire`](backend/app/services/questionnaire/README.md), [`skin_profile`](backend/app/services/skin_profile/README.md)
+- Service READMEs: [`image_analysis`](backend/app/services/image_analysis/README.md), [`questionnaire`](backend/app/services/questionnaire/README.md), [`skin_profile`](backend/app/services/skin_profile/README.md), [`ingredients`](backend/app/services/ingredients/README.md), [`recommendation`](backend/app/services/recommendation/README.md)
+- [`backend/catalog/README.md`](backend/catalog/README.md) — the product catalog: where each list comes from, the loader's checks, how to add a row
 
 ## License
 

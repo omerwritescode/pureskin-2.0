@@ -19,7 +19,7 @@ with a version bump: `app/services/catalog/tests/test_loader.py` fingerprints th
 | `catalog_id`, `sheet_row` | the row's id in the staging lists (B = catalog list, A = brand-to-active list) and its sheet row |
 | `name`, `brand`, `original_name` | display name and brand (reviewed); `original_name` is the sheet's name, unchanged |
 | `category`, `texture`, `foaming`, `spf`, `spf_verbatim` | reviewed format fields (texture and foaming from the page's own words; see `review_notes`), and the labelled SPF as printed |
-| `market` | `india` (the list is from the brand's Indian page) or `global` (from a non-India page; the version sold in India may differ). The catalog and routine pages are to label it "Global ingredient list" (step 7c-iii, unit 3) |
+| `market` | `india` (the list is from the brand's Indian page) or `global` (from a non-India page; the version sold in India may differ). The catalog and routine pages label it "Global ingredient list" |
 | `fetch_status`, `list_kind`, `copied_from` | `ok` or `ok_global_market`; `full_inci` (a full ingredient list); `page_text` |
 | `source_url`, `retailer_url`, `date_checked` | the page the list was copied from; the retailer link in the sheet (often blocked, kept for tracing); the date |
 | `ingredients_verbatim`, `verbatim_sha256` | the list exactly as copied, and its hash. **Never edited.** |

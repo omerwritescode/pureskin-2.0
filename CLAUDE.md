@@ -56,7 +56,7 @@ before auth, the DB schema, and the static frontend shell are working. Currently
           `frontend/static/js/bands.js`, a Sensitive indicator and "(assumed)" skin type on
           the Skin Profile. `/api/scan/mock-analyze` removed. The legacy "sensitive"
           skin_type mapping in `api/profile.py` is kept on purpose (harmless).
-  - [ ] 7c. Recommendation Engine (rules first, ranker second)
+  - [x] 7c. Recommendation Engine (rules first, ranker second)
     - [x] 7c-i (a). Shared ingredient normaliser and vocabulary (`services/ingredients/`);
           step 6 rules moved unchanged into `services/recommendation/` (pure functions);
           whole-token matching, proven behaviour-unchanged.
@@ -65,7 +65,7 @@ before auth, the DB schema, and the static frontend shell are working. Currently
           sunscreen first, substitutions); fixed concern priority; evening-only
           retinoids/AHAs; core fallbacks; class-level conflict rows; product `spf`,
           `texture`, `foaming`; every left-out product has a visible reason. The 24 seeded
-          products are synthetic placeholders (the catalog and routine pages say so).
+          products were synthetic placeholders (retired in 7c-iii; now the tests' fixture).
     - [x] 7c-i (c). `skin_profiles.questionnaire_tags` (migration 440d5393300d): the user's
           current products and avoid list (duplicates, conflicts with actives in use, the
           avoid list; routine-2.1.0); tag-drop notices.
@@ -74,9 +74,9 @@ before auth, the DB schema, and the static frontend shell are working. Currently
           their step last, conflict-safe, score, rule order); `why` and up to 2
           alternatives per step; routine-2.2.0 (note wording; the sensitive acne
           substitution also fires when no benzoyl-peroxide product exists). Evaluation:
-          `python -m app.services.recommendation.evaluate`. Results are on the placeholder
-          catalog until 7c-iii (IDF over 24 short lists is not meaningful).
-    - [ ] 7c-iii. A catalog of real products for the thin slots; retire the placeholders.
+          `python -m app.services.recommendation.evaluate`; results on the real catalog
+          since 7c-iii (recommendation-1.0.1).
+    - [x] 7c-iii. A catalog of real products for the thin slots; retire the placeholders.
       - [x] Unit 1: `backend/catalog/products.json` (37 products; lists copied from the cited
             pages and checked by script as exact text: sourced from the cited pages;
             spot-checked by a person: not yet), its loader (`services/catalog/`,
@@ -90,9 +90,15 @@ before auth, the DB schema, and the static frontend shell are working. Currently
             catalog (it pruned the 24 placeholders); the placeholders are now the test-only
             fixture `app/tests/catalog_fixture.py` (test DB, digests, routine snapshots;
             `seed.py` never imports it); safety invariants and a snapshot on the real catalog
-            (`recommendation/tests/test_real_catalog.py`, a few minutes). Backup
+            (`recommendation/tests/test_real_catalog.py`, about a minute;
+            machine-dependent). Backup
             `backups/pureskin_dev_20261007_before_7c-iii.dump`.
-      - [ ] Unit 3: evaluation on the real catalog, UI (market label), spec and status docs.
+      - [x] Unit 2a: `find_conflict` checks each conflict row against the products' keys
+            (results identical, proven against the old implementation; ~10x faster).
+      - [x] Unit 3: evaluation on the real catalog (recommendation-1.0.1: the placeholder
+            flag and banner removed; README results regenerated), the "Global ingredient
+            list" badge and the list notes on the catalog and routine pages, the API's
+            provenance fields and `config_versions["catalog"]`, spec addendum items 7-9.
   - [ ] 7d. Conversational AI
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
@@ -125,7 +131,7 @@ before auth, the DB schema, and the static frontend shell are working. Currently
 - Bump `CONFIG_VERSION` (questionnaire_config.py), `MERGE_CONFIG_VERSION`
   (skin_profile_config.py), `INGREDIENT_CONFIG_VERSION` (ingredient_config.py, now
   ingredients-1.2.0), `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.3.0),
-  `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.0) or
+  `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.1) or
   `CATALOG_CONFIG_VERSION` (catalog_config.py, now catalog-1.0.0) whenever a value there
   changes. `app/tests/test_config_versions.py` fingerprints the values and fails on any
   change without a bump; record the new version's fingerprint there (a version not yet
@@ -186,7 +192,7 @@ python -m app.services.ingredients.review    # ingredient review of products.jso
 python -m app.services.ingredients.review --staging ../catalog_staging   # ... on every staging row
 python -m app.services.catalog               # load products.json and print the load report
 python -m app.services.catalog.promote --staging ../catalog_staging   # exact-text check vs staging
-python -m app.services.recommendation.evaluate   # ranker evaluation report (~7 min; --no-timing)
+python -m app.services.recommendation.evaluate   # ranker evaluation report (~12 min here, machine-dependent; --no-timing)
 python -m app.services.recommendation.evaluate --update-readme   # rewrite the README's results
 UPDATE_SNAPSHOTS=1 python -m pytest app/tests # re-record routine behaviour snapshots (check the diff!)
 pip install -r requirements-train.txt        # GPU training only: CUDA 12.8 torch (~2.5 GB)
@@ -218,4 +224,18 @@ Checks a person still has to do. Until they are done, the catalog's ingredient l
 - **B34 replacement**: B34 fails `anhydrous_oil` (its first ingredient is gold flakes), so
   the dry-skin facial-oil step has no product. A replacement facial oil is needed.
 - **A second centella product** for the sensitive morning serum step.
+- **A retinol serum**: the evening wrinkle step has no product (A04, a cream, was held back).
+- **B14** (Olay Regenerist): its list (the brand's India page) includes butylphenyl
+  methylpropional (Lilial), which is prohibited in the EU (Regulation 1223/2009 Annex II,
+  entry 1666).
+- **B31** is the only tranexamic-acid option, and it lists mandelic acid (an AHA) and
+  salicylic acid (a BHA): sensitive skin gets no tranexamic step.
+- **Polish: the sensitive fragrance reason shows canonical names** ("It contains
+  melaleuca alternifolia leaf oil, an essential oil"), not the name as printed.
+- **Polish: B14's reason "It lists fragrance (declared fragrance)"** repeats itself.
+- **`config_versions["catalog"]` is the shipped file's version**, not the database's: the
+  routine reports the version of `products.json` in the code, which the DB matches only
+  after `python seed.py` (the DB stores no version).
+- **After the catalog additions above**: re-run the evaluation (`--update-readme`) and fix
+  its duplicate "Catalog:" header line then.
 - **The real-phone scan** and **the manual checklist** (still outstanding).

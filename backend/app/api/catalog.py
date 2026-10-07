@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, or_, select
@@ -24,6 +26,11 @@ class ProductOut(BaseModel):
     texture: str | None
     foaming: str | None
     spf: int | None
+    # Provenance (7c-iii): "india" or "global" (the list was copied from the brand's
+    # non-India website), the page it was copied from, and when.
+    market: str | None = None
+    source_url: str | None = None
+    date_checked: date | None = None
 
 
 class ProductPage(BaseModel):

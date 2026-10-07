@@ -8,9 +8,8 @@ Every number comes from the real functions (build_routine, the ranker, explain) 
 seeded catalog (backend/catalog/products.json through the catalog loader, in file order, so
 ids match a freshly seeded database; tests pass the fixture catalog instead). Nothing
 is entered by hand. The output is deterministic markdown, apart from the build-time
-section, which --no-timing leaves out. While recommendation_config.CATALOG_IS_PLACEHOLDER
-is set, every table carries the placeholder banner: the numbers describe the method on 24
-synthetic products and are not report results.
+section, which --no-timing leaves out. The catalog's ingredient lists are sourced from the
+cited pages; spot-checked by a person: not yet (backend/catalog/README.md).
 
 The ranker's weights were set before this evaluation and are never tuned to it. What it
 measures is how the ranker behaves (which picks it changes, how stable they are), not
@@ -36,6 +35,7 @@ from . import recommendation_config as rcfg
 from . import routine_config as cfg
 from .engine import (
     AVOID,
+    CONFLICT,
     DUPLICATE,
     EXCLUDED_INGREDIENT,
     EXISTING_CONFLICT,
@@ -147,6 +147,17 @@ def seed_catalog():
     return product_records(load_catalog()), conflict_table(seed.CONFLICTS)
 
 
+def catalog_label() -> str:
+    """Which catalog the seeded report ran on: the file, its version, its markets."""
+    from app.services.catalog import load_catalog
+
+    catalog = load_catalog()
+    global_lists = sum(p.market == "global" for p in catalog.products)
+    return (f"backend/catalog/products.json, {catalog.version}: {len(catalog.products)} real products, "
+            f"{global_lists} of them with a global-market ingredient list (ingredient lists sourced from the "
+            f"cited pages; spot-checked by a person: not yet)")
+
+
 @dataclass(frozen=True)
 class Case:
     skin_type: str
@@ -251,10 +262,6 @@ def neighbours(cases: list[Case], levels: tuple[int, ...]):
 # ======================================================================================
 
 
-def banner() -> list[str]:
-    return [f"> **{rcfg.PLACEHOLDER_BANNER}**", ""] if rcfg.CATALOG_IS_PLACEHOLDER else []
-
-
 def pct(n: int, d: int) -> str:
     return f"{n:,} / {d:,} ({100 * n / d:.1f}%)" if d else "–"
 
@@ -271,7 +278,7 @@ def para(*parts: str) -> list[str]:
 
 
 def section(title: str, *parts: list[str]) -> list[str]:
-    out = [f"## {title}", "", *banner()]
+    out = [f"## {title}", ""]
     for part in parts:
         out += part
     return out
@@ -495,6 +502,41 @@ def coverage(catalog, runs: dict[str, tuple[list[Case], Run]]) -> list[list]:
             [name, "requirements no eligible product met (each with a warning)", f"{unfilled:,}"],
         ]
     return rows
+
+
+def conflict_drops(runs: dict[str, tuple[list[Case], Run]], conflicts) -> list[list]:
+    """Steps conflict resolution removed (a lost step), per grid, by severity and by the
+    conflict row that removed them. Each (profile, session) a product lost counts once."""
+    rows_by_reason = {c.reason: c for c in conflicts.values()}
+    counts: dict[tuple, Counter] = defaultdict(Counter)
+    for grid, (_, r) in runs.items():
+        for routine in r.routines:
+            for lo in routine.left_out:
+                if lo.code != CONFLICT:
+                    continue
+                row = next((c for reason, c in rows_by_reason.items() if lo.reason.endswith(": " + reason)), None)
+                pair = " + ".join(key_name(k) for k in row.pair) if row else "?"
+                counts[(lo.severity, pair)][grid] += len(lo.sessions)
+    out = []
+    for severity in cfg.SEVERITY_ORDER:
+        keys = sorted((k for k in counts if k[0] == severity), key=lambda k: (-sum(counts[k].values()), k[1]))
+        for key in keys:
+            out.append([severity, key[1], *(f"{counts[key][g]:,}" for g in runs)])
+        out.append([severity, "total", *(f"{sum(counts[k][g] for k in keys):,}" for g in runs)])
+    return out
+
+
+def never_picked(catalog, runs: dict[str, tuple[list[Case], Run]]) -> list[list]:
+    """Products no kept step picked anywhere in a grid (and whether they were ever offered
+    as an alternative)."""
+    out = []
+    for grid, (_, r) in runs.items():
+        picked = {pid for picks in r.picks for pid in picks.values()}
+        offered = {a.product.id for routine in r.routines for _, steps in sessions(routine)
+                   for s in kept_in_order(steps) for a in s.alternatives}
+        names = [p.name + (" (an alternative)" if p.id in offered else "") for p in catalog if p.id not in picked]
+        out.append([grid, f"{len(names)} / {len(catalog)}", "; ".join(names) or "–"])
+    return out
 
 
 def cause_text(codes: tuple[str, ...]) -> str:
@@ -758,6 +800,7 @@ def gaps(cases: list[Case], conflicts, ranked: Run) -> tuple[list[list], list[st
 
 def report(settings: Settings = FULL, out=None, catalog=None) -> str:
     """The report on the seeded catalog, or on `catalog`: (product records, conflict table)."""
+    label = catalog_label() if catalog is None else "a catalog given by the caller (tests)"
     catalog, conflicts = catalog if catalog is not None else seed_catalog()
     cases = base_grid(settings)
     scen = scenario_grid(settings)
@@ -769,7 +812,8 @@ def report(settings: Settings = FULL, out=None, catalog=None) -> str:
     lines = [
         "# Recommendation ranker: evaluation",
         "",
-        *banner(),
+        f"Catalog: {label}.",
+        "",
         (f"Config versions: {rcfg.RECOMMENDATION_CONFIG_VERSION}, {cfg.ROUTINE_CONFIG_VERSION}, "
          f"{INGREDIENT_CONFIG_VERSION}, tags {QUESTIONNAIRE_CONFIG_VERSION}."),
         "",
@@ -849,6 +893,13 @@ def report(settings: Settings = FULL, out=None, catalog=None) -> str:
         unfilled_note(grids, settings),
         table(["Requirement", "Cause", "Then", "Base grid", "Tag grid", "Tag scenarios"],
               unfilled_breakdown(grids, settings.scenarios or tuple(TAG_SCENARIOS))),
+        para("Steps dropped for an in-routine conflict (conflict resolution removed an optional ",
+             "step's product because it clashes with another product in the same session), by ",
+             "severity and conflict row. Each (profile, session) a product lost counts once. Every ",
+             "severity is resolved, low included."),
+        table(["Severity", "Conflict row", "Base grid", "Tag grid"], conflict_drops(grids, conflicts)),
+        para("Products no kept step picked in the grid (\"(an alternative)\": offered as one at least once)."),
+        table(["Grid", "Never picked", "Products"], never_picked(catalog, grids)),
     )
     rows, details, known = gaps(cases, conflicts, ranked)
     lines += section(

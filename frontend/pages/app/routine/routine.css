@@ -137,6 +137,10 @@
   margin-top: 4px;
 }
 
+.routine-alternatives .market-badge {
+  margin: 0 0 0 6px;
+}
+
 .routine-alternatives__text {
   display: block;
   color: var(--muted);

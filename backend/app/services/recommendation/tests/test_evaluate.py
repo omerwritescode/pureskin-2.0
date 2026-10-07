@@ -1,4 +1,4 @@
-"""The evaluation module: deterministic output from the real functions, with the banner.
+"""The evaluation module: deterministic output from the real functions.
 
 The report's tests run on the fixture catalog (app/tests/catalog_fixture.py); the default
 (seeded) catalog is backend/catalog/products.json."""
@@ -34,20 +34,43 @@ def test_the_report_is_deterministic(text):
     assert report(SMALL, catalog=FIXTURE) == text
 
 
-def test_every_section_and_the_header_carry_the_placeholder_banner(text):
-    assert rcfg.CATALOG_IS_PLACEHOLDER  # until 7c-iii replaces the catalog
-    banner = f"> **{rcfg.PLACEHOLDER_BANNER}**"
-    header = text.split("\n## ")[0]
-    assert banner in header
+def test_eight_sections_no_placeholder_banner_and_the_catalog_named(text):
+    """7c-iii: the catalog is real, so the placeholder flag and banner are gone."""
+    assert not hasattr(rcfg, "CATALOG_IS_PLACEHOLDER") and not hasattr(evaluate, "banner")
+    assert "placeholder" not in text.lower()
     found = sections(text)
     assert [title.split(".")[0] for title in found] == [str(n) for n in range(1, 9)]
-    for title, body in found.items():
-        assert banner in body, title
+    assert text.split("\n## ")[0].count("Catalog: a catalog given by the caller (tests).") == 1
 
 
-def test_without_the_placeholder_flag_there_is_no_banner(monkeypatch):
-    monkeypatch.setattr(rcfg, "CATALOG_IS_PLACEHOLDER", False)
-    assert rcfg.PLACEHOLDER_BANNER not in "\n".join(evaluate.banner())
+def test_the_seeded_catalog_is_named_with_its_version_and_markets():
+    label = evaluate.catalog_label()
+    assert label.startswith("backend/catalog/products.json, products-1.0.0: 37 real products, 13 of them")
+    assert "spot-checked by a person: not yet" in label and "verified" not in label
+
+
+def test_conflict_drops_add_up_to_the_removed_steps_and_name_their_rows():
+    catalog, conflicts = FIXTURE
+    grids = {g: (cases, evaluate.run(cases, catalog, conflicts))
+             for g, cases in (("base", evaluate.base_grid(SMALL)), ("tags", evaluate.scenario_grid(SMALL)))}
+    rows = evaluate.conflict_drops(grids, conflicts)
+    for k, (_, r) in enumerate(grids.values()):
+        removed = sum(s.removed for routine in r.routines for _, steps in evaluate.sessions(routine) for s in steps)
+        totals = sum(int(row[2 + k].replace(",", "")) for row in rows if row[1] == "total")
+        assert totals == removed
+    assert [row[0] for row in rows if row[1] == "total"] == list(cfg.SEVERITY_ORDER)  # low listed even if 0
+    assert all(row[1] != "?" for row in rows)  # every drop traced to its conflict row
+
+
+def test_never_picked_lists_exactly_the_unpicked_products():
+    catalog, conflicts = FIXTURE
+    cases = evaluate.base_grid(SMALL)
+    r = evaluate.run(cases, catalog, conflicts)
+    ((grid, count, names),) = evaluate.never_picked(catalog, {"base": (cases, r)})
+    picked = {pid for picks in r.picks for pid in picks.values()}
+    assert count == f"{len(catalog) - len(picked)} / {len(catalog)}"
+    for p in catalog:
+        assert (p.name in names) == (p.id not in picked)
 
 
 def test_timing_is_a_separate_optional_section(text):
@@ -62,7 +85,8 @@ def test_the_readme_results_are_generated_for_the_current_versions():
     readme = evaluate.README.read_text(encoding="utf-8")
     results = readme.split(evaluate.README_START)[1].split(evaluate.README_END)[0]
     assert rcfg.RECOMMENDATION_CONFIG_VERSION in results and cfg.ROUTINE_CONFIG_VERSION in results
-    assert (f"> **{rcfg.PLACEHOLDER_BANNER}**" in results) == rcfg.CATALOG_IS_PLACEHOLDER
+    assert "Catalog: backend/catalog/products.json, products-1.0.0: 37 real products" in results
+    assert "placeholder" not in results.lower()
 
 
 def test_update_readme_replaces_only_the_marked_section(tmp_path):

@@ -179,11 +179,22 @@ The sections above are the original specification and are left unchanged. As bui
 6. **No on-device inference option** (added after 7b-ii). The scan funnel sends the photo
    to the server for analysis (in memory, never stored). The user's choice of
    on-device/in-browser inference (§3, §6) is not built.
-7. **The product catalog is synthetic placeholders** (added in 7c-i). The 24 seeded
-   products (§4 item 8) have invented brands and short invented ingredient lists, written
-   in step 6 to exercise the routine rules. They are not real products, and the catalog
-   and routine pages say so. Step 7c-iii replaces them with real products whose
+7. **Superseded in 7c-iii (see 8).** Until 7c-iii the product catalog was 24 synthetic
+   placeholders (added in 7c-i): invented brands and short invented ingredient lists,
+   written in step 6 to exercise the routine rules. They are kept only as a test fixture.
+8. **The product catalog is 37 real products** (added in 7c-iii; §4 item 8). Their
    ingredient lists are sourced from the cited pages; spot-checked by a person: not yet.
+   Each list was copied from the page cited in its row (a brand or retailer page) and
+   checked by script as exact text against the copy. 13 of the 37 lists come from a
+   brand's non-India (global-market) website; the app labels them "Global ingredient
+   list", because the version sold in India may differ. It is not a complete market: the
+   products were chosen to fill the routine's steps, and some steps still have no product
+   (no retinoid serum, no facial oil that passes the anhydrous-oil check) or one.
+9. **The recommendation ranker is not ML-trained** (added in 7c-iii). It is IDF × rank-decay weighting over rule-eligible sets: each target ingredient a product lists counts by its inverse document frequency over the catalog times a decay for its position in the ingredient list (1 / log2(position + 1)), weighted by the profile's hand-set target groups; the ranker only orders the products the rules made eligible.
+   Its weights are hand-set before any evaluation and never tuned, and there is no outcome
+   data (feedback, purchases, follow-up) to train or validate a model on. This differs
+   from §7 (an ML stack with model versioning) and from §8 step 7's "ML-ranked
+   Recommendation Engine".
 
 Details: `backend/app/services/image_analysis/README.md`,
 `backend/app/services/questionnaire/README.md`,
