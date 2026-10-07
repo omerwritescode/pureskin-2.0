@@ -295,10 +295,6 @@ def _named(items: NormalisedIngredients, key: str, *, strict: bool) -> str | Non
     return key if key in items.tokens else None
 
 
-def most_severe(found: Iterable[Conflict]) -> Conflict | None:
-    return min(found, key=lambda c: cfg.SEVERITY_ORDER.index(c.severity), default=None)
-
-
 def current_use_exclusion(
     current: CurrentUse, product: ProductRecord, conflicts: ConflictTable
 ) -> Exclusion | None:
@@ -654,16 +650,36 @@ def conflict_keys(product: ProductRecord) -> list[str]:
 
 
 def find_conflict(a: ProductRecord, b: ProductRecord, conflicts: ConflictTable) -> Conflict | None:
-    """The most severe conflict between two products (the first found among equals)."""
-    found = []
-    for key_a in conflict_keys(a):
-        for key_b in conflict_keys(b):
-            if key_a == key_b:  # the same ingredient (or class) in both: not a conflict
+    """The most severe conflict between two products; among equally severe ones, the one
+    met first walking a's conflict keys, then b's (key order: conflict_keys()).
+
+    Each conflict-table row is checked against the two products' keys: a row names two
+    keys and applies when a has one and b the other, either way round. A key both products
+    have is never a conflict with itself. Conflict keys are canonical (lowercase, trimmed),
+    so they meet the table's normalised pairs as they are. (Until unit 2a this walked every
+    pair of keys: the same result, tests/test_find_conflict_equivalence.py.)
+    """
+    positions_a, positions_b = key_positions(a), key_positions(b)
+    best_rank, best = None, None
+    for (first, second), conflict in conflicts.items():
+        if first == second:
+            continue
+        for key_a, key_b in ((first, second), (second, first)):
+            i, j = positions_a.get(key_a), positions_b.get(key_b)
+            if i is None or j is None:
                 continue
-            conflict = conflicts.get(normalize_ingredient_pair(key_a, key_b))
-            if conflict is not None:
-                found.append(conflict)
-    return most_severe(found)
+            rank = (cfg.SEVERITY_ORDER.index(conflict.severity), i, j)
+            if best_rank is None or rank < best_rank:
+                best_rank, best = rank, conflict
+    return best
+
+
+def key_positions(product: ProductRecord) -> dict[str, int]:
+    """Each of the product's conflict keys and its (first) position in conflict_keys()."""
+    positions: dict[str, int] = {}
+    for i, key in enumerate(conflict_keys(product)):
+        positions.setdefault(key, i)
+    return positions
 
 
 def resolve_conflicts(plan: _Plan, steps: list[Step], conflicts: ConflictTable, session: str) -> None:
