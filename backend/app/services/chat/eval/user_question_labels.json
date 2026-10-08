@@ -1,0 +1,22 @@
+{"labels": {
+  "1":  ["kb-app-routine"],
+  "2":  ["kb-app-conflicts"],
+  "3":  "not_covered",
+  "4":  "not_covered",
+  "5":  "not_covered",
+  "6":  ["kb-acne-types", "kb-acne-actives"],
+  "7":  "not_covered",
+  "8":  "not_covered",
+  "9":  ["kb-app-skin-type"],
+  "10": "not_covered",
+  "11": ["kb-app-conflicts"],
+  "12": "not_covered",
+  "13": "not_covered",
+  "14": ["kb-app-routine"],
+  "15": ["kb-app-scores"],
+  "16": "not_covered",
+  "17": "not_covered",
+  "18": ["kb-app-routine"],
+  "19": "not_covered",
+  "20": ["kb-marks-after-acne", "kb-pigment-spots"]
+}}

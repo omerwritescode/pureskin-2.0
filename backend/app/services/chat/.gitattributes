@@ -1,0 +1,5 @@
+# Stored byte for byte, never line-ending converted: eval/metadata.json, eval/freeze.json and
+# eval/test_results.json record the SHA-256 of these exact bytes (question files, labels and
+# the retrieval code), so a checkout on any platform must give back the same bytes.
+eval/** -text
+retrieval.py -text

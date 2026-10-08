@@ -1,0 +1,450 @@
+{
+  "run_at": "2026-10-08T10:07:49+00:00",
+  "freeze": {
+    "frozen_at": "2026-10-08T08:46:15+00:00",
+    "rescoped_at": "2026-10-08T10:01:16+00:00",
+    "note": "Set on the dev questions only. The test split runs only while these match. Rescoped to the retrieval settings after verifying the original freeze.",
+    "retrieval": {
+      "keys": [
+        "BM25_K1",
+        "BM25_B",
+        "TOP_K",
+        "NO_ANSWER_MIN_SCORE",
+        "TOKEN_PATTERN",
+        "PLURAL_RULES",
+        "KEEP_ENDINGS",
+        "MIN_STEM",
+        "SPELLING",
+        "STOPWORDS",
+        "QUESTION_IDIOMS"
+      ],
+      "fingerprint": "63c215128bde9801"
+    },
+    "kb": {
+      "version": "kb-1.0.0",
+      "fingerprint": "2e9d5fd414a376ed"
+    },
+    "no_answer_min_score": 3.03,
+    "retrieval_code_sha256": "2bfeaeca0d11e8878a541ec47d70eb1f2a61574c2a17662e02205d90ddc791d0",
+    "question_files": {
+      "author_questions.json": "4ee242c0f5d88a196e5e9a9594e752ff7ff714c41c30f372e79fa11115509ca4",
+      "user_questions.txt": "1134c69761d14a918687c82bfcc5ccf34e6def2b4041eba6870238e21bce9582"
+    },
+    "previous_scope": {
+      "chat_config": {
+        "version": "chat-1.0.0",
+        "fingerprint": "c7a206c05a82f2de"
+      },
+      "note": "Until the rescope the freeze covered every value in chat_config; it verified unchanged at the rescope."
+    }
+  },
+  "question_files": {
+    "author_questions.json": "4ee242c0f5d88a196e5e9a9594e752ff7ff714c41c30f372e79fa11115509ca4",
+    "user_questions.txt": "1134c69761d14a918687c82bfcc5ccf34e6def2b4041eba6870238e21bce9582"
+  },
+  "user_question_labels_sha256": "2880e5516b458a06f4807b2597bb60cbcfa34eb4fadf903416f8d6b209e3b3cd",
+  "authorship": {
+    "author_questions.json": "Written by Claude, the author of the knowledge base, on 2026-10-08 before any chunk text existed.",
+    "user_questions.txt": "Drafted by Claude in a separate chat session: not by the user and not by the KB author. Written before the KB existed and never shown its chunks. The KB author read this file before fixing the 24-chunk topic list (STOP 1)."
+  },
+  "author_test": {
+    "answerable": 4,
+    "hit_at_1": {
+      "k": 1,
+      "n": 4,
+      "wilson_95": [
+        0.046,
+        0.699
+      ]
+    },
+    "hit_at_4": {
+      "k": 4,
+      "n": 4,
+      "wilson_95": [
+        0.51,
+        1.0
+      ]
+    },
+    "mean_recall_at_4": 1.0,
+    "mrr": 0.625,
+    "per_question": {
+      "t01": {
+        "rank": 2,
+        "top_score": 4.9238,
+        "top_ids": [
+          "kb-dry-skin",
+          "kb-acne-actives",
+          "kb-acne-scars",
+          "kb-sun-other"
+        ]
+      },
+      "t02": {
+        "rank": 2,
+        "top_score": 3.4144,
+        "top_ids": [
+          "kb-cosmetic-reactions",
+          "kb-acne-actives",
+          "kb-acne-doctor",
+          "kb-rosacea-what"
+        ]
+      },
+      "t03": {
+        "rank": 1,
+        "top_score": 10.8092,
+        "top_ids": [
+          "kb-app-scores",
+          "kb-sun-other",
+          "kb-acne-doctor",
+          "kb-app-routine"
+        ]
+      },
+      "t04": {
+        "rank": 2,
+        "top_score": 5.3266,
+        "top_ids": [
+          "kb-sun-other",
+          "kb-app-skin-type",
+          "kb-moles-check",
+          "kb-app-scores"
+        ]
+      },
+      "t05": {
+        "rank": null,
+        "top_score": 2.8274,
+        "top_ids": [
+          "kb-acne-scars",
+          "kb-rosacea-care"
+        ]
+      }
+    },
+    "answered_at_line": {
+      "k": 4,
+      "n": 4,
+      "wilson_95": [
+        0.51,
+        1.0
+      ]
+    },
+    "refused_at_line": {
+      "k": 1,
+      "n": 1,
+      "wilson_95": [
+        0.207,
+        1.0
+      ]
+    }
+  },
+  "external": {
+    "covered": 9,
+    "not_covered": 11,
+    "per_question": {
+      "1": {
+        "label": [
+          "kb-app-routine"
+        ],
+        "top_score": 3.7474,
+        "top_ids": [
+          "kb-app-routine",
+          "kb-dry-skin",
+          "kb-sun-sunscreen-use",
+          "kb-marks-after-acne"
+        ]
+      },
+      "2": {
+        "label": [
+          "kb-app-conflicts"
+        ],
+        "top_score": 9.325,
+        "top_ids": [
+          "kb-app-conflicts",
+          "kb-acne-actives"
+        ]
+      },
+      "3": {
+        "label": "not_covered",
+        "top_score": 4.0357,
+        "top_ids": [
+          "kb-acne-care",
+          "kb-app-skin-type",
+          "kb-sun-sunscreen-use",
+          "kb-sun-other"
+        ]
+      },
+      "4": {
+        "label": "not_covered",
+        "top_score": 3.8879,
+        "top_ids": [
+          "kb-marks-after-acne",
+          "kb-acne-scars",
+          "kb-pigment-spots",
+          "kb-app-routine"
+        ]
+      },
+      "5": {
+        "label": "not_covered",
+        "top_score": 3.7584,
+        "top_ids": [
+          "kb-acne-actives",
+          "kb-acne-what",
+          "kb-acne-care",
+          "kb-cosmetic-reactions"
+        ]
+      },
+      "6": {
+        "label": [
+          "kb-acne-types",
+          "kb-acne-actives"
+        ],
+        "top_score": 4.0943,
+        "top_ids": [
+          "kb-acne-actives",
+          "kb-acne-types",
+          "kb-app-conflicts",
+          "kb-app-routine"
+        ]
+      },
+      "7": {
+        "label": "not_covered",
+        "top_score": 7.6814,
+        "top_ids": [
+          "kb-app-routine",
+          "kb-app-skin-type",
+          "kb-sun-other",
+          "kb-rosacea-care"
+        ]
+      },
+      "8": {
+        "label": "not_covered",
+        "top_score": 3.6508,
+        "top_ids": [
+          "kb-dry-skin",
+          "kb-app-skin-type",
+          "kb-rosacea-what",
+          "kb-sun-uv"
+        ]
+      },
+      "9": {
+        "label": [
+          "kb-app-skin-type"
+        ],
+        "top_score": 13.788,
+        "top_ids": [
+          "kb-app-skin-type",
+          "kb-app-routine",
+          "kb-sun-other",
+          "kb-app-conflicts"
+        ]
+      },
+      "10": {
+        "label": "not_covered",
+        "top_score": 0.0,
+        "top_ids": []
+      },
+      "11": {
+        "label": [
+          "kb-app-conflicts"
+        ],
+        "top_score": 9.9836,
+        "top_ids": [
+          "kb-app-conflicts",
+          "kb-acne-actives",
+          "kb-app-routine"
+        ]
+      },
+      "12": {
+        "label": "not_covered",
+        "top_score": 5.3226,
+        "top_ids": [
+          "kb-cosmetic-reactions",
+          "kb-rosacea-what",
+          "kb-app-skin-type",
+          "kb-acne-actives"
+        ]
+      },
+      "13": {
+        "label": "not_covered",
+        "top_score": 3.6852,
+        "top_ids": [
+          "kb-acne-care",
+          "kb-cosmetic-reactions",
+          "kb-app-routine"
+        ]
+      },
+      "14": {
+        "label": [
+          "kb-app-routine"
+        ],
+        "top_score": 3.7584,
+        "top_ids": [
+          "kb-acne-actives",
+          "kb-app-routine",
+          "kb-acne-care",
+          "kb-app-conflicts"
+        ]
+      },
+      "15": {
+        "label": [
+          "kb-app-scores"
+        ],
+        "top_score": 8.0627,
+        "top_ids": [
+          "kb-app-scores",
+          "kb-moles-check",
+          "kb-acne-doctor",
+          "kb-acne-what"
+        ]
+      },
+      "16": {
+        "label": "not_covered",
+        "top_score": 1.6409,
+        "top_ids": [
+          "kb-rash-contact",
+          "kb-acne-actives",
+          "kb-rosacea-what",
+          "kb-app-scores"
+        ]
+      },
+      "17": {
+        "label": "not_covered",
+        "top_score": 3.0379,
+        "top_ids": [
+          "kb-app-routine",
+          "kb-ageing-skin",
+          "kb-app-skin-type",
+          "kb-moles-check"
+        ]
+      },
+      "18": {
+        "label": [
+          "kb-app-routine"
+        ],
+        "top_score": 7.7998,
+        "top_ids": [
+          "kb-app-routine",
+          "kb-app-conflicts",
+          "kb-marks-after-acne",
+          "kb-app-skin-type"
+        ]
+      },
+      "19": {
+        "label": "not_covered",
+        "top_score": 3.6508,
+        "top_ids": [
+          "kb-dry-skin",
+          "kb-app-conflicts",
+          "kb-app-skin-type",
+          "kb-acne-actives"
+        ]
+      },
+      "20": {
+        "label": [
+          "kb-marks-after-acne",
+          "kb-pigment-spots"
+        ],
+        "top_score": 4.9481,
+        "top_ids": [
+          "kb-marks-after-acne",
+          "kb-acne-what",
+          "kb-pigment-spots",
+          "kb-sun-uv"
+        ]
+      }
+    },
+    "hit_at_1": {
+      "k": 8,
+      "n": 9,
+      "wilson_95": [
+        0.565,
+        0.98
+      ]
+    },
+    "hit_at_4": {
+      "k": 9,
+      "n": 9,
+      "wilson_95": [
+        0.701,
+        1.0
+      ]
+    },
+    "mean_recall_at_4": 1.0,
+    "mrr": 0.944,
+    "covered_answered_at_line": {
+      "k": 9,
+      "n": 9,
+      "wilson_95": [
+        0.701,
+        1.0
+      ]
+    },
+    "not_covered_refused_at_line": {
+      "k": 2,
+      "n": 11,
+      "wilson_95": [
+        0.051,
+        0.477
+      ]
+    }
+  },
+  "report": [
+    "Retrieval evaluation, test split, 2026-10-08T10:07:49+00:00",
+    "Retrieval only (Unit 1): BM25 over the knowledge base. No model, router or gate yet.",
+    "Knowledge base kb-1.0.0 (fingerprint 2e9d5fd414a376ed); checked by a person: 0/24",
+    "Retrieval settings fingerprint 63c215128bde9801 (chat config chat-1.0.0); top k = 4; no-answer line = 3.03",
+    "author_questions.json: sha256 4ee242c0f5d88a19... unchanged since 2026-10-08T08:26:36+00:00",
+    "user_questions.txt: sha256 1134c69761d14a91... unchanged since 2026-10-08T08:26:36+00:00",
+    "",
+    "=== Questions written by the KB's author (Claude), test split ===",
+    "The same person wrote the knowledge base, these questions and their labels: read these",
+    "results as optimistic.",
+    "",
+    "id   group        rank      top  vs line  top 4 (score)",
+    "t01  in_kb           2     4.92    +1.89  kb-dry-skin (4.92), kb-acne-actives (4.70), kb-acne-scars (4.01), kb-sun-other (3.45)",
+    "t02  in_kb           2     3.41    +0.38  kb-cosmetic-reactions (3.41), kb-acne-actives (3.41), kb-acne-doctor (3.10), kb-rosacea-what (2.79)",
+    "t03  profile         1    10.81    +7.78  kb-app-scores (10.81), kb-sun-other (2.84), kb-acne-doctor (2.31), kb-app-routine (2.12)",
+    "t04  profile         2     5.33    +2.30  kb-sun-other (5.33), kb-app-skin-type (4.99), kb-moles-check (4.59), kb-app-scores (2.60)",
+    "t05  out_of_scope    -     2.83    -0.20  kb-acne-scars (2.83), kb-rosacea-care (2.64)",
+    "",
+    "Answerable questions (in_kb + profile), n = 4:",
+    "  hit@1 1/4 (95% Wilson 0.05-0.70)",
+    "  hit@4 4/4 (95% Wilson 0.51-1.00)",
+    "  mean recall@4 1.00; MRR 0.62",
+    "",
+    "At the line 3.03: answerable answered 4/4 (95% Wilson 0.51-1.00); no-answer refused 1/1 (95% Wilson 0.21-1.00)",
+    "  answerable but refused: none; should refuse but answered: none",
+    "",
+    "Not scored in Unit 1 (router and gate, Unit 2): t06, t07, t08",
+    "Router false-positive probes (scored in Unit 2): t01, t02",
+    "",
+    "=== External questions (eval/user_questions.txt), test split ===",
+    "Drafted by Claude in a separate chat session: not by the user and not by the KB author. Written before the KB existed and never shown its chunks. The KB author read this file before fixing the 24-chunk topic list (STOP 1).",
+    "Covered (mapped to chunks by the user): 9; not covered: 11",
+    "",
+    "  # label        rank      top  vs line  top 4",
+    "  1 covered         1     3.75    +0.72  kb-app-routine, kb-dry-skin, kb-sun-sunscreen-use, kb-marks-after-acne",
+    "  2 covered         1     9.32    +6.29  kb-app-conflicts, kb-acne-actives",
+    "  3 not covered     -     4.04    +1.01  kb-acne-care, kb-app-skin-type, kb-sun-sunscreen-use, kb-sun-other",
+    "  4 not covered     -     3.89    +0.86  kb-marks-after-acne, kb-acne-scars, kb-pigment-spots, kb-app-routine",
+    "  5 not covered     -     3.76    +0.73  kb-acne-actives, kb-acne-what, kb-acne-care, kb-cosmetic-reactions",
+    "  6 covered         1     4.09    +1.06  kb-acne-actives, kb-acne-types, kb-app-conflicts, kb-app-routine",
+    "  7 not covered     -     7.68    +4.65  kb-app-routine, kb-app-skin-type, kb-sun-other, kb-rosacea-care",
+    "  8 not covered     -     3.65    +0.62  kb-dry-skin, kb-app-skin-type, kb-rosacea-what, kb-sun-uv",
+    "  9 covered         1    13.79   +10.76  kb-app-skin-type, kb-app-routine, kb-sun-other, kb-app-conflicts",
+    " 10 not covered     -     0.00    -3.03  (no matching term)",
+    " 11 covered         1     9.98    +6.95  kb-app-conflicts, kb-acne-actives, kb-app-routine",
+    " 12 not covered     -     5.32    +2.29  kb-cosmetic-reactions, kb-rosacea-what, kb-app-skin-type, kb-acne-actives",
+    " 13 not covered     -     3.69    +0.66  kb-acne-care, kb-cosmetic-reactions, kb-app-routine",
+    " 14 covered         2     3.76    +0.73  kb-acne-actives, kb-app-routine, kb-acne-care, kb-app-conflicts",
+    " 15 covered         1     8.06    +5.03  kb-app-scores, kb-moles-check, kb-acne-doctor, kb-acne-what",
+    " 16 not covered     -     1.64    -1.39  kb-rash-contact, kb-acne-actives, kb-rosacea-what, kb-app-scores",
+    " 17 not covered     -     3.04    +0.01  kb-app-routine, kb-ageing-skin, kb-app-skin-type, kb-moles-check",
+    " 18 covered         1     7.80    +4.77  kb-app-routine, kb-app-conflicts, kb-marks-after-acne, kb-app-skin-type",
+    " 19 not covered     -     3.65    +0.62  kb-dry-skin, kb-app-conflicts, kb-app-skin-type, kb-acne-actives",
+    " 20 covered         1     4.95    +1.92  kb-marks-after-acne, kb-acne-what, kb-pigment-spots, kb-sun-uv",
+    "",
+    "Covered questions only, n = 9:",
+    "  hit@1 8/9 (95% Wilson 0.56-0.98); hit@4 9/9 (95% Wilson 0.70-1.00)",
+    "  mean recall@4 1.00; MRR 0.94",
+    "At the frozen line 3.03: covered answered 9/9 (95% Wilson 0.70-1.00); not covered refused 2/11 (95% Wilson 0.05-0.48)",
+    "(No single recall figure over all 20: the not-covered ones test the no-answer path.)"
+  ]
+}

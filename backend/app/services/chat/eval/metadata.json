@@ -1,0 +1,14 @@
+{
+  "recorded_at": "2026-10-08T08:26:36+00:00",
+  "note": "Recorded before any knowledge-base chunk text existed.",
+  "question_files": {
+    "author_questions.json": {
+      "sha256": "4ee242c0f5d88a196e5e9a9594e752ff7ff714c41c30f372e79fa11115509ca4",
+      "authorship": "Written by Claude, the author of the knowledge base, on 2026-10-08 before any chunk text existed."
+    },
+    "user_questions.txt": {
+      "sha256": "1134c69761d14a918687c82bfcc5ccf34e6def2b4041eba6870238e21bce9582",
+      "authorship": "Drafted by Claude in a separate chat session: not by the user and not by the KB author. Written before the KB existed and never shown its chunks. The KB author read this file before fixing the 24-chunk topic list (STOP 1)."
+    }
+  }
+}

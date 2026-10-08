@@ -1,0 +1,38 @@
+{
+  "frozen_at": "2026-10-08T08:46:15+00:00",
+  "rescoped_at": "2026-10-08T10:01:16+00:00",
+  "note": "Set on the dev questions only. The test split runs only while these match. Rescoped to the retrieval settings after verifying the original freeze.",
+  "retrieval": {
+    "keys": [
+      "BM25_K1",
+      "BM25_B",
+      "TOP_K",
+      "NO_ANSWER_MIN_SCORE",
+      "TOKEN_PATTERN",
+      "PLURAL_RULES",
+      "KEEP_ENDINGS",
+      "MIN_STEM",
+      "SPELLING",
+      "STOPWORDS",
+      "QUESTION_IDIOMS"
+    ],
+    "fingerprint": "63c215128bde9801"
+  },
+  "kb": {
+    "version": "kb-1.0.0",
+    "fingerprint": "2e9d5fd414a376ed"
+  },
+  "no_answer_min_score": 3.03,
+  "retrieval_code_sha256": "2bfeaeca0d11e8878a541ec47d70eb1f2a61574c2a17662e02205d90ddc791d0",
+  "question_files": {
+    "author_questions.json": "4ee242c0f5d88a196e5e9a9594e752ff7ff714c41c30f372e79fa11115509ca4",
+    "user_questions.txt": "1134c69761d14a918687c82bfcc5ccf34e6def2b4041eba6870238e21bce9582"
+  },
+  "previous_scope": {
+    "chat_config": {
+      "version": "chat-1.0.0",
+      "fingerprint": "c7a206c05a82f2de"
+    },
+    "note": "Until the rescope the freeze covered every value in chat_config; it verified unchanged at the rescope."
+  }
+}

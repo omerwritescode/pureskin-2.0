@@ -1,0 +1,298 @@
+{
+  "version": "kb-1.0.0",
+  "chunks": [
+    {
+      "id": "kb-sun-uv",
+      "topic": "sun",
+      "title": "Why sun protection matters",
+      "text": "Ultraviolet (UV) light from the sun can't be seen, but it passes into the skin and damages skin cells. Sunburn is a sign of that damage, and a tan is not healthy either: it appears only after some cells have already been harmed. Over the years the damage adds up and can bring changes in texture, wrinkles, dark spots, early ageing of the skin and skin cancer. UV can harm the skin in any season and at any temperature, and it can affect the eyes as well.",
+      "aliases": ["uv", "ultraviolet", "sunburn", "tan", "tanning", "sun damage"],
+      "sources": [
+        {"url": "https://medlineplus.gov/sunexposure.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated August 25, 2026", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.nia.nih.gov/health/skin-care/skin-care-and-aging", "publisher": "National Institute on Aging, National Institutes of Health", "licence_class": "public_domain", "role": "support", "sections": ["How does skin change as you age?"], "date_checked": "2026-10-08", "page_date": "Content reviewed: February 11, 2025", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-sun-sunscreen-use",
+      "topic": "sun",
+      "title": "Using sunscreen",
+      "text": "Choose a sunscreen with SPF 15 or above, ideally one labelled \"broad spectrum\", meaning it guards against both UVA and UVB rays. Apply it 15 to 30 minutes before going outdoors. It needs topping up: reapply at least every two hours, and sooner after swimming, sweating or towelling off. UV rays get through cloud, so overcast days count too. Shade, a wide-brimmed hat and sunglasses are the other parts of sun protection.",
+      "aliases": ["spf", "sunblock", "reapply", "uva", "uvb", "broad spectrum"],
+      "sources": [
+        {"url": "https://www.nia.nih.gov/health/skin-care/skin-care-and-aging", "publisher": "National Institute on Aging, National Institutes of Health", "licence_class": "public_domain", "role": "support", "sections": ["How can I protect my skin?", "Age spots and skin tags"], "date_checked": "2026-10-08", "page_date": "Content reviewed: February 11, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "https://medlineplus.gov/sunexposure.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated August 25, 2026", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-sun-other",
+      "topic": "sun",
+      "title": "Other sun protection, and medicines that affect it",
+      "text": "Sunscreen is only one part of sun protection. The others are keeping to the shade during the hours of strongest sun, a hat with a wide brim, loose and light clothing that covers the arms and legs, and sunglasses that block nearly all UV. Sunlamps and tanning beds also give off UV, so it is best to avoid them. Some medicines, on prescription or bought over the counter, make skin more sensitive to sunlight, among them certain antibiotics, nonsteroidal anti-inflammatory drugs (NSAIDs), diuretics and some cancer treatments. A doctor or pharmacist can say whether yours do.",
+      "aliases": ["hat", "sunglasses", "clothing", "tanning bed", "sunlamp", "medicines", "photosensitivity", "sun sensitive"],
+      "sources": [
+        {"url": "https://www.nia.nih.gov/health/skin-care/skin-care-and-aging", "publisher": "National Institute on Aging, National Institutes of Health", "licence_class": "public_domain", "role": "support", "sections": ["How can I protect my skin?", "Skin cancer", "Medications and your skin"], "date_checked": "2026-10-08", "page_date": "Content reviewed: February 11, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "https://medlineplus.gov/sunexposure.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated August 25, 2026", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-acne-what",
+      "topic": "acne",
+      "title": "What acne is",
+      "text": "Acne starts when hair follicles in the skin become blocked. The pore gets plugged by dead skin cells and sebum, an oil the skin makes to stop itself drying out, and bacteria can grow inside. The result is pimples, mostly on the face, neck, chest, back and shoulders. Acne is most common in teenagers and young adults. It often settles by the thirties, though some people still have it in their forties and fifties, and in adults it is more common in women. Hormone changes, family history and some medicines make it more likely. It is not serious, but it can leave scars.",
+      "aliases": ["acne", "pimples", "breakouts", "zits", "spots", "sebum", "clogged pores"],
+      "sources": [
+        {"url": "https://medlineplus.gov/acne.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated October 12, 2024", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.niams.nih.gov/health-topics/acne", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Overview of Acne", "Who Gets Acne?", "Causes of Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-acne-types",
+      "topic": "acne",
+      "title": "Blackheads, whiteheads and other acne spots",
+      "text": "Blocked hair follicles are called comedones. A whitehead is a blocked follicle that stays closed under the skin and shows as a small white bump. A blackhead is one that opens at the surface; it looks dark because air darkens the oil inside, not because of dirt. Papules are small, pink, inflamed bumps that can be tender, and pustules are papules with a white or yellow head of pus. Nodules are large, solid, painful lumps deep in the skin. The most severe form, with deep and painful lumps full of pus, is sometimes called cystic acne.",
+      "aliases": ["blackheads", "whiteheads", "comedones", "papules", "pustules", "nodules", "cystic acne", "bumps"],
+      "sources": [
+        {"url": "https://www.niams.nih.gov/health-topics/acne", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Types of Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"},
+        {"url": "https://medlineplus.gov/acne.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated October 12, 2024", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-acne-care",
+      "topic": "acne",
+      "title": "Everyday care for acne-prone skin",
+      "text": "For skin that breaks out, wash gently with a mild cleanser in the morning, at night and after heavy exercise, and rinse with lukewarm water. Avoid harsh soaps, astringents and rough scrubbing pads. Scrubbing hard can make acne worse, and so can stress, pressure from helmets, tight clothes or backpacks, and humid or polluted air. Try not to touch, squeeze or pick spots: that can leave scars or dark marks. Choose oil-free products labelled non-comedogenic, meaning made not to block pores, though in some people even these can make acne worse. Wear sunscreen and avoid sunburn and tanning.",
+      "aliases": ["cleanser", "face wash", "washing", "picking", "squeezing", "non-comedogenic", "oil-free", "scrub"],
+      "sources": [
+        {"url": "https://www.niams.nih.gov/health-topics/acne/diagnosis-treatment-and-steps-to-take", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Living With Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.niams.nih.gov/health-topics/acne", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Causes of Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"},
+        {"url": "https://medlineplus.gov/acne.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated October 12, 2024", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-acne-actives",
+      "topic": "acne",
+      "title": "Acne products: common ingredients and side effects",
+      "text": "Acne products for the skin come as gels, lotions, creams, soaps and pads. Common ingredients include benzoyl peroxide, which acts against bacteria and may lower oil production; salicylic acid, used to break up blackheads and whiteheads; sulfur; and retinoids, which come from vitamin A. Retinol, found in many skincare products, belongs to the retinoid family. In some people these products cause side effects such as irritation, burning or redness of the skin; talk to a doctor about any side effects. Many acne medicines also make sunburn more likely, so sunscreen matters.",
+      "aliases": ["benzoyl peroxide", "salicylic acid", "bha", "retinol", "retinoid", "sulfur", "side effects", "irritation", "burning", "redness"],
+      "sources": [
+        {"url": "https://www.niams.nih.gov/health-topics/acne/diagnosis-treatment-and-steps-to-take", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Treatment for Acne", "Living With Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"},
+        {"url": "repo:backend/app/services/ingredients/ingredient_config.py", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["CLASSES: retinoid"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-acne-doctor",
+      "topic": "acne",
+      "title": "Acne: what a doctor can offer",
+      "text": "Dermatologists, who specialise in skin, and family doctors both look after acne. A doctor may suggest over-the-counter products or prescribe medicines for the skin or to take by mouth. Prescription options include antibiotics, usually for moderate to severe acne; hormone treatment, mainly for women; and isotretinoin, a retinoid taken by mouth. When severe acne or scarring doesn't respond to medicines, there are clinic treatments too, such as lasers, injections, chemical peels and procedures for scars. Acne can make people feel embarrassed, shy or anxious, and that is worth raising with a doctor as well.",
+      "aliases": ["dermatologist", "doctor", "prescription", "isotretinoin", "antibiotics", "severe acne", "hormonal"],
+      "sources": [
+        {"url": "https://www.niams.nih.gov/health-topics/acne/diagnosis-treatment-and-steps-to-take", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Treatment for Acne", "Who Treats Acne?", "Living With Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.nhs.uk/conditions/acne/treatment/", "publisher": "NHS website", "licence_class": "ogl", "role": "further_reading", "sections": ["Treatment"], "date_checked": "2026-10-08", "page_date": "Page last reviewed: 22 September 2026", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-marks-after-acne",
+      "topic": "marks",
+      "title": "Dark marks left after acne",
+      "text": "After acne heals, people with darker skin tones can be left with patches of skin that are darker than the skin around them; this is separate from scarring. Wearing sunscreen whenever you are outdoors is especially important for these dark spots, both those already there and new ones. Squeezing or picking spots can leave dark blotches or scars. A doctor can suggest an approach to fade dark spots that are already there.",
+      "aliases": ["dark spots", "discoloration", "discolouration", "blotches", "hyperpigmentation"],
+      "sources": [
+        {"url": "https://www.niams.nih.gov/health-topics/acne/diagnosis-treatment-and-steps-to-take", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Treatment for Acne", "Living With Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-pigment-spots",
+      "topic": "marks",
+      "title": "Darker patches, age spots and lighter patches",
+      "text": "Skin gets its colour from melanin, a pigment made by special cells in the skin. When the skin makes more melanin, it gets darker; sun exposure and pregnancy are among the things that can cause this. Age spots are flat brown spots, bigger than freckles, that usually come from years of sun and are commonly found on the face, the hands and arms, the back and the feet. They are harmless. A hat and a broad-spectrum sunscreen can help prevent more of them, and a doctor can discuss options if they bother you. Skin can also lose colour in patches, as in vitiligo.",
+      "aliases": ["pigmentation", "melanin", "age spots", "brown spots", "dark patches", "freckles", "vitiligo", "uneven skin tone"],
+      "sources": [
+        {"url": "https://medlineplus.gov/skinpigmentationdisorders.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated September 19, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.nia.nih.gov/health/skin-care/skin-care-and-aging", "publisher": "National Institute on Aging, National Institutes of Health", "licence_class": "public_domain", "role": "support", "sections": ["Age spots and skin tags"], "date_checked": "2026-10-08", "page_date": "Content reviewed: February 11, 2025", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-acne-scars",
+      "topic": "marks",
+      "title": "Acne scars",
+      "text": "Acne, like a cut or a burn, can leave a scar: a permanent patch of new skin formed while the skin heals. Scars often look thicker, shinier, pinker or redder than nearby skin. The size and depth of the original damage, its position on the body, the time it took to heal, age and a family tendency all affect how a scar ends up. Scars usually fade with time but don't disappear entirely. If a scar bothers you, a doctor can discuss options such as laser treatment, chemical peels, fillers, treatment with tiny needles, injections or surgery.",
+      "aliases": ["scars", "scarring", "acne scars", "laser", "chemical peel", "fillers"],
+      "sources": [
+        {"url": "https://medlineplus.gov/scars.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated August 23, 2026", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.niams.nih.gov/health-topics/acne/diagnosis-treatment-and-steps-to-take", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Treatment for Acne"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: July 2023", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-rosacea-what",
+      "topic": "redness",
+      "title": "Rosacea",
+      "text": "Rosacea is a long-term condition that mainly affects the face and sometimes the eyes. Signs include a face that often reddens or flushes, fine red lines visible in the skin, pimples and, in some people, thickened skin or a swollen nose. It is most common in women, in people with fair skin and in middle-aged and older adults, and blushing easily or a family history makes it more likely. There is no specific test: a doctor goes by the skin, the eyes and the person's history. Treatment from a doctor can take three months or more to show results. Red, dry, itchy or burning eyes need a doctor straight away, because untreated eye problems can affect sight.",
+      "aliases": ["rosacea", "flushing", "facial redness", "red face", "blushing", "redness"],
+      "sources": [
+        {"url": "https://medlineplus.gov/rosacea.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated January 6, 2024", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.niams.nih.gov/health-topics/rosacea/diagnosis-treatment-and-steps-to-take", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Diagnosis of Rosacea", "Treatment of Rosacea", "Living With Rosacea"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: May 2024", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-rosacea-care",
+      "topic": "redness",
+      "title": "Rosacea: triggers and gentle care",
+      "text": "What sets off rosacea varies from person to person, so a written note of what seems to make it worse can help. Common triggers include sunlight, hot or cold weather, strong winds, emotional stress, hard exercise, alcohol, hot baths, spicy food, and hot food or drinks. Treat the skin gently: use a cleanser made for sensitive skin, moisturise regularly, and avoid exfoliating products and products that contain alcohol. Wear a sunscreen made for the face, SPF 30 or higher, every day. A long-term skin condition can be hard to live with, and a mental health professional or a support group can help.",
+      "aliases": ["triggers", "flare-ups", "rosacea care", "sensitive skin", "spf 30", "redness"],
+      "sources": [
+        {"url": "https://www.niams.nih.gov/health-topics/rosacea/diagnosis-treatment-and-steps-to-take", "publisher": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS), NIH", "licence_class": "public_domain", "role": "support", "sections": ["Living With Rosacea"], "date_checked": "2026-10-08", "page_date": "Last Reviewed: May 2024", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-dry-skin",
+      "topic": "dry_ageing",
+      "title": "Dry, itchy skin",
+      "text": "Dry skin can feel rough, scaly and itchy. Causes include a dry environment, a lot of time in the sun, smoking, drinking too little water and the changes that come with age, when skin makes less oil. Hot baths and showers and heavy use of soap, antiperspirant or perfume can make dryness worse. To look after dry skin, use a moisturiser such as a lotion, cream or ointment every day, wash with a mild soap and warm rather than hot water, and try a humidifier to add moisture to the air. If the dryness and itching are severe, see a doctor.",
+      "aliases": ["dry skin", "dryness", "itchy", "scaly", "moisturiser", "humidifier", "lotion", "ointment"],
+      "sources": [
+        {"url": "https://www.nia.nih.gov/health/skin-care/skin-care-and-aging", "publisher": "National Institute on Aging, National Institutes of Health", "licence_class": "public_domain", "role": "support", "sections": ["Dry skin and itching", "How does skin change as you age?"], "date_checked": "2026-10-08", "page_date": "Content reviewed: February 11, 2025", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-ageing-skin",
+      "topic": "dry_ageing",
+      "title": "How skin changes with age",
+      "text": "As people age, the skin's outer layer thins, loses colour and stretches less, because elastic fibres and collagen are lost. Wrinkles, dryness and age spots appear, and the skin bruises more easily. Hormone changes such as menopause can make skin thinner and drier. Sunlight is a major cause of skin ageing, and smoking adds to wrinkles: the more cigarettes and years, the more wrinkling. Be wary of products that claim to be anti-ageing or to reduce wrinkles; some may even contain heavy metals such as mercury or lead. A dermatologist or family doctor can advise on which products are safe for you.",
+      "aliases": ["aging", "ageing", "wrinkles", "fine lines", "anti-aging", "anti-ageing", "collagen", "elastin"],
+      "sources": [
+        {"url": "https://www.nia.nih.gov/health/skin-care/skin-care-and-aging", "publisher": "National Institute on Aging, National Institutes of Health", "licence_class": "public_domain", "role": "support", "sections": ["How does skin change as you age?", "Can antiaging beauty products protect my skin?"], "date_checked": "2026-10-08", "page_date": "Content reviewed: February 11, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "https://medlineplus.gov/skinaging.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated August 23, 2026", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-cosmetic-reactions",
+      "topic": "reactions",
+      "title": "Reactions to cosmetics and skincare",
+      "text": "Cosmetics and skincare products can cause allergic reactions, and the first sign is often skin that becomes red and irritated. Of the ingredients in cosmetics, fragrances and preservatives cause skin problems most often. A rash from something the skin touched appears where the contact happened. To find out everything a product contains, check the ingredient list on its container or packaging. See a doctor if a rash is bad, doesn't go away, or comes with other symptoms.",
+      "aliases": ["allergic reaction", "allergy", "fragrance", "perfume", "preservatives", "ingredients", "irritation", "reaction"],
+      "sources": [
+        {"url": "https://medlineplus.gov/cosmetics.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated August 1, 2026", "overlap_checked": "2026-10-08"},
+        {"url": "https://medlineplus.gov/rashes.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated June 17, 2025", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-rash-contact",
+      "topic": "reactions",
+      "title": "Rashes and contact dermatitis",
+      "text": "A rash is skin that has become irritated or swollen in one area, often red, itchy or painful, and sometimes with blisters or raw patches. Rashes have many causes, among them allergies and irritating substances. A common type, contact dermatitis, brings redness, itching and sometimes small bumps where the skin touched something irritating, such as a chemical, or something the person is allergic to. Some rashes appear at once and others over several days. Most clear up fairly quickly, but knowing the cause matters before treating one. See a doctor if a rash is bad, doesn't go away, or comes with other symptoms.",
+      "aliases": ["rash", "contact dermatitis", "itchy", "irritant", "allergen", "blisters", "bumps", "redness"],
+      "sources": [
+        {"url": "https://medlineplus.gov/rashes.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated June 17, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.nhs.uk/conditions/contact-dermatitis/", "publisher": "NHS website", "licence_class": "ogl", "role": "further_reading", "sections": ["Contact dermatitis"], "date_checked": "2026-10-08", "page_date": "Page last reviewed: 03 May 2023", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-infection-signs",
+      "topic": "safety",
+      "title": "Signs of a skin infection",
+      "text": "Germs such as bacteria, viruses, fungi and parasites can infect the skin, often getting in through a cut, wound, burn or other break. Signs common to many skin infections are redness, swelling, pain, pus, itching and rashes. Some infections stay small and on the surface; others go deeper or spread over a larger area. Cellulitis is a bacterial infection of the skin and the tissues beneath it: the skin becomes red, painful and tender and may blister, and there can be fever, chills and swollen glands. A health care provider may test a skin sample or blood to find the cause; treatment is antibiotics, by mouth in mild cases or by drip (IV) in severe ones.",
+      "aliases": ["infection", "infected", "cellulitis", "pus", "swelling", "fever", "bacteria", "antibiotics"],
+      "sources": [
+        {"url": "https://medlineplus.gov/skininfections.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["What are skin infections?", "What causes skin infections?", "What are the symptoms of skin infections?"], "date_checked": "2026-10-08", "page_date": "Last updated April 24, 2024", "overlap_checked": "2026-10-08"},
+        {"url": "https://medlineplus.gov/cellulitis.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated June 25, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.nhs.uk/conditions/cellulitis/", "publisher": "NHS website", "licence_class": "ogl", "role": "further_reading", "sections": ["Cellulitis"], "date_checked": "2026-10-08", "page_date": "Page last reviewed: 18 April 2024", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-moles-check",
+      "topic": "safety",
+      "title": "Moles: changes to get checked",
+      "text": "Moles are very common, and new ones can keep appearing until about age 40. Look over your skin about once a month. Get a mole or growth checked promptly by a doctor if it looks unusual or changes: one half unlike the other, an irregular edge, several colours or a colour change, wider than a pencil eraser, or a change in size, shape, surface or feel, such as itching, tenderness or bleeding. A new growth or a sore that won't heal needs a doctor too. PureSkin's photo scores don't assess moles.",
+      "aliases": ["mole", "moles", "birthmark", "melanoma", "abcde", "skin cancer", "growth", "skin check"],
+      "sources": [
+        {"url": "https://medlineplus.gov/moles.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated July 20, 2026", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.nia.nih.gov/health/skin-care/skin-care-and-aging", "publisher": "National Institute on Aging, National Institutes of Health", "licence_class": "public_domain", "role": "support", "sections": ["Skin cancer", "Check moles, birthmarks, or other parts of the skin for 'ABCDE'"], "date_checked": "2026-10-08", "page_date": "Content reviewed: February 11, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "repo:README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["What it does"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "https://www.nhs.uk/conditions/moles/", "publisher": "NHS website", "licence_class": "ogl", "role": "further_reading", "sections": ["Non-urgent advice: See a GP if"], "date_checked": "2026-10-08", "page_date": "Page last reviewed: 04 July 2023", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-allergy-serious",
+      "topic": "safety",
+      "title": "Signs of a serious allergic reaction",
+      "text": "A serious allergic reaction, called anaphylaxis, can begin very quickly and can be life-threatening. Warning signs include swelling of the lips, tongue or throat; a tight throat or trouble swallowing; shortness of breath, coughing or wheezing; chest pain or tightness; itching, hives, redness or swelling of the skin; a weak pulse; dizziness or fainting; and vomiting, diarrhoea or cramps. Foods, medicines and insect stings are the most common causes. Anyone with these signs needs emergency help at once: call the local emergency number.",
+      "aliases": ["anaphylaxis", "allergic reaction", "swelling", "hives", "emergency", "breathing", "throat", "lips"],
+      "sources": [
+        {"url": "https://medlineplus.gov/anaphylaxis.html", "publisher": "MedlinePlus (National Library of Medicine, NIH)", "licence_class": "public_domain", "role": "support", "sections": ["Summary"], "date_checked": "2026-10-08", "page_date": "Last updated December 4, 2025", "overlap_checked": "2026-10-08"},
+        {"url": "https://www.nhs.uk/conditions/anaphylaxis/", "publisher": "NHS website", "licence_class": "ogl", "role": "further_reading", "sections": ["Immediate action required"], "date_checked": "2026-10-08", "page_date": "Page last reviewed: 21 June 2023", "overlap_checked": "2026-10-08"}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-app-scores",
+      "topic": "app",
+      "title": "What your Skin Profile scores mean",
+      "text": "Your Skin Profile has five scores from 1 to 100: acne, redness, wrinkles, pigmentation and pore visibility. Each is shown as a band: Low (1-30), Moderate (31-60) or High (61-100). They combine rule-based measurements of your selfie with your questionnaire answers. They are unvalidated estimates for building your routine, not a medical assessment. The acne score follows your answers more than the photo: without answers that support it, it stays at 60 or below.",
+      "aliases": ["score", "scores", "band", "low", "moderate", "high", "skin profile", "results"],
+      "sources": [
+        {"url": "repo:README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["What it does"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:backend/app/services/skin_profile/README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["Score bands", "Acne: the questionnaire is primary"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:docs/spec.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["Addendum, item 1"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-app-skin-type",
+      "topic": "app",
+      "title": "How PureSkin sets your skin type and sensitivity",
+      "text": "PureSkin takes your skin type and sensitivity from your questionnaire answers only; the selfie is not used for either. Skin type comes first from how your T-zone and cheeks feel by midday (an oily T-zone with normal or dry cheeks counts as combination), and otherwise from the type you picked. If neither settles it, PureSkin uses normal and shows it as assumed; answering the midday questions in a new scan gives a better result. Sensitivity is a separate yes-or-no flag, not a skin type, and it changes which products your routine can include.",
+      "aliases": ["skin type", "assumed", "oily", "dry", "combination", "normal", "sensitive", "sensitivity", "t-zone"],
+      "sources": [
+        {"url": "repo:backend/app/services/questionnaire/README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["Skin type"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:frontend/static/js/ui.js", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["assumedSkinTypeNote"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:docs/spec.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["Addendum, items 2 and 4"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:backend/app/services/recommendation/README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["How a routine is built"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-app-routine",
+      "topic": "app",
+      "title": "How your routine is built",
+      "text": "Your routine is built by fixed rules from your latest Skin Profile. Your skin type sets the base steps, and each score in the High band adds a step for that concern. Steps follow this order: cleanser, exfoliant, serum, treatment, moisturiser, then sunscreen in the morning. Retinoids, and AHAs in products left on the skin, are used only in the evening. For sensitive skin, products with fragrance, strong actives (retinoids, benzoyl peroxide, AHAs, BHAs) or L-ascorbic acid are left out, and mineral sunscreens are preferred. Products the rules couldn't use are listed under Left out, with the reason. Every retinoid step carries this caution: if you're pregnant, trying to get pregnant or breastfeeding, ask a doctor before using a retinoid.",
+      "aliases": ["routine", "steps", "order", "morning", "evening", "left out", "mineral sunscreen", "sensitive", "fragrance", "retinoid"],
+      "sources": [
+        {"url": "repo:backend/app/services/recommendation/README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["How a routine is built"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:backend/app/services/recommendation/routine_config.py", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["CATEGORY_ORDER", "RETINOID_CAUTION"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:backend/app/services/skin_profile/README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["Known limitations, item 5"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    },
+    {
+      "id": "kb-app-conflicts",
+      "topic": "app",
+      "title": "Ingredient pairs your routine keeps apart",
+      "text": "In each session, morning or evening, PureSkin's routine checks every pair of products against a table of ingredient pairs. When two products clash, it keeps one and lists the other with the clash. It rates these pairs high: retinoid + benzoyl peroxide, retinoid + AHA, retinoid + BHA. Medium: BHA + azelaic acid, benzoyl peroxide + ascorbic acid, retinoid + ascorbic acid, AHA + BHA, benzoyl peroxide + BHA, benzoyl peroxide + AHA. Low: ascorbic acid + niacinamide, AHA + ascorbic acid. Ascorbic acid is vitamin C. This list describes what the routine does; it is not a medical finding about the pairs.",
+      "aliases": ["conflict", "conflicts", "clash", "combine", "combining", "layering", "vitamin c", "pairs", "mixing"],
+      "sources": [
+        {"url": "repo:backend/seed.py", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["CONFLICTS (pairs and severities only)"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null},
+        {"url": "repo:backend/app/services/recommendation/README.md", "publisher": "PureSkin repository", "licence_class": "app_doc", "role": "support", "sections": ["How a routine is built"], "date_checked": "2026-10-08", "page_date": null, "overlap_checked": null}
+      ],
+      "review": {"status": "not_yet", "date": null, "text_sha256": null}
+    }
+  ]
+}
