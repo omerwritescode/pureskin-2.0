@@ -18,7 +18,14 @@ from app.api.profile import latest_profile
 from app.models import IngredientConflict, Product, User
 from app.services.catalog.loader import catalog_version
 from app.services.ingredients import INGREDIENT_CONFIG_VERSION
-from app.services.recommendation.engine import Step, build_routine, conflict_table, kept_in_order, product_record
+from app.services.recommendation.engine import (
+    Routine,
+    Step,
+    build_routine,
+    conflict_table,
+    kept_in_order,
+    product_record,
+)
 from app.services.recommendation.explain import explain, explain_alternative
 from app.services.recommendation.recommendation_config import RECOMMENDATION_CONFIG_VERSION
 from app.services.recommendation.routine_config import ROUTINE_CONFIG_VERSION
@@ -113,15 +120,9 @@ def to_response(steps: list[Step], rows: dict[int, Product], profile, base_set: 
     return out
 
 
-@router.get("", response_model=RoutineOut)
-def get_routine(user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> RoutineOut:
-    profile = latest_profile(db, user)
-    if profile is None:
-        return RoutineOut(
-            skin_type=None, am_routine=[], pm_routine=[], warnings=[],
-            message="Complete your skin scan first to get a personalised routine.",
-        )
-
+def compute_routine(db: Session, profile) -> tuple[Routine, dict[int, Product]]:
+    """The routine for a Skin Profile, and the catalog rows by id. Shared by GET /api/routine
+    and the chat (7d), so both see exactly the same routine."""
     # The catalog and the conflict table are small; load both once per request.
     rows = {p.id: p for p in db.scalars(select(Product).order_by(Product.id))}
     products = [
@@ -132,7 +133,19 @@ def get_routine(user: User = Depends(get_current_user), db: Session = Depends(ge
         (c.ingredient_a, c.ingredient_b, c.severity, c.reason)
         for c in db.scalars(select(IngredientConflict))
     )
-    routine = build_routine(profile, products, conflicts)
+    return build_routine(profile, products, conflicts), rows
+
+
+@router.get("", response_model=RoutineOut)
+def get_routine(user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> RoutineOut:
+    profile = latest_profile(db, user)
+    if profile is None:
+        return RoutineOut(
+            skin_type=None, am_routine=[], pm_routine=[], warnings=[],
+            message="Complete your skin scan first to get a personalised routine.",
+        )
+
+    routine, rows = compute_routine(db, profile)
 
     return RoutineOut(
         skin_type=profile.skin_type,
