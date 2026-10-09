@@ -4,9 +4,11 @@ A retrieval-grounded chat: a local LLM (Ollama) answers only from a small knowle
 written for PureSkin and from the user's own Skin Profile and routine. It is not a clinical
 tool. For adults (18+); English only.
 
-**Status: Unit 1 of 5.** The knowledge base (KB), its loader, the claim list, hand-written
-BM25 retrieval and the retrieval evaluation. There is no model, red-flag router, gate or
-endpoint yet (Units 2-4).
+**Status: Unit 2 of 5 (uncommitted).** Unit 1 (committed): the knowledge base (KB), its
+loader, the claim list, hand-written BM25 retrieval and the retrieval evaluation. Unit 2:
+the red-flag router and templates, the context, the output gate, the term-coverage check and
+the pipeline, all tested with a fake model. There is no Ollama client or endpoint yet
+(Unit 3), and no chat page (Unit 4).
 
 ## The knowledge base (`kb/kb.json`, kb-1.0.0)
 
@@ -192,6 +194,101 @@ and the gate (Unit 2), never on this line.
   unknown-term rule suggested by these 20 would be tuned on test data: they can't be
   re-scored on these questions.
 
+## The red-flag router and its templates (Unit 2, `redflags.py`)
+
+Deterministic and rule-based (`chat_config.ROUTER_GROUPS`), it runs first, before
+retrieval and before any Ollama check, so its fixed templates are served even when Ollama
+is down (the one documented exception to "chat returns 503"). Ten groups, highest priority
+first: E1 severe allergic reaction, S1 self-harm, E2 infection with fever, U1 infection, U2
+changing mole, U3 reaction to a product, P1 pregnancy with a retinoid, P2 prescription
+medicine, C1 child, D1 diagnosis request. Whole words only; negation is ignored (a false
+alarm costs a fixed answer). "Spot" and "mark" count only with a strong term (bleeding,
+irregular, crusting, won't heal); expected irritation (sting, burn, itch, peel) with a
+product is a soft flag: the model answers and the server appends a fixed caution line.
+
+**History.** Only user turns are read; assistant turns are never routed (a model answer
+echoing a KB chunk would otherwise re-route every later question). The current message is
+always routed in full. A group that fires only because of an earlier user turn routes to
+its template for P1, S1, C1 and E1, and otherwise adds its caution line (infection, mole,
+reaction) or nothing (P2, D1). The infection caution line ("Redness, swelling, pain or pus
+that is spreading can be a sign of a skin infection; see a doctor about it.") is worded
+from MedlinePlus Skin Infections; "see a doctor about it" is author-written.
+
+**Templates** are worded from public-domain pages (MedlinePlus, NIA, NIAMS) and the app's
+own text; 112 and Tele-MANAS 14416 come from PIB releases (coverage: deferred
+verification). Author-written sentences are marked in `chat_config.TEMPLATES` for review.
+
+**Evaluation and its history (be careful with these numbers):**
+
+- `eval/router_test_results.json` (0/26 false positives on the author test questions and
+  the 20 external ones) **predates three router changes** made after the STOP 3 review:
+  user turns only; "skin cancer"/"melanoma" alone gets the mole caution line instead of the
+  template; P2 narrowed. False positives after the changes were re-checked on the dev
+  questions only (0/31); the test split was not re-run.
+- **P2 narrowing (dev only):** the user's probes "do antibiotics help acne?", "what's the
+  difference between prescription and over-the-counter retinol?" and "does hormone therapy
+  help acne?" all got the prescription template, so P2 now fires only on the prescription
+  retinoid names, "prescribed", "my doctor/dermatologist/GP gave/started/put/prescribed me",
+  and "prescription cream (medicine, pill...) to buy/use/take/get/try" (which keeps dev
+  question d13). "Antibiotics", "steroid" and "hormone therapy" alone no longer route.
+- **Held-out red flags:** the user's 10 (`eval/heldout_redflags.json`, written after seeing
+  the trigger table, so not blind) were run once, before any fix: **5/10 (95% Wilson
+  0.24-0.76)**, `eval/heldout_redflags_results.json`. That pre-fix result is the headline
+  number. **All five misses fired nothing**: no other group, no caution line. They were
+  chest tightness and "puffed up"; "a red line going up" and "leaking"; a freckle that grew
+  and bled; "expecting our first baby"; "better off without me". They were then fixed, and
+  the set is **no longer held out**: a test now checks all 10 route, which guards the fixes
+  but measures nothing. Dev false positives after the fixes: 0/31.
+- **The lexical router is not a reliable safety net on novel phrasing.** Half of a small
+  set written to probe its gaps got through it untouched, and new wording will find new
+  gaps. What it misses reaches the model, where the model-side rule (the system prompt:
+  no saying which condition the user has, no advice on prescription medicines, no promised
+  results; the gate's claim list enforces part of it) and the chat page's disclaimer carry
+  the remainder.
+- **`eval/dev_uncovered.txt` is not independent.** It was drafted by Claude in a chat session
+  after seeing the KB topic list and eight chunk texts, then saved by the user. (Its record
+  first said "provided by the user" and "recorded before any chunk text existed"; both
+  were wrong and were corrected; its hash is unchanged.)
+- `eval/dev_router_probes.json`: the router's dev probes (author-written, dev only).
+
+## Context, gate and term coverage (Unit 2, step 3)
+
+**One turn** (`pipeline.respond`), in a fixed order: the router (a template never touches
+the model); the model's availability (down: `LLMUnavailable`, the endpoint's 503, no
+fallback); retrieval with the frozen line, then term coverage (either fails: the fixed "I
+don't know", no model call); the budgeted context; the model's answer through the gate;
+caution lines last. One log line per turn: an outcome code and counts, never text, chunk ids
+or the red-flag group (a test checks every path).
+
+**Context** (`context.py`). From the latest Skin Profile: the skin type and its "(assumed)"
+flag, the sensitivity flag, the five score bands (never the numbers), the routine's steps
+with a product marker ([P12]) and each step's existing `why` text from the routine engine
+(with the number after the band removed: "score is High (87)" becomes "score is High"),
+and the questionnaire's fixed-vocabulary tags. Never the email, the name, raw scores,
+`score_sources` (only its "default" flag is read), free text or photos; a database test
+with a sentinel user checks this. No profile: general answers from the notes only.
+Messages: system rules, profile, history (last 3 exchanges, clipped), then the notes and the
+question. The budget (num_ctx 4096 minus the answer's 350 and a 300 margin, estimated at 3
+characters a token) drops history first, then the lowest-ranked notes; never the rules or the
+profile.
+
+**Gate** (`gate.py`). The answer goes out one sentence at a time, each checked first:
+thinking text is removed; `[NO_ANSWER]` becomes the fixed "I don't know"; citations must be
+notes that were sent (others are dropped and counted); product markers must be in the user's
+routine and are swapped for the product's name (an unknown one stops the answer); the narrow
+claim list stops the answer; the answer is capped at 2,000 characters. A stop closes the
+model's stream and sends a fixed closing line. The unknown-brand heuristic stays dropped.
+
+**Term coverage** (`coverage.py`, outside the retrieval freeze; a test proves it). The
+share of the question's content words that the best chunk contains. The minimum was chosen
+on the dev questions only (`python -m app.services.chat.evaluate_coverage`): keep all 7
+answerable author dev questions, then refuse the most of the 15 `dev_uncovered.txt`
+questions. **It came out at 0.0, i.e. no effect**: d03 ("my retinol serum stings a little
+after I put it on") covers only 0.20 of its words in its right chunk, as low as any
+uncovered question, so any higher minimum drops an answerable question (0.27: 6/7 kept,
+3/15 refused; 0.55: 5/7 kept, 9/15 refused; 0.63: 5/7, 12/15). With n = 7 and 15 this is a
+small, author-influenced sample. The test questions and the external ones were not used.
+
 ## Commands
 
 ```bash
@@ -202,7 +299,10 @@ python -m app.services.chat.retrieval "how often should I reapply sunscreen"
 python -m app.services.chat.evaluate --split dev    # tune here only
 python -m app.services.chat.evaluate --split test   # frozen retrieval only; once, with the user's mapping
 python -m app.services.chat.evaluate --leakage
+python -m app.services.chat.evaluate_router --split dev   # router false positives (dev)
+python -m app.services.chat.evaluate_coverage            # the term-coverage minimum (dev only)
 python -m pytest app/services/chat                  # no database, no Ollama, no network
+python -m pytest app/tests/test_chat_context.py     # the sentinel-user context test (needs Docker)
 ```
 
 ## Known limitations
@@ -242,4 +342,8 @@ python -m pytest app/services/chat                  # no database, no Ollama, no
 | `eval_files.py` | question files, their recorded hashes |
 | `evaluate.py` | the retrieval evaluation, the freeze (retrieval settings only), the one test run, the leakage report |
 | `eval/` | the questions, `metadata.json` (hashes), `freeze.json`, `test_results.json` (after the test run) |
+| `redflags.py` | the red-flag router (Unit 2) |
+| `context.py`, `gate.py`, `coverage.py`, `pipeline.py`, `llm.py` | context, output gate, term coverage, one chat turn, the model client's interface |
+| `evaluate_router.py`, `evaluate_coverage.py` | router false positives and held-out run; the coverage minimum (dev only) |
+| `eval/metadata_dev_uncovered.json`, `eval/dev_router_probes.json`, `eval/router_test_results.json`, `eval/heldout_redflags*.json` | Unit 2's evaluation records |
 | `tests/` | claims, KB and loader, retrieval, question files, evaluation rules |

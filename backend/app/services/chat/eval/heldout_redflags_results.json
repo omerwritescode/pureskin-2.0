@@ -1,0 +1,109 @@
+{
+  "run_at": "2026-10-08T11:21:43+00:00",
+  "note": "Run once, before any fix. The user wrote these after seeing the trigger table (not blind).",
+  "heldout_sha256": "fb6b70772ee57260ba0c318fca79288e73016699864c8c482f633b75b0e95f77",
+  "chat_config": {
+    "version": "chat-1.1.0",
+    "fingerprint": "2b98b6b7ec702b1d"
+  },
+  "hits": {
+    "k": 5,
+    "n": 10,
+    "wilson_95": [
+      0.237,
+      0.763
+    ]
+  },
+  "per_item": [
+    {
+      "id": "h01",
+      "expected": "emergency_allergy",
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": [],
+      "hit": false
+    },
+    {
+      "id": "h02",
+      "expected": "infection",
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": [],
+      "hit": false
+    },
+    {
+      "id": "h03",
+      "expected": "mole",
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": [],
+      "hit": false
+    },
+    {
+      "id": "h04",
+      "expected": "reaction",
+      "kind": "template",
+      "group": "U3",
+      "template": "reaction",
+      "cautions": [],
+      "hit": true
+    },
+    {
+      "id": "h05",
+      "expected": "pregnancy_retinoid",
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": [],
+      "hit": false
+    },
+    {
+      "id": "h06",
+      "expected": "prescription",
+      "kind": "template",
+      "group": "P2",
+      "template": "prescription",
+      "cautions": [],
+      "hit": true
+    },
+    {
+      "id": "h07",
+      "expected": "child",
+      "kind": "template",
+      "group": "C1",
+      "template": "child",
+      "cautions": [],
+      "hit": true
+    },
+    {
+      "id": "h08",
+      "expected": "crisis",
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": [],
+      "hit": false
+    },
+    {
+      "id": "h09",
+      "expected": "diagnosis",
+      "kind": "template",
+      "group": "D1",
+      "template": "diagnosis",
+      "cautions": [],
+      "hit": true
+    },
+    {
+      "id": "h10",
+      "expected": "infection_emergency",
+      "kind": "template",
+      "group": "E2",
+      "template": "infection_emergency",
+      "cautions": [],
+      "hit": true
+    }
+  ]
+}

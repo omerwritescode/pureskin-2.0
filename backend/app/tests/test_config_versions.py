@@ -38,6 +38,7 @@ RECORDED = {
     "catalog-1.0.0": "7f4991367e8eabda",
     "recommendation-1.0.1": "a23ff72ea1e7fb2c",
     "chat-1.0.0": "c7a206c05a82f2de",
+    "chat-1.1.0": "9bc62d71edf36867",
 }
 
 CONFIGS = [

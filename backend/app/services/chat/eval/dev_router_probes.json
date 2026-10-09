@@ -1,0 +1,10 @@
+{
+  "author": "Claude (the router's author), 2026-10-08, after the STOP 3 review. Dev only: used to tune the router; never a test.",
+  "note": "p1-p3 are the user's P2 over-triggering probes (STOP 3 item 5); p4 checks decision 2 (skin cancer alone gets the mole caution line, not the template).",
+  "probes": [
+    {"id": "p1", "question": "Do antibiotics help acne?", "expect": "no_template"},
+    {"id": "p2", "question": "What's the difference between prescription and over-the-counter retinol?", "expect": "no_template"},
+    {"id": "p3", "question": "Does hormone therapy help acne?", "expect": "no_template"},
+    {"id": "p4", "question": "Does sunscreen lower my risk of skin cancer?", "expect": "no_template"}
+  ]
+}

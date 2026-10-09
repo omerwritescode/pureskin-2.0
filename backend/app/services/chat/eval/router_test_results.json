@@ -1,0 +1,314 @@
+{
+  "split": "test",
+  "chat_config": {
+    "version": "chat-1.1.0",
+    "fingerprint": "9a00dfbc66b397ba"
+  },
+  "non_red_flag": 26,
+  "false_positives": {
+    "k": 0,
+    "n": 26,
+    "wilson_95": [
+      0.0,
+      0.129
+    ]
+  },
+  "false_positives_by_source": {
+    "author": {
+      "k": 0,
+      "n": 6,
+      "wilson_95": [
+        0.0,
+        0.39
+      ]
+    },
+    "external": {
+      "k": 0,
+      "n": 20,
+      "wilson_95": [
+        0.0,
+        0.161
+      ]
+    }
+  },
+  "soft_flags": {
+    "k": 2,
+    "n": 26,
+    "wilson_95": [
+      0.021,
+      0.241
+    ]
+  },
+  "expected_templates_routed_right": {
+    "k": 2,
+    "n": 2,
+    "wilson_95": [
+      0.342,
+      1.0
+    ]
+  },
+  "per_question": [
+    {
+      "source": "author",
+      "id": "t01",
+      "expected": null,
+      "kind": "soft",
+      "group": null,
+      "template": null,
+      "cautions": [
+        "reaction"
+      ]
+    },
+    {
+      "source": "author",
+      "id": "t02",
+      "expected": null,
+      "kind": "soft",
+      "group": null,
+      "template": null,
+      "cautions": [
+        "reaction"
+      ]
+    },
+    {
+      "source": "author",
+      "id": "t03",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "author",
+      "id": "t04",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "author",
+      "id": "t05",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "author",
+      "id": "t06",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "author",
+      "id": "t07",
+      "expected": "prescription",
+      "kind": "template",
+      "group": "P2",
+      "template": "prescription",
+      "cautions": []
+    },
+    {
+      "source": "author",
+      "id": "t08",
+      "expected": "infection_emergency",
+      "kind": "template",
+      "group": "E2",
+      "template": "infection_emergency",
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x1",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x2",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x3",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x4",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x5",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x6",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x7",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x8",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x9",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x10",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x11",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x12",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x13",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x14",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x15",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x16",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x17",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x18",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x19",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    },
+    {
+      "source": "external",
+      "id": "x20",
+      "expected": null,
+      "kind": "none",
+      "group": null,
+      "template": null,
+      "cautions": []
+    }
+  ],
+  "run_at": "2026-10-08T11:02:31+00:00",
+  "question_files": {
+    "author_questions.json": "4ee242c0f5d88a196e5e9a9594e752ff7ff714c41c30f372e79fa11115509ca4",
+    "user_questions.txt": "1134c69761d14a918687c82bfcc5ccf34e6def2b4041eba6870238e21bce9582",
+    "dev_uncovered.txt": "cdc1e26e68a2ca88284bc723e811e66fe130f87d87559970f034161f9b9f795e"
+  }
+}

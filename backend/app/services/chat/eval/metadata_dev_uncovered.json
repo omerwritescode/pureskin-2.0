@@ -1,0 +1,11 @@
+{
+  "recorded_at": "2026-10-08T10:57:19+00:00",
+  "note": "Recorded when the file was first used (Unit 2), after the KB existed.",
+  "corrected": "2026-10-08, STOP 3 review: the note and the authorship text were wrong and were corrected; the sha256 and recorded_at are unchanged.",
+  "question_files": {
+    "dev_uncovered.txt": {
+      "sha256": "cdc1e26e68a2ca88284bc723e811e66fe130f87d87559970f034161f9b9f795e",
+      "authorship": "Drafted by Claude in a chat session after seeing the KB topic list and eight chunk texts, then saved by the user (2026-10-08, Unit 2). Not independent of the KB. Dev questions, all not covered by the KB; used for tuning (router false positives, term coverage)."
+    }
+  }
+}

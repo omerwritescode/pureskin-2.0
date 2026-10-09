@@ -29,6 +29,13 @@ AUTHOR_QUESTIONS = EVAL_DIR / "author_questions.json"
 USER_QUESTIONS = EVAL_DIR / "user_questions.txt"
 USER_LABELS = EVAL_DIR / "user_question_labels.json"
 METADATA = EVAL_DIR / "metadata.json"
+# Unit 2: the user's dev questions the KB doesn't cover (all "not_covered"). Its hash has its
+# own record, so metadata.json (which the retrieval freeze checks) is never rewritten.
+DEV_UNCOVERED = EVAL_DIR / "dev_uncovered.txt"
+METADATA_DEV_UNCOVERED = EVAL_DIR / "metadata_dev_uncovered.json"
+# Unit 2: the router's dev probes (author-written, dev only) and the user's held-out red flags.
+DEV_ROUTER_PROBES = EVAL_DIR / "dev_router_probes.json"
+HELDOUT_REDFLAGS = EVAL_DIR / "heldout_redflags.json"
 
 SPLITS = ("dev", "test")
 GROUPS = ("in_kb", "profile", "unanswerable", "out_of_scope", "injection", "red_flag")
@@ -45,6 +52,12 @@ AUTHORSHIP = {
         "Drafted by Claude in a separate chat session: not by the user and not by the KB "
         "author. Written before the KB existed and never shown its chunks. The KB author read "
         "this file before fixing the 24-chunk topic list (STOP 1)."
+    ),
+    DEV_UNCOVERED.name: (
+        "Drafted by Claude in a chat session after seeing the KB topic list and eight chunk "
+        "texts, then saved by the user (2026-10-08, Unit 2). Not independent of the KB. Dev "
+        "questions, all not covered by the KB; used for tuning (router false positives, term "
+        "coverage)."
     ),
 }
 
@@ -75,13 +88,14 @@ def sha256_of(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def record_hashes(metadata: Path = METADATA, files: tuple[Path, ...] = (AUTHOR_QUESTIONS, USER_QUESTIONS)) -> dict:
-    """Write metadata.json with each question file's SHA-256. Once only: never overwrites."""
+def record_hashes(metadata: Path = METADATA, files: tuple[Path, ...] = (AUTHOR_QUESTIONS, USER_QUESTIONS),
+                  note: str = "Recorded before any knowledge-base chunk text existed.") -> dict:
+    """Write a record of each question file's SHA-256. Once only: never overwrites."""
     if metadata.exists():
         raise EvalFileError(f"{metadata.name} already exists: the hashes are recorded once and never rewritten.")
     data = {
         "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "note": "Recorded before any knowledge-base chunk text existed.",
+        "note": note,
         "question_files": {
             f.name: {"sha256": sha256_of(f), "authorship": AUTHORSHIP.get(f.name, "")} for f in files
         },
@@ -102,6 +116,29 @@ def check_hashes(metadata: Path = METADATA, eval_dir: Path = EVAL_DIR) -> dict:
     if changed:
         raise EvalFileError(f"question file(s) changed since their hashes were recorded: {', '.join(changed)}")
     return data
+
+
+def check_dev_uncovered(record: Path | None = None, eval_dir: Path | None = None) -> dict:
+    """check_hashes() for dev_uncovered.txt's own record."""
+    return check_hashes(record or METADATA_DEV_UNCOVERED, eval_dir or EVAL_DIR)
+
+
+def load_dev_uncovered(path: Path | None = None) -> tuple[UserQuestion, ...]:
+    """The user's dev questions not covered by the KB ("N. text" lines, as user_questions.txt)."""
+    return load_user_questions(path or DEV_UNCOVERED)
+
+
+def load_router_probes(path: Path | None = None) -> tuple[dict, ...]:
+    """The router's dev probes: {id, question, expect ("no_template")}."""
+    return tuple(json.loads(Path(path or DEV_ROUTER_PROBES).read_text(encoding="utf-8"))["probes"])
+
+
+def load_heldout_redflags(path: Path | None = None) -> tuple[dict, ...]:
+    """The user's held-out red flags: [{id, expected (a template id), text}]."""
+    items = json.loads(Path(path or HELDOUT_REDFLAGS).read_text(encoding="utf-8"))
+    if not (isinstance(items, list) and all(set(i) == {"id", "expected", "text"} for i in items)):
+        raise EvalFileError(f"{HELDOUT_REDFLAGS.name}: expected a list of {{id, expected, text}}")
+    return tuple(items)
 
 
 def load_author_questions(path: Path | None = None) -> tuple[Question, ...]:
@@ -174,16 +211,25 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--record-hashes", action="store_true", help="write eval/metadata.json (once)")
+    group.add_argument("--record-dev-uncovered", action="store_true",
+                       help="write eval/metadata_dev_uncovered.json (once)")
     group.add_argument("--check", action="store_true", help="check the question files against it")
     args = parser.parse_args(argv)
     try:
-        data = record_hashes() if args.record_hashes else check_hashes()
+        if args.record_hashes:
+            data = record_hashes()
+        elif args.record_dev_uncovered:
+            data = record_hashes(METADATA_DEV_UNCOVERED, (DEV_UNCOVERED,),
+                                 note="Recorded when the file was first used (Unit 2), after the KB existed.")
+        else:
+            data = check_hashes()
     except EvalFileError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     for name, entry in data["question_files"].items():
         print(f"{name}: sha256 {entry['sha256']}")
-    print("recorded" if args.record_hashes else "unchanged since recorded", data["recorded_at"])
+    recorded_now = args.record_hashes or args.record_dev_uncovered
+    print("recorded" if recorded_now else "unchanged since recorded", data["recorded_at"])
     return 0
 
 

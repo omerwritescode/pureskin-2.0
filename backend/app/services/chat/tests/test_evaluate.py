@@ -54,6 +54,12 @@ def test_the_freeze(tmp_path, monkeypatch):
         ev.check_freeze(kb, metadata, path)
 
 
+def test_the_committed_freeze_still_verifies():
+    """Later units change chat_config (router, templates, gate, term coverage); the retrieval
+    freeze recorded in Unit 1 must still hold."""
+    ev.check_freeze(load_kb(), ef.check_hashes())
+
+
 def test_router_templates_and_gate_patterns_dont_touch_the_freeze(tmp_path, monkeypatch):
     kb, metadata = load_kb(), ef.check_hashes()
     path = tmp_path / "freeze.json"
