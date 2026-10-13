@@ -7,9 +7,12 @@ sources are parsed as text.
 - The funnel calls endpoints that exist, and nothing calls the removed mock endpoint.
 - The pure JS logic (bands, skin-type label, save-failure policy, response reading) runs
   correctly in Node, and the pages keep the photo out of the tab once it's not needed.
+- The chat page reads the stream the backend writes: the same event types, routes, 503
+  reasons, limits and emergency number, and no answer text of its own.
 """
 
 import itertools
+import json
 import re
 import shutil
 import subprocess
@@ -19,6 +22,10 @@ from pathlib import Path
 import pytest
 
 from app.main import app
+from app.services.chat import chat_config as ccfg
+from app.services.chat.claims import claims_in
+from app.services.chat.kb import KB_PATH
+from app.services.chat.redflags import split_sentences
 from app.services.questionnaire import QuestionnaireAnswers, score_questionnaire
 from app.services.questionnaire import questionnaire_config as qcfg
 from app.services.skin_profile import skin_profile_config as scfg
@@ -318,3 +325,108 @@ def test_storage_keys_are_defined_only_in_scan_guard():
         # data-requires="pureskin_scan_..." attributes are the only other mention.
         stray = re.findall(r'(?<!data-requires=)"pureskin_scan_\w+"', text)
         assert not stray, (path, stray)
+
+
+# --------------------------------------------------------------------------------------
+# Chat (7d, Unit 4): the page reads the stream app/api/chat.py writes
+# --------------------------------------------------------------------------------------
+
+CHAT_STREAM_JS = FRONTEND / "static" / "js" / "chat-stream.js"
+CHAT_SERVICE = Path(__file__).resolve().parents[1] / "services" / "chat"
+CHAT_API = Path(__file__).resolve().parents[1] / "api" / "chat.py"
+CHAT_SCRIPTS = [CHAT_STREAM_JS]
+EMERGENCY_NUMBERS = re.compile(ccfg.PHONE_PATTERNS[2])  # 112, 108, 911, 14416, ...
+
+
+def js_const(source: str, name: str) -> str:
+    """The text of `const NAME = ...;` (an array or object up to its closing line)."""
+    match = re.search(rf"^\s*const {name} = (\[.*?\]|\{{.*?\}}|[^;]+);", source, re.DOTALL | re.MULTILINE)
+    assert match, f"const {name} not found"
+    return match.group(1)
+
+
+def js_strings(source: str, name: str) -> list[str]:
+    return re.findall(r'"([^"]*)"', js_const(source, name))
+
+
+def js_keys(source: str, name: str) -> list[str]:
+    return re.findall(r"^\s*(\w+):", js_const(source, name), re.MULTILINE)
+
+
+def chat_stream() -> str:
+    return CHAT_STREAM_JS.read_text(encoding="utf-8")
+
+
+def test_chat_event_types_match_the_backend():
+    """A new event type in the backend (as caution was) must fail here until the page reads it."""
+    backend = (CHAT_SERVICE / "pipeline.py").read_text(encoding="utf-8") + CHAT_API.read_text(encoding="utf-8")
+    assert set(re.findall(r'Event\("(\w+)"', backend)) == set(js_strings(chat_stream(), "EVENT_TYPES"))
+
+
+def test_chat_routes_match_the_backend():
+    pipeline = (CHAT_SERVICE / "pipeline.py").read_text(encoding="utf-8")
+    assert set(re.findall(r'"route": "(\w+)"', pipeline)) == set(js_strings(chat_stream(), "ROUTES"))
+
+
+def test_chat_503_reasons_match_the_backend():
+    assert '"reason": "busy"' in CHAT_API.read_text(encoding="utf-8")
+    assert set(js_keys(chat_stream(), "REASONS")) == set(ccfg.STATUS_REASONS) | {"busy"}
+
+
+def test_chat_limits_match_the_backend():
+    source = chat_stream()
+    assert int(js_const(source, "MAX_MESSAGE_CHARS")) == ccfg.MAX_MESSAGE_CHARS
+    assert int(js_const(source, "MAX_HISTORY_TURNS").split()[0]) == ccfg.MAX_HISTORY_TURNS
+    assert int(js_const(source, "MAX_ASSISTANT_CHARS")) == ccfg.MAX_HISTORY_ASSISTANT_CHARS
+
+
+def test_chat_calls_the_existing_endpoint():
+    assert 'const CHAT_URL = "/api/chat";' in chat_stream()
+    assert "post" in app.openapi()["paths"]["/api/chat"]
+
+
+def test_the_emergency_number_has_one_source():
+    """The page's number is the router templates' (chat_config.EMERGENCY_NUMBER, sourced by
+    SRC_112), and the stream module names it once, in its constant."""
+    number = ccfg.EMERGENCY_NUMBER
+    assert number in ccfg.SRC_112["supports"]
+    assert js_strings(chat_stream(), "EMERGENCY_NUMBER") == [number]
+    assert EMERGENCY_NUMBERS.findall(chat_stream()) == [number]
+    texts = [ccfg.GENERIC_ESCALATION] + [t["text"] for t in (*ccfg.TEMPLATES.values(), *ccfg.CAUTIONS.values())]
+    named = {n for text in texts for n in EMERGENCY_NUMBERS.findall(text)}
+    assert number in named and named <= {number, "14416"}  # 14416: Tele-MANAS, the crisis template only
+
+
+def test_the_chat_hides_further_reading_and_relabels_the_repository():
+    """Only "support" sources are shown (NHS pages are further reading, never a sentence's
+    source); the app's own notes cite the repository, shown as "PureSkin (how the app works)"."""
+    assert set(ccfg.SOURCE_ROLES) == {"support", "further_reading"}
+    source = chat_stream()
+    assert 'source.role === "support"' in source
+    kb = json.loads(KB_PATH.read_text(encoding="utf-8"))
+    app_doc = {s["publisher"] for c in kb["chunks"] for s in c["sources"] if s["licence_class"] == "app_doc"}
+    assert app_doc == set(js_strings(source, "REPOSITORY_PUBLISHER"))
+    assert js_strings(source, "REPOSITORY_LABEL") == ["PureSkin (how the app works)"]
+
+
+@pytest.mark.parametrize("path", CHAT_SCRIPTS, ids=lambda p: p.name)
+def test_chat_scripts_render_text_only_and_store_nothing(path):
+    source = path.read_text(encoding="utf-8")
+    for banned in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "localStorage",
+                   "sessionStorage", "indexedDB", "document.cookie", "console."):
+        assert banned not in source, (path.name, banned)
+    assert "mock" not in source.lower()
+    assert claims_in(source) == []
+
+
+def test_no_answer_text_lives_in_the_frontend():
+    """No mock fallback: every answer comes from the server. The fixed replies, templates and
+    caution lines (sentence by sentence) and the server's 503/429 texts appear in no frontend
+    file, so the page can't show one on its own or echo the server's detail."""
+    texts = [ccfg.NO_ANSWER_TEXT, ccfg.GATE_STOP_TEXT, ccfg.BUSY_TEXT, ccfg.RATE_LIMITED_TEXT,
+             *ccfg.STATUS_REASONS.values(), *(t["text"] for t in ccfg.TEMPLATES.values()),
+             *(t["text"] for t in ccfg.CAUTIONS.values())]
+    sentences = {s for text in texts for s in split_sentences(text) if len(s) >= 25}
+    for path, text in frontend_sources().items():
+        found = [s for s in sentences if s in text]
+        assert not found, (path, found)
