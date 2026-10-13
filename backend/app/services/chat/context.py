@@ -52,6 +52,9 @@ class ProfileContext:
     bands: tuple[tuple[str, str], ...]  # (score, band)
     steps: tuple[StepContext, ...]
     tags: tuple[tuple[str, tuple[str, ...]], ...]  # (field, values); () when the profile has none
+    # Canonical ingredient tokens of every product shown (picks and alternatives): the
+    # ingredient check never blocks a question about these (never sent to the model).
+    ingredients: frozenset[str] = frozenset()
 
     @property
     def products(self) -> dict[int, str]:
@@ -81,9 +84,12 @@ def profile_context(profile, routine, rows) -> ProfileContext:
     """From a SkinProfile row, its routine (compute_routine) and the catalog rows by id."""
     sources = profile.score_sources or {}
     steps = []
+    ingredients: set[str] = set()
     for session, raw in (("morning", routine.am), ("evening", routine.pm)):
         for number, step in enumerate(kept_in_order(raw), start=1):
             pid = step.product.id
+            for record in (step.product, *(a.product for a in step.alternatives)):
+                ingredients.update(record.ingredients.tokens)
             steps.append(StepContext(
                 session, number, step.req.category, f"P{pid}", f"{rows[pid].brand} {rows[pid].name}",
                 tuple(without_raw_scores(s) for s in explain(step, profile, routine.base_set).text),
@@ -104,6 +110,7 @@ def profile_context(profile, routine, rows) -> ProfileContext:
         bands=tuple((label, band(getattr(profile, column))) for column, label in SCORES),
         steps=tuple(steps),
         tags=tuple(tag_values),
+        ingredients=frozenset(ingredients),
     )
 
 

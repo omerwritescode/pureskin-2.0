@@ -39,6 +39,9 @@ RECORDED = {
     "recommendation-1.0.1": "a23ff72ea1e7fb2c",
     "chat-1.0.0": "c7a206c05a82f2de",
     "chat-1.1.0": "9bc62d71edf36867",
+    "chat-1.2.0": "09d9585d7c777fc8",  # STOP 5 (never committed)
+    "chat-1.3.0": "3ae603759adf0b7a",  # STOP 5 decisions and the pinned models: frozen for the bake-off
+    "chat-1.4.0": "3aea9264031ff51c",  # STOP 6 fixes (not yet committed: updated in place until Unit 3 is)
 }
 
 CONFIGS = [

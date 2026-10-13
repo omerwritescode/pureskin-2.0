@@ -105,6 +105,68 @@ def test_the_gate_stops_the_model_and_closes_its_stream():
     assert end(events) == "gate_claim" and llm.closed
 
 
+def test_an_ingredient_no_note_mentions_is_the_fixed_no_answer_without_a_model_call():
+    question = "Does adenosine help with sunscreen and sun spots?"
+    assert "adenosine" not in PROFILE.ingredients
+    llm = FakeLLM(["never"])
+    events = run(question, llm)
+    assert llm.calls == [] and end(events) == "no_answer_ingredient"
+    assert " ".join(texts(events)) == cfg.NO_ANSWER_TEXT
+    llm = FakeLLM(["never"])
+    assert end(run(question, llm, profile=None)) == "no_answer_ingredient" and llm.calls == []
+
+
+def test_an_ingredient_in_the_users_routine_reaches_the_model():
+    from dataclasses import replace
+
+    question = "Does adenosine help with sunscreen and sun spots?"
+    mine = replace(PROFILE, ingredients=PROFILE.ingredients | {"adenosine"})
+    llm = FakeLLM(["Reapply every two hours [kb-sun-sunscreen-use]."])
+    assert end(run(question, llm, profile=mine)) == "answered" and llm.calls
+
+
+def test_the_profile_lists_every_ingredient_of_its_products_and_alternatives():
+    from app.services.recommendation.engine import kept_in_order
+
+    ctx, routine = context_for(sentinel_profile())
+    expected = {t for steps in (routine.am, routine.pm) for step in kept_in_order(steps)
+                for record in (step.product, *(a.product for a in step.alternatives)) for t in record.ingredients.tokens}
+    assert expected and ctx.ingredients == expected
+
+
+def test_a_phone_number_from_the_model_stops_the_answer():
+    llm = FakeLLM(["Reapply every two hours [kb-sun-sunscreen-use]. ", "If it is bad, call 911. ", "never sent."])
+    events = run(IN_KB, llm)
+    assert texts(events) == ["Reapply every two hours.", *split_sentences(cfg.GATE_STOP_TEXT)]
+    assert end(events) == "gate_number" and llm.closed
+
+
+def test_f1_a_no_answer_after_a_sentence_is_still_only_the_fixed_reply():
+    llm = FakeLLM(["The notes do not explain the difference [kb-sun-uv].\n", "[NO_ANSWER]"])
+    events = run(IN_KB, llm)
+    assert " ".join(texts(events)) == cfg.NO_ANSWER_TEXT and end(events) == "no_answer_model"
+    assert not any(e.type == "citations" and e.data["chunks"] for e in events)
+
+
+def test_f1_no_text_goes_out_before_the_models_stream_ends():
+    seen: list = []
+
+    class Watching(FakeLLM):
+        async def stream_chat(self, messages, options, usage=None):
+            async for piece in super().stream_chat(messages, options, usage):
+                assert not any(e.type == "text" for e in seen), "text released mid-stream"
+                yield piece
+
+    async def consume():
+        async for event in respond(IN_KB, [], Watching(["One [kb-sun-sunscreen-use]. ", "Two. ", "Three."]),
+                                   kb=KB, index=INDEX, profile=PROFILE):
+            seen.append(event)
+
+    import asyncio
+    asyncio.run(consume())
+    assert texts(seen) == ["One.", "Two.", "Three."] and end(seen) == "answered"
+
+
 def test_the_models_no_answer_becomes_the_fixed_reply():
     events = run(IN_KB, FakeLLM(["[NO_ANSWER]"]))
     assert " ".join(texts(events)) == cfg.NO_ANSWER_TEXT and end(events) == "no_answer_model"

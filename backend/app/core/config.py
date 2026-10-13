@@ -30,6 +30,11 @@ class Settings:
         for origin in os.getenv("CORS_ORIGINS", "http://localhost:5500").split(",")
         if origin.strip()
     ]
+    # Chat (7d), optional: without them the chat is unavailable (503), the rest of the app
+    # isn't affected. OLLAMA_HOST must be a loopback address; CHAT_MODEL must be pinned in
+    # app/services/chat/chat_config.py (ALLOWED_MODELS).
+    OLLAMA_HOST: str = os.getenv("OLLAMA_HOST", "")
+    CHAT_MODEL: str = os.getenv("CHAT_MODEL", "")
 
 
 settings = Settings()

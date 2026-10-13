@@ -1,5 +1,6 @@
+import asyncio
 import logging
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 
 from fastapi import FastAPI, Request, status
@@ -11,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api import (
     auth,
     catalog,
+    chat,
     image_analysis,
     profile,
     questionnaire,
@@ -22,6 +24,15 @@ from app.core.config import settings
 from app.services import image_analysis as image_analysis_service
 
 logger = logging.getLogger("uvicorn.error")
+
+# The app's own log lines (the chat's one metadata line per request): uvicorn configures
+# only its own loggers, so without a handler these INFO lines would go nowhere.
+_app_log = logging.getLogger("pureskin")
+if not _app_log.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(levelname)s:     %(message)s"))
+    _app_log.addHandler(_handler)
+    _app_log.setLevel(logging.INFO)
 
 # Absolute, so it works whatever directory uvicorn is started from.
 # backend/app/main.py -> parent = app/, parent.parent = backend/, then up to the repo root.
@@ -37,7 +48,14 @@ async def lifespan(app: FastAPI):
         logger.info("Image Analysis: %s", analyzer.skin_type_status)
     except image_analysis_service.ModelUnavailable as exc:
         logger.error("Image Analysis service unavailable: %s", exc)
+    # The chat's model: checked in the background (1 s timeouts), so startup never waits on
+    # Ollama, and never warmed (only /api/version and /api/tags).
+    chat_probe = asyncio.create_task(chat.probe_chat())
     yield
+    chat_probe.cancel()
+    with suppress(asyncio.CancelledError, Exception):  # its outcome was logged (or it never finished)
+        await chat_probe
+    await chat.close_chat_llm()
 
 
 app = FastAPI(title="PureSkin API", lifespan=lifespan)
@@ -70,6 +88,7 @@ app.include_router(routine.router)
 app.include_router(catalog.router)
 app.include_router(image_analysis.router)
 app.include_router(questionnaire.router)
+app.include_router(chat.router)
 
 
 @app.get("/health")

@@ -24,3 +24,6 @@ pillow
 # Linux/Docker image, install torch from https://download.pytorch.org/whl/cpu instead.
 torch==2.11.0
 torchvision==0.26.0
+# --- Chat (step 7d): the Ollama client. Not a typo: httpx2 is httpx's successor (same
+# author), which Starlette 1.x's TestClient also uses; plain httpx is deprecated there.
+httpx2

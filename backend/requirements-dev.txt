@@ -1,3 +1,2 @@
 -r requirements.txt
 pytest
-httpx2  # not a typo: Starlette 1.x's TestClient uses httpx2 (same author as httpx); plain httpx is deprecated there
