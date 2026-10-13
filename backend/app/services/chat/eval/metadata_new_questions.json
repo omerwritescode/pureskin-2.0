@@ -1,0 +1,23 @@
+{
+ "recorded_at": "2026-10-13T02:07:18+00:00",
+ "note": "Frozen after the user's additions and before the ingredient check was built (STOP 6 decision 3). Any later change to either file is a new freeze, reported openly.",
+ "authorship": "\"claude\": drafted by Claude (the KB's and the chat's author) on 2026-10-13, after proposing the ingredient check, knowing its rule. \"claude-chat\": added by the user; the entries are marked as drafted by Claude in a chat session (the user's message said \"my own\", marked \"user\"; the files say \"claude-chat\" and were not edited). Not independent of the KB's topic list.",
+ "question_files": {
+  "new_uncovered.json": {
+   "sha256": "f02327f9481e1b35084c73aa4132fbc4e3b4d2e3ab716a98b47277508ad89768",
+   "questions": 22,
+   "by": {
+    "claude": 15,
+    "claude-chat": 7
+   }
+  },
+  "new_covered.json": {
+   "sha256": "d95ea70e80959df194c6b7bd142e7e4064d4d7e9b3d25a4f30b3ee67f01b561d",
+   "questions": 15,
+   "by": {
+    "claude": 10,
+    "claude-chat": 5
+   }
+  }
+ }
+}

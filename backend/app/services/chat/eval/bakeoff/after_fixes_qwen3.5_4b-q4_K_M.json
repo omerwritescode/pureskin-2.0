@@ -1,0 +1,1758 @@
+{
+ "set": "new",
+ "model": "qwen3.5:4b-q4_K_M",
+ "digest": "d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04",
+ "ollama_version": "0.40.2",
+ "started": "2026-10-13T02:13:49+00:00",
+ "show": {
+  "capabilities": [
+   "completion",
+   "vision",
+   "tools",
+   "thinking"
+  ],
+  "thinking": {
+   "values": [
+    false,
+    true
+   ],
+   "default": true
+  },
+  "details": {
+   "parent_model": "model.gguf",
+   "format": "gguf",
+   "family": "qwen35",
+   "families": [
+    "qwen35"
+   ],
+   "parameter_size": "4.2B",
+   "quantization_level": "Q4_K_M",
+   "runner": "llamacpp"
+  },
+  "parameters": "presence_penalty               1.5\ntemperature                    1\ntop_k                          20\ntop_p                          0.95"
+ },
+ "options": {
+  "temperature": 0.2,
+  "top_p": 0.9,
+  "top_k": 40,
+  "min_p": 0.0,
+  "presence_penalty": 0.0,
+  "repeat_penalty": 1.0,
+  "seed": 42,
+  "num_ctx": 4096,
+  "num_predict": 350
+ },
+ "think": false,
+ "chat_config": "chat-1.4.0",
+ "kb": "kb-1.0.0",
+ "profile": {
+  "skin_type": "oily",
+  "is_sensitive": false,
+  "acne_score": 75,
+  "redness_score": 45,
+  "wrinkle_score": 20,
+  "pigmentation_score": 70,
+  "pore_score": 50,
+  "score_sources": null,
+  "questionnaire_tags": null
+ },
+ "records": [
+  {
+   "id": "n01",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Does squalane clog pores?",
+   "audit": {
+    "top_chunk": "kb-acne-what",
+    "top_score": 2.7579,
+    "line_answerable": false,
+    "coverage": 0.33,
+    "named_ingredients": [
+     "squalane"
+    ],
+    "unsupported_ingredients": [
+     "squalane"
+    ]
+   },
+   "route": "no_answer",
+   "outcome": "no_answer_line",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": null,
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [],
+   "first_piece_s": null,
+   "first_sentence_s": 0.071,
+   "total_s": 0.082,
+   "blocked": null,
+   "prompt_chars": null,
+   "estimated_prompt_tokens": null
+  },
+  {
+   "id": "n02",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "What does bakuchiol do, and is it gentler than retinol?",
+   "audit": {
+    "top_chunk": "kb-acne-actives",
+    "top_score": 3.7584,
+    "line_answerable": true,
+    "coverage": 0.33,
+    "named_ingredients": [
+     "retinol"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "no_answer_model",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": "Bakuchiol is not mentioned in your profile or the available notes, so I cannot answer what it does or compare it to retinol. [NO_ANSWER]",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-acne-actives"
+   ],
+   "first_piece_s": 12.923,
+   "first_sentence_s": 13.569,
+   "total_s": 13.57,
+   "blocked": "{'doubled_name': 0, 'no_answer': 1}",
+   "prompt_chars": 5734,
+   "estimated_prompt_tokens": 1924,
+   "prompt_tokens": 1585,
+   "output_tokens": 35,
+   "load_ms": 11888,
+   "prompt_ms": 973,
+   "eval_ms": 572,
+   "tokens_per_s": 61.19
+  },
+  {
+   "id": "n03",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Are sheet masks worth using a few times a week?",
+   "audit": {
+    "top_chunk": "kb-acne-scars",
+    "top_score": 3.1769,
+    "line_answerable": true,
+    "coverage": 0.2,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "no_answer_model",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": "The provided information does not contain facts about sheet masks or their effectiveness.\n[NO_ANSWER]",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-acne-scars",
+    "kb-acne-doctor",
+    "kb-dry-skin"
+   ],
+   "first_piece_s": 0.503,
+   "first_sentence_s": 0.911,
+   "total_s": 0.912,
+   "blocked": "{'doubled_name': 0, 'no_answer': 1}",
+   "prompt_chars": 6877,
+   "estimated_prompt_tokens": 2305,
+   "prompt_tokens": 1853,
+   "output_tokens": 21,
+   "load_ms": 45,
+   "prompt_ms": 413,
+   "eval_ms": 317,
+   "tokens_per_s": 66.25
+  },
+  {
+   "id": "n04",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Should my skincare routine change between summer and winter?",
+   "audit": {
+    "top_chunk": "kb-cosmetic-reactions",
+    "top_score": 3.3269,
+    "line_answerable": true,
+    "coverage": 0.17,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Your current routine is built based on your latest Skin Profile, which includes your skin type and score bands. The rules state that your routine is constructed from fixed rules derived from this profile. These fixed rules do not include seasonal adjustments for summer or winter. Your routine will remain the same unless your Skin Profile changes.",
+   "raw": "[profile] Your current routine is built based on your latest Skin Profile, which includes your skin type and score bands. [kb-app-routine] The rules state that your routine is constructed from fixed rules derived from this profile. [kb-app-routine] These fixed rules do not include seasonal adjustments for summer or winter. [kb-app-routine] Your routine will remain the same unless your Skin Profile changes.",
+   "cautions": [],
+   "cites": [
+    "kb-app-routine",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-cosmetic-reactions",
+    "kb-app-skin-type",
+    "kb-app-conflicts",
+    "kb-app-routine"
+   ],
+   "first_piece_s": 0.5,
+   "first_sentence_s": 1.763,
+   "total_s": 1.765,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7696,
+   "estimated_prompt_tokens": 2578,
+   "prompt_tokens": 2040,
+   "output_tokens": 84,
+   "load_ms": 78,
+   "prompt_ms": 372,
+   "eval_ms": 1169,
+   "tokens_per_s": 71.86
+  },
+  {
+   "id": "n05",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Is micellar water enough to take off makeup at night?",
+   "audit": {
+    "top_chunk": "kb-acne-care",
+    "top_score": 4.771,
+    "line_answerable": true,
+    "coverage": 0.33,
+    "named_ingredients": [
+     "water"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "No, micellar water alone is not enough to remove makeup for your night routine. Your evening routine includes a specific foaming cleanser Minimalist Aquaporin Booster 05% Cleanser designed for oily skin. Using only micellar water might not fully remove all makeup or impurities. Relying solely on micellar water could also leave residue that clogs pores. Your current plan ensures thorough cleansing as part of your acne care. For best results, follow your recommended evening steps exactly.",
+   "raw": "No, micellar water alone is not enough to remove makeup for your night routine.\nYour evening routine includes a specific foaming cleanser [P1] designed for oily skin.\nUsing only micellar water might not fully remove all makeup or impurities.\nRelying solely on micellar water could also leave residue that clogs pores.\nYour current plan ensures thorough cleansing as part of your acne care.\nFor best results, follow your recommended evening steps exactly.",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-acne-care",
+    "kb-dry-skin",
+    "kb-acne-doctor",
+    "kb-app-skin-type"
+   ],
+   "first_piece_s": 0.59,
+   "first_sentence_s": 2.088,
+   "total_s": 2.089,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7572,
+   "estimated_prompt_tokens": 2537,
+   "prompt_tokens": 1996,
+   "output_tokens": 98,
+   "load_ms": 139,
+   "prompt_ms": 372,
+   "eval_ms": 1387,
+   "tokens_per_s": 70.66
+  },
+  {
+   "id": "n06",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Is snail mucin any good for oily skin?",
+   "audit": {
+    "top_chunk": "kb-app-skin-type",
+    "top_score": 4.0527,
+    "line_answerable": true,
+    "coverage": 0.4,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "no_answer_model",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": "The provided notes and profile do not contain information about snail mucin or its suitability for oily skin.\n[NO_ANSWER]",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-app-skin-type",
+    "kb-sun-uv",
+    "kb-infection-signs",
+    "kb-pigment-spots"
+   ],
+   "first_piece_s": 0.449,
+   "first_sentence_s": 0.91,
+   "total_s": 0.911,
+   "blocked": "{'doubled_name': 0, 'no_answer': 1}",
+   "prompt_chars": 7517,
+   "estimated_prompt_tokens": 2518,
+   "prompt_tokens": 1984,
+   "output_tokens": 28,
+   "load_ms": 41,
+   "prompt_ms": 372,
+   "eval_ms": 393,
+   "tokens_per_s": 71.25
+  },
+  {
+   "id": "n07",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Can I dab tea tree oil on a pimple to dry it out?",
+   "audit": {
+    "top_chunk": "kb-dry-skin",
+    "top_score": 4.9513,
+    "line_answerable": true,
+    "coverage": 0.33,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "no_answer_model",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": "I cannot advise on using tea tree oil because it is not included in your current routine or the available product catalog.\n[profile]\nYour acne score is High, but the only treatment product listed for you is a benzoyl peroxide spot corrector.\n[profile]\nTea tree oil is not mentioned in any of the product descriptions or notes provided.\n[no_answer]",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-dry-skin",
+    "kb-acne-what",
+    "kb-rosacea-what",
+    "kb-app-skin-type"
+   ],
+   "first_piece_s": 0.441,
+   "first_sentence_s": 1.695,
+   "total_s": 1.696,
+   "blocked": "{'doubled_name': 0, 'no_answer': 1}",
+   "prompt_chars": 7554,
+   "estimated_prompt_tokens": 2531,
+   "prompt_tokens": 2009,
+   "output_tokens": 81,
+   "load_ms": 35,
+   "prompt_ms": 368,
+   "eval_ms": 1174,
+   "tokens_per_s": 68.99
+  },
+  {
+   "id": "n08",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "How long should I wait between putting on different products?",
+   "audit": {
+    "top_chunk": "kb-rosacea-care",
+    "top_score": 3.4317,
+    "line_answerable": true,
+    "coverage": 0.33,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "There is no specific waiting time mentioned in your profile or notes for applying your current products. Your routine follows a fixed order of cleanser, serum, treatment, moisturiser, and sunscreen. Some ingredients like benzoyl peroxide can cause irritation, so gentle care is recommended. If you experience burning or redness, stop using the product and see a doctor. ",
+   "raw": "There is no specific waiting time mentioned in your profile or notes for applying your current products.\nYour routine follows a fixed order of cleanser, serum, treatment, moisturiser, and sunscreen.\nSome ingredients like benzoyl peroxide can cause irritation, so gentle care is recommended.\nIf you experience burning or redness, stop using the product and see a doctor.\n[profile]",
+   "cautions": [],
+   "cites": [
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-rosacea-care",
+    "kb-rosacea-what",
+    "kb-acne-actives",
+    "kb-app-routine"
+   ],
+   "first_piece_s": 0.507,
+   "first_sentence_s": 1.7,
+   "total_s": 1.701,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7867,
+   "estimated_prompt_tokens": 2635,
+   "prompt_tokens": 2069,
+   "output_tokens": 81,
+   "load_ms": 35,
+   "prompt_ms": 412,
+   "eval_ms": 1124,
+   "tokens_per_s": 72.06
+  },
+  {
+   "id": "n09",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Does mandelic acid suit darker skin better than glycolic acid?",
+   "audit": {
+    "top_chunk": "kb-marks-after-acne",
+    "top_score": 3.6217,
+    "line_answerable": true,
+    "coverage": 0.29,
+    "named_ingredients": [
+     "mandelic acid",
+     "glycolic acid"
+    ],
+    "unsupported_ingredients": [
+     "mandelic acid",
+     "glycolic acid"
+    ]
+   },
+   "route": "no_answer",
+   "outcome": "no_answer_ingredient",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": null,
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [],
+   "first_piece_s": null,
+   "first_sentence_s": 0.053,
+   "total_s": 0.054,
+   "blocked": null,
+   "prompt_chars": null,
+   "estimated_prompt_tokens": null
+  },
+  {
+   "id": "n10",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Is rice water good for brightening the face?",
+   "audit": {
+    "top_chunk": "kb-acne-care",
+    "top_score": 3.5593,
+    "line_answerable": true,
+    "coverage": 0.4,
+    "named_ingredients": [
+     "water"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "no_answer_model",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": "Rice water is not mentioned in your profile or the provided notes.\n[NO_ANSWER]",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-acne-care",
+    "kb-dry-skin",
+    "kb-rosacea-what",
+    "kb-acne-what"
+   ],
+   "first_piece_s": 0.478,
+   "first_sentence_s": 0.845,
+   "total_s": 0.846,
+   "blocked": "{'doubled_name': 0, 'no_answer': 1}",
+   "prompt_chars": 7576,
+   "estimated_prompt_tokens": 2538,
+   "prompt_tokens": 2020,
+   "output_tokens": 21,
+   "load_ms": 41,
+   "prompt_ms": 390,
+   "eval_ms": 310,
+   "tokens_per_s": 67.74
+  },
+  {
+   "id": "n11",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Does dermaplaning make facial hair grow back thicker?",
+   "audit": {
+    "top_chunk": "kb-acne-what",
+    "top_score": 8.8548,
+    "line_answerable": true,
+    "coverage": 0.57,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "no_answer_model",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": "The provided notes do not contain information about dermaplaning or whether it causes facial hair to grow back thicker. [NO_ANSWER]",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-acne-what",
+    "kb-rosacea-what",
+    "kb-pigment-spots",
+    "kb-acne-scars"
+   ],
+   "first_piece_s": 0.449,
+   "first_sentence_s": 0.931,
+   "total_s": 0.933,
+   "blocked": "{'doubled_name': 0, 'no_answer': 1}",
+   "prompt_chars": 7569,
+   "estimated_prompt_tokens": 2536,
+   "prompt_tokens": 2014,
+   "output_tokens": 29,
+   "load_ms": 32,
+   "prompt_ms": 380,
+   "eval_ms": 404,
+   "tokens_per_s": 71.78
+  },
+  {
+   "id": "n12",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Can I use my body lotion on my face?",
+   "audit": {
+    "top_chunk": "kb-dry-skin",
+    "top_score": 3.1256,
+    "line_answerable": true,
+    "coverage": 0.33,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "I cannot advise on using body lotion on your face because I do not have information about your body lotions in your profile. only lists specific face products matched to your oily skin, high acne score, and high pigmentation. Using a product not in your routine could cause irritation or other reactions. If you are unsure about a product, see a doctor or pharmacist.",
+   "raw": "I cannot advise on using body lotion on your face because I do not have information about your body lotions in your profile. [profile] only lists specific face products matched to your oily skin, high acne score, and high pigmentation. Using a product not in your routine could cause irritation or other reactions. If you are unsure about a product, see a doctor or pharmacist.",
+   "cautions": [],
+   "cites": [
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-dry-skin",
+    "kb-acne-scars",
+    "kb-rosacea-what",
+    "kb-acne-actives"
+   ],
+   "first_piece_s": 0.461,
+   "first_sentence_s": 1.66,
+   "total_s": 1.661,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7539,
+   "estimated_prompt_tokens": 2526,
+   "prompt_tokens": 2013,
+   "output_tokens": 77,
+   "load_ms": 57,
+   "prompt_ms": 365,
+   "eval_ms": 1125,
+   "tokens_per_s": 68.44
+  },
+  {
+   "id": "n13",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Do I really need a separate eye cream?",
+   "audit": {
+    "top_chunk": "kb-rosacea-what",
+    "top_score": 5.4166,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Your current routine includes a sunscreen with Niacinamide and Allantoin that may help with redness and eye area protection. However, there is no eye cream listed in your profile to address specific eye concerns. If you experience red, dry, itchy, or burning eyes, you should see a doctor immediately. Otherwise, your existing sunscreen and moisturizer provide general skin protection for the face. PureSkin sets your skin type based on your questionnaire answers, not selfies. I cannot recommend a specific product for your eyes as none are in your profile.",
+   "raw": "Your current routine includes a sunscreen with Niacinamide and Allantoin that may help with redness and eye area protection [kb-sun-uv].\nHowever, there is no eye cream listed in your profile to address specific eye concerns [profile].\nIf you experience red, dry, itchy, or burning eyes, you should see a doctor immediately [kb-rosacea-what].\nOtherwise, your existing sunscreen and moisturizer provide general skin protection for the face.\nPureSkin sets your skin type based on your questionnaire answers, not selfies [kb-app-skin-type].\nI cannot recommend a specific product for your eyes as none are in your profile.",
+   "cautions": [],
+   "cites": [
+    "kb-app-skin-type",
+    "kb-rosacea-what",
+    "kb-sun-uv",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-rosacea-what",
+    "kb-marks-after-acne",
+    "kb-sun-uv",
+    "kb-app-skin-type"
+   ],
+   "first_piece_s": 0.417,
+   "first_sentence_s": 2.442,
+   "total_s": 2.443,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7340,
+   "estimated_prompt_tokens": 2459,
+   "prompt_tokens": 1934,
+   "output_tokens": 138,
+   "load_ms": 35,
+   "prompt_ms": 338,
+   "eval_ms": 1954,
+   "tokens_per_s": 70.62
+  },
+  {
+   "id": "n14",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Does the fabric of my pillowcase matter for breakouts?",
+   "audit": {
+    "top_chunk": "kb-acne-what",
+    "top_score": 2.8966,
+    "line_answerable": false,
+    "coverage": 0.25,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "no_answer",
+   "outcome": "no_answer_line",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": null,
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [],
+   "first_piece_s": null,
+   "first_sentence_s": 0.081,
+   "total_s": 0.081,
+   "blocked": null,
+   "prompt_chars": null,
+   "estimated_prompt_tokens": null
+  },
+  {
+   "id": "n15",
+   "set": "new_uncovered",
+   "by": "claude",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "Is a vitamin C serum a good idea for fading dark marks?",
+   "audit": {
+    "top_chunk": "kb-app-conflicts",
+    "top_score": 6.7014,
+    "line_answerable": true,
+    "coverage": 0.25,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Yes, ascorbic acid (vitamin C) is used to help fade dark marks left after acne heals. However, your current routine does not include a vitamin C serum. Your evening treatment uses benzoyl peroxide, which clashes with ascorbic acid. Additionally, your routine avoids strong actives like ascorbic acid for sensitive skin concerns.",
+   "raw": "Yes, ascorbic acid (vitamin C) is used to help fade dark marks left after acne heals [kb-marks-after-acne]. However, your current routine does not include a vitamin C serum [kb-app-routine]. Your evening treatment uses benzoyl peroxide, which clashes with ascorbic acid [kb-app-conflicts]. Additionally, your routine avoids strong actives like ascorbic acid for sensitive skin concerns [kb-app-routine].",
+   "cautions": [],
+   "cites": [
+    "kb-app-conflicts",
+    "kb-app-routine",
+    "kb-marks-after-acne"
+   ],
+   "sent_ids": [
+    "kb-app-conflicts",
+    "kb-marks-after-acne",
+    "kb-acne-care",
+    "kb-app-routine"
+   ],
+   "first_piece_s": 0.466,
+   "first_sentence_s": 1.872,
+   "total_s": 1.873,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7655,
+   "estimated_prompt_tokens": 2564,
+   "prompt_tokens": 2052,
+   "output_tokens": 95,
+   "load_ms": 30,
+   "prompt_ms": 402,
+   "eval_ms": 1336,
+   "tokens_per_s": 71.11
+  },
+  {
+   "id": "n16",
+   "set": "new_uncovered",
+   "by": "claude-chat",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "is hyaluronic acid ok to use with vitamin c or do they cancel out",
+   "audit": {
+    "top_chunk": "kb-app-conflicts",
+    "top_score": 10.228,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [
+     "hyaluronic acid"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Hyaluronic acid and vitamin C do not cancel each other out when used together.  Your current routine includes a serum with alpha arbutin, which is a form of vitamin C, but it is paired with hyaluronic acid in the same product Minimalist 2% Alpha Arbutin + HA Serum.  The routine notes that ascorbic acid and niacinamide are a low-conflict pair, but this does not apply to hyaluronic acid.  You can use both ingredients safely in your skincare regimen.  There is no need to separate them in your morning or evening steps. ",
+   "raw": "Hyaluronic acid and vitamin C do not cancel each other out when used together. [kb-app-routine]\nYour current routine includes a serum with alpha arbutin, which is a form of vitamin C, but it is paired with hyaluronic acid in the same product [P29]. [kb-app-routine]\nThe routine notes that ascorbic acid and niacinamide are a low-conflict pair, but this does not apply to hyaluronic acid. [kb-app-conflicts]\nYou can use both ingredients safely in your skincare regimen. [kb-app-routine]\nThere is no need to separate them in your morning or evening steps. [kb-app-routine]",
+   "cautions": [],
+   "cites": [
+    "kb-app-conflicts",
+    "kb-app-routine"
+   ],
+   "sent_ids": [
+    "kb-app-conflicts",
+    "kb-acne-actives",
+    "kb-app-routine"
+   ],
+   "first_piece_s": 0.368,
+   "first_sentence_s": 2.596,
+   "total_s": 2.597,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7197,
+   "estimated_prompt_tokens": 2412,
+   "prompt_tokens": 1955,
+   "output_tokens": 146,
+   "load_ms": 50,
+   "prompt_ms": 280,
+   "eval_ms": 2063,
+   "tokens_per_s": 70.77
+  },
+  {
+   "id": "n17",
+   "set": "new_uncovered",
+   "by": "claude-chat",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "will a ceramide moisturiser make my oily skin worse?",
+   "audit": {
+    "top_chunk": "kb-dry-skin",
+    "top_score": 6.4187,
+    "line_answerable": true,
+    "coverage": 0.67,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "gate_bracket",
+   "released": "Ceramides are lipids that help repair the skin barrier, but they can feel heavy on oily skin.  Your current routine uses a gel moisturiser Sebamed Clear Face Care Gel which is ranked as suitable for your oily skin type.  If you try a ceramide moisturiser, it might feel too heavy or cause breakouts.  You should see a doctor or pharmacist if you experience severe irritation or new breakouts. I can't say more about that here. For advice about your own skin, please ask a pharmacist or doctor.",
+   "raw": "Ceramides are lipids that help repair the skin barrier, but they can feel heavy on oily skin.\n[kb-dry-skin]\nYour current routine uses a gel moisturiser [P7] which is ranked as suitable for your oily skin type.\n[profile]\nIf you try a ceramide moisturiser, it might feel too heavy or cause breakouts.\n[kb-acne-care]\nYou should see a doctor or pharmacist if you experience severe irritation or new breakouts.\n[safety]",
+   "cautions": [],
+   "cites": [
+    "kb-acne-care",
+    "kb-dry-skin",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-dry-skin",
+    "kb-app-skin-type",
+    "kb-acne-care",
+    "kb-rosacea-care"
+   ],
+   "first_piece_s": 0.446,
+   "first_sentence_s": 2.041,
+   "total_s": 2.042,
+   "blocked": "{'doubled_name': 0, 'bracket': 1}",
+   "prompt_chars": 7565,
+   "estimated_prompt_tokens": 2534,
+   "prompt_tokens": 2000,
+   "output_tokens": 108,
+   "load_ms": 34,
+   "prompt_ms": 369,
+   "eval_ms": 1525,
+   "tokens_per_s": 70.82
+  },
+  {
+   "id": "n18",
+   "set": "new_uncovered",
+   "by": "claude-chat",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "is coconut oil fine for removing makeup",
+   "audit": {
+    "top_chunk": "kb-ageing-skin",
+    "top_score": 2.234,
+    "line_answerable": false,
+    "coverage": 0.2,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "no_answer",
+   "outcome": "no_answer_line",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": null,
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [],
+   "first_piece_s": null,
+   "first_sentence_s": 0.071,
+   "total_s": 0.072,
+   "blocked": null,
+   "prompt_chars": null,
+   "estimated_prompt_tokens": null
+  },
+  {
+   "id": "n19",
+   "set": "new_uncovered",
+   "by": "claude-chat",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "how often should i be changing my face towel",
+   "audit": {
+    "top_chunk": "kb-rosacea-what",
+    "top_score": 3.5767,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "no_answer_model",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": "The provided notes do not contain information about how often to change a face towel.\n\n[NO_ANSWER]",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-rosacea-what",
+    "kb-acne-what",
+    "kb-cosmetic-reactions",
+    "kb-pigment-spots"
+   ],
+   "first_piece_s": 0.437,
+   "first_sentence_s": 0.822,
+   "total_s": 0.823,
+   "blocked": "{'doubled_name': 0, 'no_answer': 1}",
+   "prompt_chars": 7527,
+   "estimated_prompt_tokens": 2522,
+   "prompt_tokens": 1982,
+   "output_tokens": 23,
+   "load_ms": 30,
+   "prompt_ms": 370,
+   "eval_ms": 321,
+   "tokens_per_s": 71.65
+  },
+  {
+   "id": "n20",
+   "set": "new_uncovered",
+   "by": "claude-chat",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "does drinking more water actually clear skin??",
+   "audit": {
+    "top_chunk": "kb-dry-skin",
+    "top_score": 6.0727,
+    "line_answerable": true,
+    "coverage": 0.6,
+    "named_ingredients": [
+     "water"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Drinking more water does not directly clear skin, as skin hydration comes from the skin's own moisture and external products.  Dryness can be caused by drinking too little water, but this does not apply to oily skin.  For acne, focus on gentle cleansing and avoiding harsh soaps or scrubbing.  Sun protection is also important to prevent dark spots and early aging.  Your current routine includes cleansers, serums, and sunscreen tailored for your oily and acne-prone skin.  Consult a doctor or pharmacist if your skin condition changes or causes distress.",
+   "raw": "Drinking more water does not directly clear skin, as skin hydration comes from the skin's own moisture and external products. [kb-dry-skin]\nDryness can be caused by drinking too little water, but this does not apply to oily skin. [kb-dry-skin]\nFor acne, focus on gentle cleansing and avoiding harsh soaps or scrubbing. [kb-acne-care]\nSun protection is also important to prevent dark spots and early aging. [kb-sun-uv]\nYour current routine includes cleansers, serums, and sunscreen tailored for your oily and acne-prone skin. [profile]\nConsult a doctor or pharmacist if your skin condition changes or causes distress.",
+   "cautions": [],
+   "cites": [
+    "kb-acne-care",
+    "kb-dry-skin",
+    "kb-sun-uv",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-dry-skin",
+    "kb-rash-contact",
+    "kb-acne-care",
+    "kb-sun-uv"
+   ],
+   "first_piece_s": 0.437,
+   "first_sentence_s": 2.567,
+   "total_s": 2.568,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7453,
+   "estimated_prompt_tokens": 2497,
+   "prompt_tokens": 1977,
+   "output_tokens": 145,
+   "load_ms": 42,
+   "prompt_ms": 351,
+   "eval_ms": 2048,
+   "tokens_per_s": 70.8
+  },
+  {
+   "id": "n21",
+   "set": "new_uncovered",
+   "by": "claude-chat",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "does toothpaste on a pimple actually work",
+   "audit": {
+    "top_chunk": "kb-acne-what",
+    "top_score": 3.2298,
+    "line_answerable": true,
+    "coverage": 0.25,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Toothpaste is not a recommended treatment for acne and can cause skin irritation.  Your current routine uses products like The Derma Co. 2.5% Benzoyl Peroxide Spot Corrector Benzoyl Peroxide Spot Corrector, which are designed to treat acne safely. Using toothpaste may introduce ingredients that burn or irritate your sensitive skin. Please avoid applying toothpaste to your face. If you have a reaction like redness or swelling, see a doctor or pharmacist.",
+   "raw": "Toothpaste is not a recommended treatment for acne and can cause skin irritation. [kb-acne-what]\nYour current routine uses products like [P35] Benzoyl Peroxide Spot Corrector, which are designed to treat acne safely.\nUsing toothpaste may introduce ingredients that burn or irritate your sensitive skin.\nPlease avoid applying toothpaste to your face.\nIf you have a reaction like redness or swelling, see a doctor or pharmacist.",
+   "cautions": [],
+   "cites": [
+    "kb-acne-what"
+   ],
+   "sent_ids": [
+    "kb-acne-what",
+    "kb-rosacea-what"
+   ],
+   "first_piece_s": 0.371,
+   "first_sentence_s": 1.865,
+   "total_s": 1.866,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 6361,
+   "estimated_prompt_tokens": 2133,
+   "prompt_tokens": 1730,
+   "output_tokens": 98,
+   "load_ms": 40,
+   "prompt_ms": 284,
+   "eval_ms": 1422,
+   "tokens_per_s": 68.92
+  },
+  {
+   "id": "n22",
+   "set": "new_uncovered",
+   "by": "claude-chat",
+   "group": "not_covered",
+   "expect": "no_answer",
+   "about_routine": false,
+   "question": "what's a peptide serum even do, should i get one",
+   "audit": {
+    "top_chunk": "kb-app-routine",
+    "top_score": 2.5949,
+    "line_answerable": false,
+    "coverage": 0.25,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "no_answer",
+   "outcome": "no_answer_line",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": null,
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [],
+   "first_piece_s": null,
+   "first_sentence_s": 0.066,
+   "total_s": 0.067,
+   "blocked": null,
+   "prompt_chars": null,
+   "estimated_prompt_tokens": null
+  },
+  {
+   "id": "c01",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": true,
+   "question": "Why is the alpha arbutin serum part of my morning routine?",
+   "audit": {
+    "top_chunk": "kb-app-routine",
+    "top_score": 7.7313,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [
+     "alpha arbutin"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "The alpha arbutin serum is included in your morning routine because your pigmentation score is High. ",
+   "raw": "The alpha arbutin serum is included in your morning routine because your pigmentation score is High. [kb-app-routine]",
+   "cautions": [],
+   "cites": [
+    "kb-app-routine"
+   ],
+   "sent_ids": [
+    "kb-app-routine",
+    "kb-app-conflicts",
+    "kb-sun-sunscreen-use",
+    "kb-sun-other"
+   ],
+   "first_piece_s": 0.474,
+   "first_sentence_s": 0.921,
+   "total_s": 0.922,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7648,
+   "estimated_prompt_tokens": 2562,
+   "prompt_tokens": 2059,
+   "output_tokens": 27,
+   "load_ms": 41,
+   "prompt_ms": 381,
+   "eval_ms": 379,
+   "tokens_per_s": 71.24
+  },
+  {
+   "id": "c02",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": true,
+   "question": "What does the benzoyl peroxide spot corrector in my evening routine do?",
+   "audit": {
+    "top_chunk": "kb-app-conflicts",
+    "top_score": 11.2007,
+    "line_answerable": true,
+    "coverage": 0.67,
+    "named_ingredients": [
+     "benzoyl peroxide"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "The benzoyl peroxide spot corrector The Derma Co. 2.5% Benzoyl Peroxide Spot Corrector is designed to act against bacteria and may lower oil production. It is used specifically to target acne due to your High acne score. Like other acne products, it can cause side effects such as irritation or burning, so talk to a doctor about any reactions. Many acne products also increase the risk of sunburn, making your evening sunscreen important.",
+   "raw": "The benzoyl peroxide spot corrector [P35] is designed to act against bacteria and may lower oil production [kb-acne-actives]. It is used specifically to target acne due to your High acne score [profile]. Like other acne products, it can cause side effects such as irritation or burning, so talk to a doctor about any reactions [kb-acne-actives]. Many acne products also increase the risk of sunburn, making your evening sunscreen important [kb-acne-actives].",
+   "cautions": [],
+   "cites": [
+    "kb-acne-actives",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-app-conflicts",
+    "kb-app-routine",
+    "kb-acne-actives",
+    "kb-marks-after-acne"
+   ],
+   "first_piece_s": 0.471,
+   "first_sentence_s": 2.027,
+   "total_s": 2.028,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7675,
+   "estimated_prompt_tokens": 2571,
+   "prompt_tokens": 2056,
+   "output_tokens": 106,
+   "load_ms": 35,
+   "prompt_ms": 393,
+   "eval_ms": 1484,
+   "tokens_per_s": 71.43
+  },
+  {
+   "id": "c03",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": true,
+   "question": "Why does my morning face wash contain salicylic acid?",
+   "audit": {
+    "top_chunk": "kb-acne-actives",
+    "top_score": 6.3849,
+    "line_answerable": true,
+    "coverage": 0.33,
+    "named_ingredients": [
+     "salicylic acid"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Your morning face wash contains salicylic acid because your acne score is in the High band. Salicylic acid is used to break up blackheads and whiteheads. It helps keep your pores clear without harsh scrubbing.",
+   "raw": "Your morning face wash contains salicylic acid because your acne score is in the High band. [kb-acne-actives] Salicylic acid is used to break up blackheads and whiteheads. [kb-acne-care] It helps keep your pores clear without harsh scrubbing.",
+   "cautions": [],
+   "cites": [
+    "kb-acne-actives",
+    "kb-acne-care"
+   ],
+   "sent_ids": [
+    "kb-acne-actives",
+    "kb-acne-care",
+    "kb-app-conflicts",
+    "kb-app-routine"
+   ],
+   "first_piece_s": 0.486,
+   "first_sentence_s": 1.4,
+   "total_s": 1.401,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7827,
+   "estimated_prompt_tokens": 2622,
+   "prompt_tokens": 2098,
+   "output_tokens": 60,
+   "load_ms": 44,
+   "prompt_ms": 402,
+   "eval_ms": 847,
+   "tokens_per_s": 70.84
+  },
+  {
+   "id": "c04",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": true,
+   "question": "What is the zinc in my niacinamide serum there for?",
+   "audit": {
+    "top_chunk": "kb-app-conflicts",
+    "top_score": 2.6237,
+    "line_answerable": false,
+    "coverage": 0.33,
+    "named_ingredients": [
+     "niacinamide"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "no_answer",
+   "outcome": "no_answer_line",
+   "released": "I don't have reliable information on that in PureSkin's notes, so I can't answer it. A pharmacist or dermatologist can help with questions like this.",
+   "raw": null,
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [],
+   "first_piece_s": null,
+   "first_sentence_s": 0.055,
+   "total_s": 0.055,
+   "blocked": null,
+   "prompt_chars": null,
+   "estimated_prompt_tokens": null
+  },
+  {
+   "id": "c05",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": true,
+   "question": "Why is the Sebamed gel my moisturiser?",
+   "audit": {
+    "top_chunk": "kb-dry-skin",
+    "top_score": 3.1256,
+    "line_answerable": true,
+    "coverage": 0.33,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "The Sebamed gel is selected as your moisturiser because it is ranked first among eligible options for your oily skin profile. It contains Panthenol, which helps match your moderate redness score. Additionally, its gel texture is suitable for oily skin types.",
+   "raw": "The Sebamed gel is selected as your moisturiser because it is ranked first among eligible options for your oily skin profile [profile]. It contains Panthenol, which helps match your moderate redness score [profile]. Additionally, its gel texture is suitable for oily skin types [profile].",
+   "cautions": [],
+   "cites": [
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-dry-skin",
+    "kb-acne-actives",
+    "kb-app-routine"
+   ],
+   "first_piece_s": 0.414,
+   "first_sentence_s": 1.287,
+   "total_s": 1.288,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7075,
+   "estimated_prompt_tokens": 2371,
+   "prompt_tokens": 1908,
+   "output_tokens": 58,
+   "load_ms": 50,
+   "prompt_ms": 327,
+   "eval_ms": 818,
+   "tokens_per_s": 70.9
+  },
+  {
+   "id": "c06",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "Do I still need sunscreen on a cloudy day?",
+   "audit": {
+    "top_chunk": "kb-sun-sunscreen-use",
+    "top_score": 5.309,
+    "line_answerable": true,
+    "coverage": 0.6,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Yes, you still need sunscreen on a cloudy day because UV rays penetrate through the clouds. Your current sunscreen, Minimalist Multi-Vitamin Sunscreen, provides SPF 50 protection. It is recommended to reapply at least every two hours or sooner after sweating.",
+   "raw": "Yes, you still need sunscreen on a cloudy day because UV rays penetrate through the clouds [kb-sun-sunscreen-use]. Your current sunscreen, [P17], provides SPF 50 protection [profile]. It is recommended to reapply at least every two hours or sooner after sweating [kb-sun-sunscreen-use].",
+   "cautions": [],
+   "cites": [
+    "kb-sun-sunscreen-use",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-sun-sunscreen-use",
+    "kb-acne-what",
+    "kb-rosacea-care",
+    "kb-moles-check"
+   ],
+   "first_piece_s": 0.4,
+   "first_sentence_s": 1.483,
+   "total_s": 1.485,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7335,
+   "estimated_prompt_tokens": 2458,
+   "prompt_tokens": 1965,
+   "output_tokens": 69,
+   "load_ms": 31,
+   "prompt_ms": 324,
+   "eval_ms": 997,
+   "tokens_per_s": 69.21
+  },
+  {
+   "id": "c07",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "Is scrubbing my face hard a bad idea when I'm breaking out?",
+   "audit": {
+    "top_chunk": "kb-acne-care",
+    "top_score": 7.2446,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Yes, scrubbing your face hard is a bad idea when you are breaking out. Hard scrubbing can make acne worse and may leave scars or dark marks. You should wash gently with a mild cleanser and rinse with lukewarm water instead. Avoid harsh soaps, astringents, and rough scrubbing pads. Stress, pressure from helmets or tight clothes, and humid air can also worsen breakouts. Try not to touch, squeeze, or pick spots.",
+   "raw": "Yes, scrubbing your face hard is a bad idea when you are breaking out. Hard scrubbing can make acne worse and may leave scars or dark marks. You should wash gently with a mild cleanser and rinse with lukewarm water instead. Avoid harsh soaps, astringents, and rough scrubbing pads. Stress, pressure from helmets or tight clothes, and humid air can also worsen breakouts. Try not to touch, squeeze, or pick spots.",
+   "cautions": [],
+   "cites": [],
+   "sent_ids": [
+    "kb-acne-care",
+    "kb-rosacea-care",
+    "kb-cosmetic-reactions",
+    "kb-rosacea-what"
+   ],
+   "first_piece_s": 0.405,
+   "first_sentence_s": 1.843,
+   "total_s": 1.844,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7608,
+   "estimated_prompt_tokens": 2549,
+   "prompt_tokens": 1993,
+   "output_tokens": 96,
+   "load_ms": 35,
+   "prompt_ms": 336,
+   "eval_ms": 1369,
+   "tokens_per_s": 70.12
+  },
+  {
+   "id": "c08",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "What's the difference between a whitehead and a blackhead?",
+   "audit": {
+    "top_chunk": "kb-acne-types",
+    "top_score": 7.2329,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "A whitehead is a blocked hair follicle that stays closed under the skin and appears as a small white bump. A blackhead is a blocked follicle that opens at the surface, looking dark because air darkens the oil inside. This darkness is not caused by dirt. ",
+   "raw": "A whitehead is a blocked hair follicle that stays closed under the skin and appears as a small white bump. A blackhead is a blocked follicle that opens at the surface, looking dark because air darkens the oil inside. This darkness is not caused by dirt. [kb-acne-types]",
+   "cautions": [],
+   "cites": [
+    "kb-acne-types"
+   ],
+   "sent_ids": [
+    "kb-acne-types",
+    "kb-acne-actives"
+   ],
+   "first_piece_s": 0.343,
+   "first_sentence_s": 1.276,
+   "total_s": 1.277,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 6335,
+   "estimated_prompt_tokens": 2124,
+   "prompt_tokens": 1725,
+   "output_tokens": 62,
+   "load_ms": 41,
+   "prompt_ms": 260,
+   "eval_ms": 866,
+   "tokens_per_s": 71.59
+  },
+  {
+   "id": "c09",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "Which ingredient pairs does my routine keep apart?",
+   "audit": {
+    "top_chunk": "kb-app-conflicts",
+    "top_score": 15.858,
+    "line_answerable": true,
+    "coverage": 1.0,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Your routine keeps apart ingredient pairs that clash, such as retinoids with benzoyl peroxide or AHAs. It also separates medium-clash pairs like BHA with azelaic acid or benzoyl peroxide with ascorbic acid. The system rates these conflicts as high, medium, or low to decide which product to use in each session. This list describes what the routine does; it is not a medical finding about the pairs.",
+   "raw": "Your routine keeps apart ingredient pairs that clash, such as retinoids with benzoyl peroxide or AHAs [kb-app-conflicts]. It also separates medium-clash pairs like BHA with azelaic acid or benzoyl peroxide with ascorbic acid [kb-app-conflicts]. The system rates these conflicts as high, medium, or low to decide which product to use in each session [kb-app-conflicts]. This list describes what the routine does; it is not a medical finding about the pairs [kb-app-conflicts].",
+   "cautions": [],
+   "cites": [
+    "kb-app-conflicts"
+   ],
+   "sent_ids": [
+    "kb-app-conflicts",
+    "kb-cosmetic-reactions",
+    "kb-acne-actives",
+    "kb-app-routine"
+   ],
+   "first_piece_s": 0.438,
+   "first_sentence_s": 2.098,
+   "total_s": 2.098,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7717,
+   "estimated_prompt_tokens": 2585,
+   "prompt_tokens": 2055,
+   "output_tokens": 112,
+   "load_ms": 32,
+   "prompt_ms": 369,
+   "eval_ms": 1599,
+   "tokens_per_s": 70.04
+  },
+  {
+   "id": "c10",
+   "set": "new_covered",
+   "by": "claude",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "Why does skin get thinner with age?",
+   "audit": {
+    "top_chunk": "kb-ageing-skin",
+    "top_score": 5.2562,
+    "line_answerable": true,
+    "coverage": 1.0,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Skin gets thinner with age because the outer layer loses colour and stretches less as elastic fibres and collagen are lost. Hormone changes such as menopause can also make skin thinner and drier. Sunlight is a major cause of skin ageing, and smoking adds to wrinkling.",
+   "raw": "Skin gets thinner with age because the outer layer loses colour and stretches less as elastic fibres and collagen are lost [kb-ageing-skin]. Hormone changes such as menopause can also make skin thinner and drier [kb-ageing-skin]. Sunlight is a major cause of skin ageing, and smoking adds to wrinkling [kb-ageing-skin].",
+   "cautions": [],
+   "cites": [
+    "kb-ageing-skin"
+   ],
+   "sent_ids": [
+    "kb-ageing-skin",
+    "kb-pigment-spots",
+    "kb-moles-check",
+    "kb-acne-scars"
+   ],
+   "first_piece_s": 0.416,
+   "first_sentence_s": 1.538,
+   "total_s": 1.538,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7452,
+   "estimated_prompt_tokens": 2497,
+   "prompt_tokens": 1986,
+   "output_tokens": 74,
+   "load_ms": 42,
+   "prompt_ms": 337,
+   "eval_ms": 1066,
+   "tokens_per_s": 69.42
+  },
+  {
+   "id": "c11",
+   "set": "new_covered",
+   "by": "claude-chat",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": true,
+   "question": "can i use the benzoyl peroxide spot corrector and the salicylic face wash together or will that be too much",
+   "audit": {
+    "top_chunk": "kb-acne-actives",
+    "top_score": 9.0114,
+    "line_answerable": true,
+    "coverage": 0.38,
+    "named_ingredients": [
+     "benzoyl peroxide"
+    ],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Yes, you can use the benzoyl peroxide spot corrector and the salicylic acid face wash together. Benzoyl peroxide and salicylic acid are both common acne ingredients that work against bacteria and break up clogged pores. Your routine includes both products, so using them in your morning and evening steps is the intended approach. However, these products can cause irritation, burning, or redness in some people. If you experience severe irritation that won't go away, please see a doctor or pharmacist.",
+   "raw": "Yes, you can use the benzoyl peroxide spot corrector and the salicylic acid face wash together. [kb-acne-actives] Benzoyl peroxide and salicylic acid are both common acne ingredients that work against bacteria and break up clogged pores. [kb-acne-care] Your routine includes both products, so using them in your morning and evening steps is the intended approach. [kb-acne-actives] However, these products can cause irritation, burning, or redness in some people. [kb-acne-care] If you experience severe irritation that won't go away, please see a doctor or pharmacist.",
+   "cautions": [],
+   "cites": [
+    "kb-acne-actives",
+    "kb-acne-care"
+   ],
+   "sent_ids": [
+    "kb-acne-actives",
+    "kb-app-conflicts",
+    "kb-acne-care",
+    "kb-pigment-spots"
+   ],
+   "first_piece_s": 0.45,
+   "first_sentence_s": 2.401,
+   "total_s": 2.402,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7721,
+   "estimated_prompt_tokens": 2586,
+   "prompt_tokens": 2070,
+   "output_tokens": 134,
+   "load_ms": 34,
+   "prompt_ms": 379,
+   "eval_ms": 1874,
+   "tokens_per_s": 71.5
+  },
+  {
+   "id": "c12",
+   "set": "new_covered",
+   "by": "claude-chat",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": true,
+   "question": "do i need to put the minimalist sunscreen on if i'm indoors most of the day",
+   "audit": {
+    "top_chunk": "kb-sun-sunscreen-use",
+    "top_score": 5.309,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Yes, you should still use sunscreen indoors because UV rays can penetrate clouds and windows.  Your current sunscreen, Minimalist Multi-Vitamin Sunscreen, has an SPF of 50 and is part of your base routine.  It is recommended to apply sunscreen every day to protect your skin.  Wearing a wide-brimmed hat can also provide additional shade protection. ",
+   "raw": "Yes, you should still use sunscreen indoors because UV rays can penetrate clouds and windows. [kb-sun-sunscreen-use]\nYour current sunscreen, [P17], has an SPF of 50 and is part of your base routine. [profile]\nIt is recommended to apply sunscreen every day to protect your skin. [kb-rosacea-care]\nWearing a wide-brimmed hat can also provide additional shade protection. [kb-sun-sunscreen-use]",
+   "cautions": [],
+   "cites": [
+    "kb-rosacea-care",
+    "kb-sun-sunscreen-use",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-sun-sunscreen-use",
+    "kb-rosacea-care",
+    "kb-moles-check",
+    "kb-allergy-serious"
+   ],
+   "first_piece_s": 0.394,
+   "first_sentence_s": 1.899,
+   "total_s": 1.9,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7366,
+   "estimated_prompt_tokens": 2468,
+   "prompt_tokens": 1964,
+   "output_tokens": 101,
+   "load_ms": 33,
+   "prompt_ms": 327,
+   "eval_ms": 1442,
+   "tokens_per_s": 70.04
+  },
+  {
+   "id": "c13",
+   "set": "new_covered",
+   "by": "claude-chat",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "what spf should i be wearing every day",
+   "audit": {
+    "top_chunk": "kb-sun-sunscreen-use",
+    "top_score": 6.8739,
+    "line_answerable": true,
+    "coverage": 0.75,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "You should wear a sunscreen with an SPF of 30 or higher every day. Ideally, choose one labelled \"broad spectrum\" to guard against both UVA and UVB rays. Your current routine includes the Minimalist Multi-Vitamin Sunscreen, which has an SPF of 50.",
+   "raw": "You should wear a sunscreen with an SPF of 30 or higher every day [kb-rosacea-care]. Ideally, choose one labelled \"broad spectrum\" to guard against both UVA and UVB rays [kb-sun-sunscreen-use]. Your current routine includes the Minimalist Multi-Vitamin Sunscreen, which has an SPF of 50 [profile].",
+   "cautions": [],
+   "cites": [
+    "kb-rosacea-care",
+    "kb-sun-sunscreen-use",
+    "profile"
+   ],
+   "sent_ids": [
+    "kb-sun-sunscreen-use",
+    "kb-rosacea-care",
+    "kb-marks-after-acne",
+    "kb-dry-skin"
+   ],
+   "first_piece_s": 0.366,
+   "first_sentence_s": 1.507,
+   "total_s": 1.508,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7228,
+   "estimated_prompt_tokens": 2422,
+   "prompt_tokens": 1932,
+   "output_tokens": 77,
+   "load_ms": 32,
+   "prompt_ms": 301,
+   "eval_ms": 1075,
+   "tokens_per_s": 71.63
+  },
+  {
+   "id": "c14",
+   "set": "new_covered",
+   "by": "claude-chat",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "should i pop a whitehead or just leave it alone",
+   "audit": {
+    "top_chunk": "kb-acne-types",
+    "top_score": 3.6165,
+    "line_answerable": true,
+    "coverage": 0.25,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "gate_bracket",
+   "released": "Squeezing or picking spots can leave dark blotches or scars.  It is better to leave the whitehead alone.  Popping can also cause irritation or redness.  Your routine includes salicylic acid to help break up whiteheads naturally.  If the spot becomes painful, swollen, or bleeds, see a doctor. I can't say more about that here. For advice about your own skin, please ask a pharmacist or doctor.",
+   "raw": "Squeezing or picking spots can leave dark blotches or scars. [kb-marks-after-acne]\nIt is better to leave the whitehead alone. [kb-marks-after-acne]\nPopping can also cause irritation or redness. [kb-acne-actives]\nYour routine includes salicylic acid to help break up whiteheads naturally. [kb-acne-actives]\nIf the spot becomes painful, swollen, or bleeds, see a doctor. [Safety Rule]",
+   "cautions": [],
+   "cites": [
+    "kb-acne-actives",
+    "kb-marks-after-acne"
+   ],
+   "sent_ids": [
+    "kb-acne-types",
+    "kb-acne-actives",
+    "kb-marks-after-acne",
+    "kb-acne-what"
+   ],
+   "first_piece_s": 0.419,
+   "first_sentence_s": 1.999,
+   "total_s": 2.0,
+   "blocked": "{'doubled_name': 0, 'bracket': 1}",
+   "prompt_chars": 7397,
+   "estimated_prompt_tokens": 2478,
+   "prompt_tokens": 1966,
+   "output_tokens": 107,
+   "load_ms": 32,
+   "prompt_ms": 346,
+   "eval_ms": 1521,
+   "tokens_per_s": 70.35
+  },
+  {
+   "id": "c15",
+   "set": "new_covered",
+   "by": "claude-chat",
+   "group": "covered",
+   "expect": "answer",
+   "about_routine": false,
+   "question": "does sun exposure make wrinkles show up sooner",
+   "audit": {
+    "top_chunk": "kb-pigment-spots",
+    "top_score": 5.7578,
+    "line_answerable": true,
+    "coverage": 0.5,
+    "named_ingredients": [],
+    "unsupported_ingredients": []
+   },
+   "route": "model",
+   "outcome": "answered",
+   "released": "Yes, sun exposure is a major cause of skin ageing that can make wrinkles appear sooner. Ultraviolet light damages skin cells, leading to changes in texture and early ageing over the years. As people age, the loss of collagen and elastic fibres causes the skin to wrinkle, and sunlight accelerates this process.",
+   "raw": "Yes, sun exposure is a major cause of skin ageing that can make wrinkles appear sooner. Ultraviolet light damages skin cells, leading to changes in texture and early ageing over the years [kb-sun-uv]. As people age, the loss of collagen and elastic fibres causes the skin to wrinkle, and sunlight accelerates this process [kb-ageing-skin].",
+   "cautions": [],
+   "cites": [
+    "kb-ageing-skin",
+    "kb-sun-uv"
+   ],
+   "sent_ids": [
+    "kb-pigment-spots",
+    "kb-sun-sunscreen-use",
+    "kb-sun-uv",
+    "kb-ageing-skin"
+   ],
+   "first_piece_s": 0.428,
+   "first_sentence_s": 1.552,
+   "total_s": 1.553,
+   "blocked": "{'doubled_name': 0}",
+   "prompt_chars": 7309,
+   "estimated_prompt_tokens": 2449,
+   "prompt_tokens": 1948,
+   "output_tokens": 75,
+   "load_ms": 36,
+   "prompt_ms": 351,
+   "eval_ms": 1058,
+   "tokens_per_s": 70.89
+  }
+ ],
+ "calibration": [
+  {
+   "chars": 5769,
+   "estimated_tokens": 1936,
+   "prompt_tokens": 1610,
+   "chars_per_token": 3.583
+  },
+  {
+   "chars": 6912,
+   "estimated_tokens": 2317,
+   "prompt_tokens": 1878,
+   "chars_per_token": 3.681
+  },
+  {
+   "chars": 7731,
+   "estimated_tokens": 2590,
+   "prompt_tokens": 2065,
+   "chars_per_token": 3.744
+  },
+  {
+   "chars": 7607,
+   "estimated_tokens": 2549,
+   "prompt_tokens": 2021,
+   "chars_per_token": 3.764
+  },
+  {
+   "chars": 7552,
+   "estimated_tokens": 2530,
+   "prompt_tokens": 2009,
+   "chars_per_token": 3.759
+  },
+  {
+   "chars": 7589,
+   "estimated_tokens": 2543,
+   "prompt_tokens": 2034,
+   "chars_per_token": 3.731
+  },
+  {
+   "chars": 7902,
+   "estimated_tokens": 2647,
+   "prompt_tokens": 2094,
+   "chars_per_token": 3.774
+  },
+  {
+   "chars": 7611,
+   "estimated_tokens": 2550,
+   "prompt_tokens": 2045,
+   "chars_per_token": 3.722
+  },
+  {
+   "chars": 7604,
+   "estimated_tokens": 2548,
+   "prompt_tokens": 2039,
+   "chars_per_token": 3.729
+  },
+  {
+   "chars": 7574,
+   "estimated_tokens": 2538,
+   "prompt_tokens": 2038,
+   "chars_per_token": 3.716
+  },
+  {
+   "chars": 7376,
+   "estimated_tokens": 2471,
+   "prompt_tokens": 1960,
+   "chars_per_token": 3.763
+  },
+  {
+   "chars": 7691,
+   "estimated_tokens": 2576,
+   "prompt_tokens": 2078,
+   "chars_per_token": 3.701
+  }
+ ],
+ "machine": {
+  "before": {
+   "stopped": [],
+   "ollama_ps": "NAME    ID    SIZE    PROCESSOR    CONTEXT    RUNNER    UNTIL",
+   "nvidia_smi": {
+    "gpu": "NVIDIA GeForce RTX 5050 Laptop GPU",
+    "driver": "617.42",
+    "total_mib": 8151,
+    "used_mib": 0,
+    "free_mib": 7910
+   },
+   "user_env": {
+    "OLLAMA_NO_CLOUD": "1",
+    "OLLAMA_HOST": null,
+    "OLLAMA_KV_CACHE_TYPE": null,
+    "OLLAMA_FLASH_ATTENTION": null,
+    "OLLAMA_NUM_PARALLEL": null,
+    "OLLAMA_CONTEXT_LENGTH": null,
+    "OLLAMA_DEBUG": null
+   },
+   "server_log": [
+    "time=2026-10-12T23:02:24.014+05:30 level=INFO source=routes.go:2375 msg=\"Ollama cloud disabled: true\"",
+    "time=2026-10-12T23:02:24.085+05:30 level=INFO source=routes.go:2435 msg=\"Listening on 127.0.0.1:11434 (version 0.40.2)\"",
+    "time=2026-10-12T23:02:41.235+05:30 level=INFO source=types.go:32 msg=\"inference compute\" id=0 filter_id=0 library=CUDA compute=12.0 name=CUDA0 description=\"NVIDIA GeForce RTX 5050 Laptop GPU\" libdirs=ollama,cuda_v13 driver=13.4 pci_id=0000:01:00.0 type=discrete total=\"7.9 GiB\" available=\"6.9 GiB\"",
+    "time=2026-10-12T23:02:41.235+05:30 level=INFO source=routes.go:2485 msg=\"vram-based default context\" total_vram=\"7.9 GiB\" default_num_ctx=4096"
+   ]
+  },
+  "after": {
+   "ollama_ps": "NAME                 ID              SIZE      PROCESSOR    CONTEXT    RUNNER      UNTIL              \nqwen3.5:4b-q4_K_M    d8b0f5e9760c    3.1 GB    100% GPU     4096       llamacpp    4 minutes from now",
+   "rows": [
+    {
+     "name": "qwen3.5:4b-q4_K_M",
+     "id": "d8b0f5e9760c",
+     "size": "3.1 GB",
+     "processor": "100% GPU",
+     "context": "4096",
+     "runner": "llamacpp",
+     "until": "4 minutes from now"
+    }
+   ],
+   "nvidia_smi": {
+    "gpu": "NVIDIA GeForce RTX 5050 Laptop GPU",
+    "driver": "617.42",
+    "total_mib": 8151,
+    "used_mib": 3736,
+    "free_mib": 4175
+   }
+  }
+ },
+ "contaminated": false,
+ "freeze": {
+  "recorded_at": "2026-10-13T02:13:38+00:00",
+  "code_sha256": {
+   "gate.py": "6d36757963e2784d9c89f76a1ea46209293f034738cc0c03ea548410838265e2",
+   "pipeline.py": "9c416852c97345948c4d8d5ee9e03ddef29771be176fb84f3a857161e29b6d2a",
+   "context.py": "da868f5f04cdc039beb74ab95688482f812e7c915aef253225511bc19c4e0313",
+   "ingredient_check.py": "02d65c383d88118856dbfa3d941f8d388b5b1849d81b1cb380dc64fb6790499f",
+   "retrieval.py": "2bfeaeca0d11e8878a541ec47d70eb1f2a61574c2a17662e02205d90ddc791d0",
+   "coverage.py": "e8c079efa12d41d0dcec8949515b3bc94fec98477289f4042c6aa36810490912",
+   "ollama.py": "35081e2aaf0f189ef1a5ae246132f68f9298623cbd410f1ccdd28aae1c33ec68",
+   "redflags.py": "f5882d481d031d6f28ec72d192d68f7d3aac0dcd97beca9809503e080f12335f"
+  },
+  "new_questions_sha256": {
+   "new_uncovered.json": "f02327f9481e1b35084c73aa4132fbc4e3b4d2e3ab716a98b47277508ad89768",
+   "new_covered.json": "d95ea70e80959df194c6b7bd142e7e4064d4d7e9b3d25a4f30b3ee67f01b561d"
+  },
+  "chat_config": "chat-1.4.0",
+  "chat_config_fingerprint": "3aea9264031ff51c",
+  "system_prompt_sha256": "fcfde3463210be2e9f900bd8b05153fca8a66ff17e3e6cd7a79a2cf995f0b439",
+  "kb": "kb-1.0.0",
+  "kb_fingerprint": "2e9d5fd414a376ed",
+  "options": {
+   "temperature": 0.2,
+   "top_p": 0.9,
+   "top_k": 40,
+   "min_p": 0.0,
+   "presence_penalty": 0.0,
+   "repeat_penalty": 1.0,
+   "seed": 42,
+   "num_ctx": 4096,
+   "num_predict": 350
+  },
+  "think": false,
+  "bakeoff_py_sha256": "e59239a66aaa49bc68b51700924647451cc3ce4f750eebff98e87c998917b123",
+  "injection_probes_sha256": "54569fcc41f1902addda14c88b2a5d653107abb380ecb8cb8fc9d68561c19ced"
+ }
+}

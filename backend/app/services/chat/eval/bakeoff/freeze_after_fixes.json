@@ -1,0 +1,36 @@
+{
+ "recorded_at": "2026-10-13T02:13:38+00:00",
+ "code_sha256": {
+  "gate.py": "6d36757963e2784d9c89f76a1ea46209293f034738cc0c03ea548410838265e2",
+  "pipeline.py": "9c416852c97345948c4d8d5ee9e03ddef29771be176fb84f3a857161e29b6d2a",
+  "context.py": "da868f5f04cdc039beb74ab95688482f812e7c915aef253225511bc19c4e0313",
+  "ingredient_check.py": "02d65c383d88118856dbfa3d941f8d388b5b1849d81b1cb380dc64fb6790499f",
+  "retrieval.py": "2bfeaeca0d11e8878a541ec47d70eb1f2a61574c2a17662e02205d90ddc791d0",
+  "coverage.py": "e8c079efa12d41d0dcec8949515b3bc94fec98477289f4042c6aa36810490912",
+  "ollama.py": "35081e2aaf0f189ef1a5ae246132f68f9298623cbd410f1ccdd28aae1c33ec68",
+  "redflags.py": "f5882d481d031d6f28ec72d192d68f7d3aac0dcd97beca9809503e080f12335f"
+ },
+ "new_questions_sha256": {
+  "new_uncovered.json": "f02327f9481e1b35084c73aa4132fbc4e3b4d2e3ab716a98b47277508ad89768",
+  "new_covered.json": "d95ea70e80959df194c6b7bd142e7e4064d4d7e9b3d25a4f30b3ee67f01b561d"
+ },
+ "chat_config": "chat-1.4.0",
+ "chat_config_fingerprint": "3aea9264031ff51c",
+ "system_prompt_sha256": "fcfde3463210be2e9f900bd8b05153fca8a66ff17e3e6cd7a79a2cf995f0b439",
+ "kb": "kb-1.0.0",
+ "kb_fingerprint": "2e9d5fd414a376ed",
+ "options": {
+  "temperature": 0.2,
+  "top_p": 0.9,
+  "top_k": 40,
+  "min_p": 0.0,
+  "presence_penalty": 0.0,
+  "repeat_penalty": 1.0,
+  "seed": 42,
+  "num_ctx": 4096,
+  "num_predict": 350
+ },
+ "think": false,
+ "bakeoff_py_sha256": "e59239a66aaa49bc68b51700924647451cc3ce4f750eebff98e87c998917b123",
+ "injection_probes_sha256": "54569fcc41f1902addda14c88b2a5d653107abb380ecb8cb8fc9d68561c19ced"
+}

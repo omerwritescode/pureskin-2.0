@@ -1,0 +1,22 @@
+{
+ "author": "Claude (the author of the knowledge base and the chat), 2026-10-13, after the bake-off and after proposing the ingredient check at STOP 6, before the check was built. The author knew the check's rule and the KB, so these questions are not independent. The user adds at least 5 of their own (\"by\": \"user\").",
+ "use": "Judging the ingredient check's false blocks (STOP 6 decision 3): each is answerable from the knowledge base or from the bake-off profile's routine, so none should be blocked. \"about_routine\": the question is about a product in that routine (the check must never block these). \"support\": the chunk ids or \"profile\" that answer it. Never used to tune anything.",
+ "profile": "The bake-off profile (bakeoff.PROFILE_FIELDS): oily, not sensitive, acne and pigmentation High, on the real catalog. Its routine: morning [P6] Foxtale True Clarity Oil & Acne Control Face Wash, [P21] The Ordinary Niacinamide 10% + Zinc 1%, [P29] Minimalist 2% Alpha Arbutin + HA Serum, [P7] Sebamed Clear Face Care Gel, [P17] Minimalist Multi-Vitamin Sunscreen; evening [P1] Minimalist Aquaporin Booster 05% Cleanser, [P21], [P35] The Derma Co. 2.5% Benzoyl Peroxide Spot Corrector, [P7].",
+ "questions": [
+  {"id": "c01", "by": "claude", "about_routine": true, "support": ["profile"], "question": "Why is the alpha arbutin serum part of my morning routine?"},
+  {"id": "c02", "by": "claude", "about_routine": true, "support": ["kb-acne-actives", "profile"], "question": "What does the benzoyl peroxide spot corrector in my evening routine do?"},
+  {"id": "c03", "by": "claude", "about_routine": true, "support": ["kb-acne-actives", "profile"], "question": "Why does my morning face wash contain salicylic acid?"},
+  {"id": "c04", "by": "claude", "about_routine": true, "support": ["profile"], "question": "What is the zinc in my niacinamide serum there for?"},
+  {"id": "c05", "by": "claude", "about_routine": true, "support": ["profile"], "question": "Why is the Sebamed gel my moisturiser?"},
+  {"id": "c06", "by": "claude", "about_routine": false, "support": ["kb-sun-sunscreen-use"], "question": "Do I still need sunscreen on a cloudy day?"},
+  {"id": "c07", "by": "claude", "about_routine": false, "support": ["kb-acne-care"], "question": "Is scrubbing my face hard a bad idea when I'm breaking out?"},
+  {"id": "c08", "by": "claude", "about_routine": false, "support": ["kb-acne-types"], "question": "What's the difference between a whitehead and a blackhead?"},
+  {"id": "c09", "by": "claude", "about_routine": false, "support": ["kb-app-conflicts"], "question": "Which ingredient pairs does my routine keep apart?"},
+  {"id": "c10", "by": "claude", "about_routine": false, "support": ["kb-ageing-skin"], "question": "Why does skin get thinner with age?"},
+  {"id": "c11", "by": "claude-chat", "about_routine": true, "support": ["kb-app-conflicts", "profile"], "question": "can i use the benzoyl peroxide spot corrector and the salicylic face wash together or will that be too much"},
+  {"id": "c12", "by": "claude-chat", "about_routine": true, "support": ["kb-sun-sunscreen-use", "profile"], "question": "do i need to put the minimalist sunscreen on if i'm indoors most of the day"},
+  {"id": "c13", "by": "claude-chat", "about_routine": false, "support": ["kb-sun-sunscreen-use"], "question": "what spf should i be wearing every day"},
+  {"id": "c14", "by": "claude-chat", "about_routine": false, "support": ["kb-acne-care"], "question": "should i pop a whitehead or just leave it alone"},
+  {"id": "c15", "by": "claude-chat", "about_routine": false, "support": ["kb-ageing-skin"], "question": "does sun exposure make wrinkles show up sooner"}
+ ]
+}

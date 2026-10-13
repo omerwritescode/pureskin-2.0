@@ -1,0 +1,29 @@
+{
+ "author": "Claude (the author of the knowledge base and the chat), 2026-10-13, after the bake-off and after proposing the ingredient check at STOP 6, before the check was built. The author knew the check's rule and the KB, so these questions are not independent. The user adds at least 5 of their own (\"by\": \"user\").",
+ "use": "Judging the ingredient check and the gate fixes (STOP 6 decision 3): none of these is answered by the knowledge base or by the bake-off profile, so each should get the fixed \"I don't know\". Never used to tune anything.",
+ "profile": "The bake-off profile (bakeoff.PROFILE_FIELDS): oily, not sensitive, acne and pigmentation High, on the real catalog.",
+ "questions": [
+  {"id": "n01", "by": "claude", "question": "Does squalane clog pores?"},
+  {"id": "n02", "by": "claude", "question": "What does bakuchiol do, and is it gentler than retinol?"},
+  {"id": "n03", "by": "claude", "question": "Are sheet masks worth using a few times a week?"},
+  {"id": "n04", "by": "claude", "question": "Should my skincare routine change between summer and winter?"},
+  {"id": "n05", "by": "claude", "question": "Is micellar water enough to take off makeup at night?"},
+  {"id": "n06", "by": "claude", "question": "Is snail mucin any good for oily skin?"},
+  {"id": "n07", "by": "claude", "question": "Can I dab tea tree oil on a pimple to dry it out?"},
+  {"id": "n08", "by": "claude", "question": "How long should I wait between putting on different products?"},
+  {"id": "n09", "by": "claude", "question": "Does mandelic acid suit darker skin better than glycolic acid?"},
+  {"id": "n10", "by": "claude", "question": "Is rice water good for brightening the face?"},
+  {"id": "n11", "by": "claude", "question": "Does dermaplaning make facial hair grow back thicker?"},
+  {"id": "n12", "by": "claude", "question": "Can I use my body lotion on my face?"},
+  {"id": "n13", "by": "claude", "question": "Do I really need a separate eye cream?"},
+  {"id": "n14", "by": "claude", "question": "Does the fabric of my pillowcase matter for breakouts?"},
+  {"id": "n15", "by": "claude", "question": "Is a vitamin C serum a good idea for fading dark marks?"},
+  {"id": "n16", "by": "claude-chat", "question": "is hyaluronic acid ok to use with vitamin c or do they cancel out"},
+  {"id": "n17", "by": "claude-chat", "question": "will a ceramide moisturiser make my oily skin worse?"},
+  {"id": "n18", "by": "claude-chat", "question": "is coconut oil fine for removing makeup"},
+  {"id": "n19", "by": "claude-chat", "question": "how often should i be changing my face towel"},
+  {"id": "n20", "by": "claude-chat", "question": "does drinking more water actually clear skin??"},
+  {"id": "n21", "by": "claude-chat", "question": "does toothpaste on a pimple actually work"},
+  {"id": "n22", "by": "claude-chat", "question": "what's a peptide serum even do, should i get one"}
+ ]
+}
