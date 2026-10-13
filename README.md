@@ -138,6 +138,23 @@ uvicorn app.main:app --reload         # http://localhost:8000: /scan/, /auth/, /
 On Windows, `--reload` can hang silently when the server isn't attached to a real
 console: if a code change doesn't show up, stop the server and start it again.
 
+**Optional, 7. The chat's local model.** The chat (`/app/chat`) runs an open-weights model,
+qwen3.5:4b (Apache-2.0), through [Ollama](https://ollama.com) on the same machine; without
+it, the chat answers "unavailable" (HTTP 503) and nothing else changes.
+1. Install Ollama (Windows: the installer from ollama.com; developed on 0.40.2).
+2. Keep it local-only: set the user environment variable `OLLAMA_NO_CLOUD=1`, then restart
+   Ollama (its log then shows `Ollama cloud disabled: true`).
+3. `ollama pull qwen3.5:4b-q4_K_M` (3.3 GB). The tag is pinned to its digest in
+   `ALLOWED_MODELS` (`backend/app/services/chat/chat_config.py`); a tag whose local digest
+   differs is refused.
+4. In `.env`, set `CHAT_MODEL=qwen3.5:4b-q4_K_M` (as `.env.example` has it); set `OLLAMA_HOST`
+   only if Ollama isn't on `http://127.0.0.1:11434` (it must be a loopback address). Restart
+   the API: its log says `Chat: available (...)` or why not, and `GET /api/chat/status`
+   says the same.
+5. Warm it up before a demo: ask the chat one question. The first answer after a model is
+   pulled or loaded can take longer than the 60 s timeout and return 503 (ask again);
+   `ollama ps` should then show `100% GPU`.
+
 **Tests** (from `backend/`, after `pip install -r requirements-dev.txt`):
 `python -m pytest`. The database tests need Docker running; they create and drop their
 own throwaway databases and never touch the one in `.env`. Tests that need real selfies

@@ -166,6 +166,12 @@ before auth, the DB schema, and the static frontend shell are working. Currently
 - The questionnaire page's input names/values ARE the scorer's field names/values, and the
   score-band cutoffs exist only in `skin_profile_config.py` and `frontend/static/js/bands.js`.
   `app/tests/test_frontend_contract.py` checks both, so keep them in sync.
+- Chat (7d, in progress): a local Ollama on loopback only, and only a model pinned to its
+  full digest in `chat_config.ALLOWED_MODELS` (never a cloud tag). Otherwise the chat is a
+  503 whose reason `GET /api/chat/status` names: `non_loopback_host`, `cloud_tag`,
+  `unpinned_model`, `unreachable`, `missing_model` or `moved_tag`. Red flags never reach the
+  model. Never log chat text, chunk ids, red-flag groups or the user (one metadata line per
+  request). Details: `backend/app/services/chat/README.md`.
 
 ## Commands
 

@@ -195,6 +195,14 @@ The sections above are the original specification and are left unchanged. As bui
    data (feedback, purchases, follow-up) to train or validate a model on. This differs
    from §7 (an ML stack with model versioning) and from §8 step 7's "ML-ranked
    Recommendation Engine".
+10. **The chat's answer arrives whole, not as it is generated** (added in 7d; §4 item 10,
+    §6). The model streams its answer to the server, where an output gate checks it sentence
+    by sentence, but nothing is released to the page until the model has finished: a late
+    "no answer" marker must be able to turn the whole answer into the fixed "I don't know",
+    and nothing the gate blocks may reach the page first. The page still reads the response
+    as a stream of events, but the answer's text comes in one piece at the end, so §6's
+    "chat streams within 1–2 s of first token" does not hold: the user waits for the whole
+    answer (measured times: `backend/app/services/chat/README.md`).
 
 Details: `backend/app/services/image_analysis/README.md`,
 `backend/app/services/questionnaire/README.md`,
