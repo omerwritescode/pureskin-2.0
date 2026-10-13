@@ -4,14 +4,15 @@ A retrieval-grounded chat: a local LLM (Ollama) answers only from a small knowle
 written for PureSkin and from the user's own Skin Profile and routine. It is not a clinical
 tool. For adults (18+); English only.
 
-**Status: Unit 3 of 5 (uncommitted).** Unit 1 (committed): the knowledge base (KB), its
-loader, the claim list, hand-written BM25 retrieval and the retrieval evaluation. Unit 2
-(committed): the red-flag router and templates, the context, the output gate, the
+**Status: Units 1-4 done; Unit 5 open** (the "For Unit 5" list below). Unit 1: the knowledge
+base (KB), its loader, the claim list, hand-written BM25 retrieval and the retrieval
+evaluation. Unit 2: the red-flag router and templates, the context, the output gate, the
 term-coverage check and the pipeline, all tested with a fake model. Unit 3: the Ollama
 client, `POST /api/chat` and `GET /api/chat/status`, the limits, the model-side safety rule
 (part 3a); the model bake-off (part 3b, `bakeoff.py`, frozen setup and results in
-`eval/bakeoff/`; under the user's review, not yet written up here). No chat page yet
-(Unit 4).
+`eval/bakeoff/`, written up below). Unit 4: the chat page at `/app/chat` ("The chat page",
+below). Its manual browser checklist was run by the author: 20 of 21 items passed, none
+failed, and the real-phone item was not run.
 
 ## The knowledge base (`kb/kb.json`, kb-1.0.0)
 
@@ -219,7 +220,9 @@ from MedlinePlus Skin Infections; "see a doctor about it" is author-written.
 
 **Templates** are worded from public-domain pages (MedlinePlus, NIA, NIAMS) and the app's
 own text; 112 and Tele-MANAS 14416 come from PIB releases (coverage: deferred
-verification). Author-written sentences are marked in `chat_config.TEMPLATES` for review.
+verification). 112 is one constant, `EMERGENCY_NUMBER`, which the chat page also uses (Unit 4,
+"The emergency number"). Author-written sentences are marked in `chat_config.TEMPLATES` for
+review.
 
 **Evaluation and its history (be careful with these numbers):**
 
@@ -532,6 +535,7 @@ python -m app.services.chat.bakeoff run --set new --model qwen3.5:4b-q4_K_M   # 
 python -m pytest app/services/chat                  # no database, no Ollama, no network
 python -m pytest app/tests/test_chat_api.py         # the endpoints (no database, no Ollama)
 python -m pytest app/tests/test_chat_context.py app/tests/test_chat_api_db.py   # need Docker
+python -m pytest app/tests/test_frontend_contract.py   # the chat page against the backend, and its Node checks (needs Node)
 ```
 
 ## Known limitations
@@ -577,28 +581,172 @@ python -m pytest app/tests/test_chat_context.py app/tests/test_chat_api_db.py   
 - **A question only the profile answers can be refused by the BM25 line.** c04 ("What is the
   zinc in my niacinamide serum there for?") is answered by the routine's own why text, but the
   line scores only the notes, so it got the fixed "I don't know".
+- **The rate limiter runs before the router** (open). After 10 messages in a minute or 100 in
+  a day, even a red-flag message gets a 429, not its template. The page's 429 message carries
+  an urgent-help line with the emergency number. Planned fix (Unit 5 list): serve the
+  templates before the model limits, with their own limit.
 
 **Future work** (each to be judged on new questions only): a common-name list for the
 ingredient check (the questionnaire's free-text lexicon already maps names such as "vitamin
 c", "bha", "aha" and "arbutin"); not matching "water" inside a compound name ("micellar
 water", "rice water"); letting a question the profile answers past the BM25 line.
 
-**For Unit 4 (the chat page):** the stream has a `caution` event (a fixed line after the
-answer) as well as start, text, citations, end and error; the page must show it.
+## The chat page (Unit 4)
+
+`/app/chat` (`frontend/pages/app/chat/`), plain HTML, CSS and JS. The one reader of
+`POST /api/chat` is `frontend/static/js/chat-stream.js`: pure (no DOM, no storage, never
+logs), checked in Node (`app/tests/frontend_modules.mjs`) and against the backend's event
+types, routes, 503 reasons, limits and emergency number (`app/tests/test_frontend_contract.py`).
+
+**Reading the stream.** NDJSON from bytes, in any pieces: a line, or a UTF-8 character, can be
+split across chunks. "start" comes first, once, and nothing may follow "end" or "error". A line
+that isn't a known, well-formed event stops the turn, and so does a 200 that isn't
+`application/x-ndjson`. The events are held until "end", and only then is the reply shown. An
+answer cut short (an error event, a dropped connection, Stop, a bad line) shows nothing at all,
+because its caution line would come after it. The Node checks feed one stream (1,066 bytes,
+with é, ₹ and 🌞) split at every byte offset (1,067), at every pair of offsets up to 8 bytes
+apart (8,484) and byte by byte, and get the same 7 events every time. Every pair of offsets
+(566,580 splits) passed once on 2026-10-13, but took 21 s, so the narrower set is kept.
+
+**What the page shows.**
+
+- **A reply:** its text; each caution line under it, labelled "Caution"; a red-flag template
+  labelled "Safety information"; and under a model answer, "Sources". Each cited note shows its
+  title and its supporting sources' publishers, as given (the NIA asks for credit), linked in a
+  new tab: following a link in the same tab would clear the conversation. Further-reading
+  sources (the NHS pages) are never shown, because they must not read as the source of a
+  sentence. The repository's notes are labelled "PureSkin (how the app works)", with no link,
+  and a `[profile]` citation adds "Your Skin Profile". Only https links are kept. Product names
+  arrive already swapped in; the page gets no product ids, so it can't link to the catalog.
+- **While waiting:** "Thinking…" (the answer arrives whole: median 1.70 s after the fixes).
+  After 10 s on the model route: "Still thinking. The first answer after the chat starts up can
+  take up to a minute."
+- **No reply:** nothing from the stream is shown, the question goes back in the box (unless
+  something new has been typed), and a message says why:
+  - 401: logged out to /auth/;
+  - 413 or 422: the message couldn't be sent;
+  - 429: a countdown with Send disabled (the server refuses everything until then), and an
+    urgent-help line with the emergency number;
+  - 503 busy: a countdown with Send still enabled (templates and the fixed reply are served
+    while busy). There is no automatic retry: every request counts toward the rate limit, busy
+    ones too;
+  - 503 for any other reason: a friendly line and a collapsed "Technical detail" with the reason
+    code only. The server's detail texts are fixed, but one names loopback addresses, so none is
+    shown;
+  - an error event: "may still have been starting up" if it came 45 s or more after sending,
+    otherwise "couldn't be finished";
+  - a dropped connection, a malformed stream, or no connection at all.
+- **No client timeout:** the server's 60 s read timeout ends a cold-load stall, and Stop covers
+  the rest.
+- **Stop (or Escape)** aborts the fetch and cancels the body, so the connection closes and the
+  server frees its generation slot (tested at the ASGI level in Unit 3). The question goes back
+  in the box: "Stopped. Your question is back in the box."
+
+**History and storage.** Only answered exchanges are kept, in the script's memory: the
+question and the reply's text, never its caution lines. The last 3 are sent (the API's limit),
+clipped as the server counts characters (code points). A failed or stopped turn is never added.
+"Clear conversation" (no confirm) aborts any answer and forgets everything. Nothing is stored in
+the browser: no localStorage, sessionStorage, IndexedDB or cookie (a contract test checks the
+chat scripts). `pagehide` clears the page, so a Back from the back/forward cache shows it
+empty, and the box has `autocomplete="off"`.
+
+**The disclaimer**, always shown above the conversation (the contract test holds its exact
+wording): "PureSkin's chat answers from a small set of skincare notes and your Skin Profile. Its
+answers can be wrong or incomplete, and they are not medical advice. For a skin problem, a
+reaction to a product, a medicine, pregnancy or anything that worries you, ask a doctor or
+pharmacist. In an emergency, call 112." and "Nothing you type is saved: the conversation is
+cleared when you leave or reload this page, and the chat only sees your last three questions
+and answers. For adults (18+), in English."
+
+**The emergency number** has one source, `chat_config.EMERGENCY_NUMBER` ("112"). chat-1.5.0
+added only this constant; every template's text is unchanged, byte for byte. The templates, the
+disclaimer and the 429 line use it, and a contract test checks that the page's copies match
+and that the page names no other emergency number. Sources, opened on 2026-10-13:
+
+- Ministry of Home Affairs, "Emergency Response Support System", a document linked from the
+  MHA's ERSS page
+  (https://www.mha.gov.in/en/divisionofmha/women-safety-division/emergency-response-support-system-erss);
+  its file name dates it 24 April 2018:
+  https://www.mha.gov.in/sites/default/files/2022-08/WebsiteNERScontent_24042018%2520%5B1%5D.pdf.
+  It says "to introduce a Pan-India Single Emergency Response Number `112' to address all kinds
+  of distress calls" and "Department of Telecommunications (DoT) has enabled 112 by routing all
+  112 calls to existing Dial 100 in all States & Union Territories."
+- Press Information Bureau, Ministry of Home Affairs, 19 Feb 2019 (`SRC_112`, the templates'
+  source): https://www.pib.gov.in/newsite/PrintRelease.aspx?relid=188727&reg=48&lang=2. It says
+  "People in these states and UTs can now call a single pan India number 112 for any
+  emergency." (the launch in 16 states/UTs and Mumbai).
+- https://112.gov.in/ could not be reached (the connection was refused or timed out, twice).
+
+**Accessibility and mobile.**
+
+- The conversation is a list with `role="log"`. Each reply is added once, whole, so it is read
+  once: answer, caution, sources.
+- Every other message is shown in a notice that is never live, and spoken once by a hidden
+  status region (errors by a hidden alert region), so a countdown isn't read every second.
+- Visible "You" and "PureSkin" labels; every label is text, never colour alone.
+- The box has a visible label, a 500-character limit and a counter. Enter sends, Shift+Enter
+  starts a new line (Enter is ignored while an IME is composing), and Escape stops. Focus stays
+  in, or returns to, the box, and never moves to the reply.
+- One column with no inner scroll box, 16 px text in the box (phones don't zoom) and buttons at
+  least 44 px high. The composer sticks to the bottom only on screens at least 700 px wide and
+  tall; on phones the sticky nav already takes the top.
+
+**Manual browser checklist**, run by the author on 2026-10-13. A ticked item was run and
+passed; an item marked "not run" was not run. Nothing here was checked by anyone else.
+Result: 20 of the 21 items passed, none failed, and the real-phone item was not run.
+
+- [x] Warm up first: sign in, ask one ordinary question, and check that `ollama ps` shows 100% GPU.
+- [x] An ordinary question: "Thinking…", then the reply appears whole, with sources (titles and publishers) whose links open in a new tab; no NHS source is shown.
+- [x] "My retinol serum stings a little": the answer, then the caution line under it, labelled "Caution".
+- [x] With Ollama stopped, a red-flag message gets its template, labelled "Safety information".
+- [x] With Ollama stopped, an ordinary question gets "isn't available right now"; "Technical detail" opens to the reason code only (`unreachable`); Send stays enabled.
+- [x] "What's the weather today?" gets the fixed "I don't know".
+- [x] Stop while thinking (easiest on a cold model), and again with Escape: the question goes back in the box with "Stopped…". Asking again at once is not refused as busy, and the server's log line says `outcome=stopped`.
+- [x] Two tabs: the second gets the busy countdown, Send stays enabled, and it ends with "You can send again."
+- [x] Eleven messages within a minute: the 429 message with the urgent-help line and a countdown; Send stays disabled until 0, then "You can send again."
+- [x] Change or delete the token in devtools, then send: you land on /auth/.
+- [x] `CHAT_MODEL` set to an unpinned tag (restart the server): the "switched off" message; "Technical detail" shows `unpinned_model` and no host or path.
+- [x] Devtools offline: "We couldn't reach PureSkin…", and the question stays in the box.
+- [x] Four exchanges: in devtools, the fourth request's `history` holds only 3 exchanges and no caution lines. After Clear, the next request's history is `[]`.
+- [x] Go to Routine, then Back: the conversation is empty. Reload: empty. Devtools' Application tab: no chat data in local or session storage.
+- [x] Keyboard only: Tab order (box, then Clear, then Send or Stop), Enter, Shift+Enter, Escape; focus returns to the box after a reply, Stop and Clear; the focus ring is visible.
+- [x] With at least one exchange on screen (Clear is disabled, and skipped by Tab, when there's nothing to clear), Tab to "Clear conversation" and press Space once: confirm it is clear what it did.
+- [x] The cold-start case: the first question after starting Ollama shows "Still thinking…" after 10 s, then either the reply or "may still have been starting up".
+- [ ] **Not run** (still to do, together with the outstanding real-phone scan test): Phone width (devtools at 360 px and, if possible, a real phone over the LAN): no sideways scroll, the box doesn't zoom, long names and sources wrap, and buttons are easy to tap.
+- [x] Paste 600 characters: the box keeps 500 and the counter shows 500/500.
+- [x] Send `<img src=x onerror=alert(1)>`: it shows as plain text, and nothing runs.
+- [x] With "reduce motion" on, scrolling to a reply is instant; the console shows no errors.
+
+## For Unit 5
+
+- Move the deferred verification below into CLAUDE.md.
+- **The rate limiter before the router:** serve the red-flag templates before the model
+  limits (the rate limit and the generation slot), with their own limit (Known limitations).
+- **A manual faithfulness check:** a person reads the model's answers from the after-fixes
+  run against the notes and profile they were given, and marks each sentence supported or
+  not (a valid citation is not support). It includes n15 and n21 (a profile that isn't
+  sensitive treated as sensitive) and n16 (alpha arbutin called "a form of vitamin C").
+- **The evaluation write-up** for the report: retrieval, the router, the bake-off, the
+  after-fixes run and the faithfulness check, each with its n, its intervals and its limits.
+- The chat page checklist's real-phone item (not run; above), together with the outstanding
+  real-phone scan test.
 
 ## Deferred verification (to move into CLAUDE.md in Unit 5)
 
 - A person reviews every chunk against its cited pages (then `review.status: "checked"`,
   with the date and `text_sha256`, and a new KB version).
 - The 11 conflict-pair reason texts in `backend/seed.py` need sources or rewording.
-- 112 nationwide today: the official page found (PIB, Ministry of Home Affairs, 19 Feb 2019)
-  covers the launch in 16 states/UTs and Mumbai.
+- 112 nationwide today: the PIB release (19 Feb 2019) covers the launch in 16 states/UTs and
+  Mumbai. An MHA document (dated 24 April 2018 by its file name) says DoT routes 112 calls to
+  Dial 100 in all States & UTs ("The emergency number", above). No current official page that
+  says 112 is answered nationwide has been found (112.gov.in could not be reached on
+  2026-10-13).
 
 ## Files
 
 | File | What |
 |---|---|
-| `chat_config.py` | KB rules, claim list, BM25 parameters, the no-answer line (chat-1.0.0, fingerprinted) |
+| `chat_config.py` | KB rules, claim list, BM25 parameters, the no-answer line, router, templates, model and limits (fingerprinted; now chat-1.5.0) |
 | `claims.py` | the claim list as a function |
 | `kb/kb.json`, `kb/__init__.py`, `kb/__main__.py` | the KB, its loader, the load report |
 | `kb_check.py` | the 8-word copying check and the evidence helper |
@@ -615,3 +763,6 @@ answer) as well as start, text, citations, end and error; the page must show it.
 | `evaluate_router.py`, `evaluate_coverage.py` | router false positives and held-out run; the coverage minimum (dev only) |
 | `eval/metadata_dev_uncovered.json`, `eval/dev_router_probes.json`, `eval/router_test_results.json`, `eval/heldout_redflags*.json` | Unit 2's evaluation records |
 | `tests/` | claims, KB and loader, retrieval, question files, evaluation rules |
+| `frontend/static/js/chat-stream.js` | the chat page's one reader of `POST /api/chat` (Unit 4) |
+| `frontend/pages/app/chat/` | the chat page (Unit 4) |
+| `app/tests/frontend_modules.mjs`, `app/tests/test_frontend_contract.py` | the stream reader in Node; the page against the backend (Unit 4) |

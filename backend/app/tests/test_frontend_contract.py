@@ -334,7 +334,9 @@ def test_storage_keys_are_defined_only_in_scan_guard():
 CHAT_STREAM_JS = FRONTEND / "static" / "js" / "chat-stream.js"
 CHAT_SERVICE = Path(__file__).resolve().parents[1] / "services" / "chat"
 CHAT_API = Path(__file__).resolve().parents[1] / "api" / "chat.py"
-CHAT_SCRIPTS = [CHAT_STREAM_JS]
+CHAT_PAGE = FRONTEND / "pages" / "app" / "chat" / "index.html"
+CHAT_JS = FRONTEND / "pages" / "app" / "chat" / "chat.js"
+CHAT_SCRIPTS = [CHAT_STREAM_JS, CHAT_JS]
 EMERGENCY_NUMBERS = re.compile(ccfg.PHONE_PATTERNS[2])  # 112, 108, 911, 14416, ...
 
 
@@ -430,3 +432,66 @@ def test_no_answer_text_lives_in_the_frontend():
     for path, text in frontend_sources().items():
         found = [s for s in sentences if s in text]
         assert not found, (path, found)
+
+
+# The approved wording (Unit 4, Q1); the number is the templates' constant.
+CHAT_DISCLAIMER = (
+    "PureSkin's chat answers from a small set of skincare notes and your Skin Profile. Its answers can be "
+    "wrong or incomplete, and they are not medical advice. For a skin problem, a reaction to a product, a "
+    "medicine, pregnancy or anything that worries you, ask a doctor or pharmacist. In an emergency, call "
+    f"{ccfg.EMERGENCY_NUMBER}."
+)
+CHAT_PRIVACY_LINE = (
+    "Nothing you type is saved: the conversation is cleared when you leave or reload this page, and the chat "
+    "only sees your last three questions and answers. For adults (18+), in English."
+)
+
+
+def test_chat_page_carries_the_disclaimer_with_the_one_emergency_number():
+    html = CHAT_PAGE.read_text(encoding="utf-8")
+    text = visible_text(html)
+    assert CHAT_DISCLAIMER in text and CHAT_PRIVACY_LINE in text
+    assert EMERGENCY_NUMBERS.findall(html) == [ccfg.EMERGENCY_NUMBER]
+    assert claims_in(text) == []
+    assert "coming soon" not in text.lower() and "page__placeholder" not in html
+
+
+def test_chat_page_loads_the_guard_first_and_its_scripts_in_order():
+    html = CHAT_PAGE.read_text(encoding="utf-8")
+    head, body = html.split("</head>")
+    scripts = re.findall(r'<script src="([^"]+)"', html)
+    assert scripts[0] == "/static/js/auth-guard.js" and head.index("auth-guard.js") < head.index("<link")
+    assert re.findall(r'<script src="([^"]+)"', body) == [
+        "/static/js/nav.js", "/static/js/ui.js", "/static/js/chat-stream.js", "/app/chat/chat.js"]
+    assert '{ href: "/app/chat/", label: "Chat" }' in page("static/js/nav.js")  # Tier 1, in the nav
+
+
+def test_chat_page_box_live_regions_and_keys():
+    html = CHAT_PAGE.read_text(encoding="utf-8")
+    box = re.search(r"<textarea[^>]*>", html).group(0)
+    assert f'maxlength="{ccfg.MAX_MESSAGE_CHARS}"' in box and 'id="chat-input"' in box
+    assert 'autocomplete="off"' in box and 'aria-describedby="chat-count chat-keys"' in box
+    assert '<label class="chat-form__label" for="chat-input">' in html
+    assert f">0/{ccfg.MAX_MESSAGE_CHARS}<" in html
+    assert re.search(r'<ol id="chat-log"[^>]*role="log"', html)
+    assert 'role="status"' in html and 'role="alert"' in html
+    source = CHAT_JS.read_text(encoding="utf-8")
+    assert '"Escape"' in source and "event.shiftKey" in source and "event.isComposing" in source
+
+
+def test_chat_page_shows_cautions_sources_and_safety_and_never_the_servers_detail():
+    source = CHAT_JS.read_text(encoding="utf-8")
+    assert "result.cautions" in source and "result.notes" in source and "result.profileCited" in source
+    assert '"Safety information"' in source and 'result.route === "template"' in source
+    assert 'link.target = "_blank"' in source and 'link.rel = "noopener noreferrer"' in source
+    assert '"Technical detail"' in source and "Reason code: " in source
+    for script in CHAT_SCRIPTS:
+        assert ".detail" not in script.read_text(encoding="utf-8"), script.name
+
+
+def test_chat_history_is_the_reply_text_only_and_nothing_survives_the_page():
+    source = CHAT_JS.read_text(encoding="utf-8")
+    assert "exchanges.push({ user: request.question, assistant: result.text })" in source
+    assert source.count("exchanges.push(") == 1
+    assert 'window.addEventListener("pagehide"' in source
+    assert "PureSkinChatStream.send" in source or "Chat.send(" in source

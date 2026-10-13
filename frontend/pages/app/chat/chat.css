@@ -1,1 +1,212 @@
-/* Chat page styles — supplements /static/css/main.css. Nothing page-specific yet. */
+/* Chat page styles — supplements /static/css/main.css. Mobile-first: one column, the page
+   scrolls (no inner scroll box). The composer sticks to the bottom only on large screens;
+   on phones the sticky nav already takes the top. */
+
+.chat {
+  max-width: 760px;
+}
+
+/* Read by screen readers, not shown. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.chat-disclaimer p {
+  margin: 0;
+}
+
+.chat-disclaimer p + p {
+  margin-top: 8px;
+}
+
+.chat-disclaimer__small {
+  font-size: 0.85rem;
+}
+
+/* ---- The conversation --------------------------------------------------- */
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.chat-msg {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow-wrap: anywhere;
+  /* Scrolled to: clear of the sticky nav (two rows on phones). */
+  scroll-margin-top: 7rem;
+  scroll-margin-bottom: 1rem;
+}
+
+.chat-msg--user {
+  align-self: flex-end;
+  max-width: 85%;
+  border-color: transparent;
+  background: var(--accent-soft);
+}
+
+.chat-msg--safety {
+  border-left: 4px solid #b54708;
+}
+
+.chat-msg__author {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* "Safety information" on a red-flag template: text, not colour alone. */
+.chat-msg__label {
+  margin: 0 0 6px;
+  color: #8a3a06;
+  font-weight: 600;
+}
+
+.chat-msg__text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.chat-msg__caution {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border: 1px solid #f0d9a8;
+  border-radius: var(--radius);
+  background: #fff6e5;
+  color: #5c4100;
+}
+
+.chat-thinking {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.chat-sources {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+.chat-sources__title {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.chat-sources ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.chat-source + .chat-source {
+  margin-top: 4px;
+}
+
+.chat-source__title,
+.chat-source__label {
+  display: block;
+}
+
+.chat-source__title {
+  font-weight: 600;
+}
+
+/* ---- Composer ----------------------------------------------------------- */
+
+.chat-composer {
+  padding: 8px 0 16px;
+  background: var(--bg);
+}
+
+.chat-notice {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.chat-notice p {
+  margin: 0;
+}
+
+.chat-notice--error {
+  color: #8c1d18;
+}
+
+.chat-notice__detail {
+  margin-top: 4px;
+  font-size: 0.85rem;
+}
+
+.chat-form__label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* 16px text: phones don't zoom in on focus. */
+.chat-form__input {
+  display: block;
+  width: 100%;
+  min-height: 5.5em;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.chat-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chat-form__count {
+  margin: 0 auto 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.chat-form .btn {
+  min-height: 44px;
+}
+
+@media (max-width: 480px) {
+  .chat-form__row .btn {
+    flex: 1 1 auto;
+  }
+}
+
+@media (min-width: 700px) and (min-height: 700px) {
+  .chat-composer {
+    position: sticky;
+    bottom: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .chat-msg {
+    scroll-margin-bottom: 15rem;
+  }
+}

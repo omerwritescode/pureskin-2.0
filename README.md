@@ -2,7 +2,8 @@
 
 AI-assisted personalised skincare platform: a selfie and a short questionnaire become a
 structured Skin Profile, which drives a rule-based AM/PM routine with ingredient-conflict
-checks. A conversational advisor and a generative "4 weeks from now" preview are planned.
+checks. A chat answers skincare questions from a small knowledge base and the user's own
+profile, with a local model. A generative "4 weeks from now" preview is planned.
 
 MSc Data Science project, NMIMS NSOMASA, Mumbai.
 
@@ -32,6 +33,21 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
   website and are labelled "Global ingredient list" in the app. It is not a complete
   market; some routine steps still have no product (see the
   [recommendation README](backend/app/services/recommendation/README.md)).
+- **Chat.** A local LLM with retrieval (RAG). Questions are answered from 24 short notes,
+  written for PureSkin from public health pages (mostly US: MedlinePlus and the NIH) and the
+  app's own docs, and from the user's Skin Profile and routine. The model is open-weights
+  (qwen3.5:4b through Ollama, on the same machine; no cloud model).
+  - Messages with red flags (such as a severe allergic reaction or thoughts of self-harm) get
+    fixed, sourced safety replies before any model call.
+  - Every sentence of an answer is checked before it is released, and the answer arrives
+    whole, once the model has finished, not word by word.
+  - Questions the notes don't cover often, but not always, get a fixed "I don't know" (12 of
+    22 such test questions did); the model sometimes answers from general knowledge, and
+    sometimes wrongly.
+  - It is not a clinical tool, and its answers are not medical advice. Nothing typed is
+    stored.
+
+  See the [chat README](backend/app/services/chat/README.md).
 - **Accounts.** Sign up and log in. The Dashboard and Skin Profile pages show the latest
   scan.
 
@@ -39,11 +55,9 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
 
 - A conflict check for a single scanned or looked-up product. The product page says
   "coming soon".
-- Conversational guidance: a chatbot grounded in the user's Skin Profile, using a local
-  LLM + RAG (7d).
 - A generative "4 weeks from now" preview (7e).
 - Progress tracking, a privacy dashboard, notifications and subscriptions (step 8). The
-  chat, progress and settings pages exist only as empty shells. **The step 8 data export
+  progress and settings pages exist only as empty shells. **The step 8 data export
   must include each Skin Profile's `questionnaire_tags`** (the current products, avoid
   list and goal saved since 7c-i c); they are already deleted with the user.
 
@@ -74,12 +88,14 @@ What is in the repo today:
   checked loader (every ingredient name reviewed, provenance required).
 - **Auth:** JWT (python-jose), passwords hashed with bcrypt (passlib). No OAuth or social
   login.
+- **Chat:** a local LLM, qwen3.5:4b (Apache-2.0), run by Ollama on the same machine and pinned
+  to its digest; hand-written BM25 retrieval over a 24-note knowledge base (RAG); a
+  rule-based red-flag router and an output gate. The page reads the answer as NDJSON events.
 
 **Planned:**
-- **Chat (7d):** a local LLM via Ollama + RAG.
 - **Visual preview (7e):** Stable Diffusion 1.5 img2img.
 
-Neither is in the repo yet.
+It is not in the repo yet.
 
 **Not implemented:**
 - **MLOps and monitoring:** MLflow/Kubeflow, Kubernetes, Prometheus/Grafana.
@@ -140,7 +156,8 @@ console: if a code change doesn't show up, stop the server and start it again.
 
 **Optional, 7. The chat's local model.** The chat (`/app/chat`) runs an open-weights model,
 qwen3.5:4b (Apache-2.0), through [Ollama](https://ollama.com) on the same machine; without
-it, the chat answers "unavailable" (HTTP 503) and nothing else changes.
+it, the chat answers "unavailable" (HTTP 503), except for its fixed safety replies, and nothing
+else changes.
 1. Install Ollama (Windows: the installer from ollama.com; developed on 0.40.2).
 2. Keep it local-only: set the user environment variable `OLLAMA_NO_CLOUD=1`, then restart
    Ollama (its log then shows `Ollama cloud disabled: true`).
@@ -152,8 +169,8 @@ it, the chat answers "unavailable" (HTTP 503) and nothing else changes.
    the API: its log says `Chat: available (...)` or why not, and `GET /api/chat/status`
    says the same.
 5. Warm it up before a demo: ask the chat one question. The first answer after a model is
-   pulled or loaded can take longer than the 60 s timeout and return 503 (ask again);
-   `ollama ps` should then show `100% GPU`.
+   pulled or loaded can take longer than the 60 s timeout and fail (the page then says the
+   model may still have been starting up: ask again); `ollama ps` should then show `100% GPU`.
 
 **Tests** (from `backend/`, after `pip install -r requirements-dev.txt`):
 `python -m pytest`. The database tests need Docker running; they create and drop their
@@ -198,6 +215,13 @@ Tracking against the roadmap in [`docs/spec.md`](docs/spec.md) §8:
     - [x] 7c-ii. Content-based ranker, explanations, evaluation
     - [x] 7c-iii. Catalog expansion (sourced ingredient lists)
   - [ ] 7d. Conversational AI
+    - [x] Units 1-3. Knowledge base and retrieval, red-flag router, output gate, local model
+          and endpoint, model bake-off
+    - [x] Unit 4. Chat page. The manual browser checklist was run by the author; its
+          real-phone item was not run and is still to do, together with the outstanding
+          real-phone scan test (see the [chat README](backend/app/services/chat/README.md))
+    - [ ] Unit 5. Open items: the rate limiter before the router, a manual faithfulness
+          check, the evaluation write-up
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
 
@@ -227,12 +251,16 @@ an addendum at its end records these deviations:
 - **The recommendation ranker is not ML-trained**: IDF × rank-decay weighting over
   rule-eligible sets, with hand-set weights; there is no outcome data to train or
   validate on.
+- **The chat's answer arrives whole, not as it is generated.** The server checks every
+  sentence and releases the answer only when the model has finished, so the spec's "chat
+  streams within 1-2 s of first token" doesn't hold. After the fixes, the whole answer took a
+  median of 1.7 s (p90 2.4 s) on the development machine.
 
 ## Documentation
 
 - [`docs/spec.md`](docs/spec.md) — original project spec: features, sitemap, architecture, NFRs, evaluation plan (addendum at the end)
 - [`CLAUDE.md`](CLAUDE.md) — conventions and hard constraints for Claude Code sessions
-- Service READMEs: [`image_analysis`](backend/app/services/image_analysis/README.md), [`questionnaire`](backend/app/services/questionnaire/README.md), [`skin_profile`](backend/app/services/skin_profile/README.md), [`ingredients`](backend/app/services/ingredients/README.md), [`recommendation`](backend/app/services/recommendation/README.md)
+- Service READMEs: [`image_analysis`](backend/app/services/image_analysis/README.md), [`questionnaire`](backend/app/services/questionnaire/README.md), [`skin_profile`](backend/app/services/skin_profile/README.md), [`ingredients`](backend/app/services/ingredients/README.md), [`recommendation`](backend/app/services/recommendation/README.md), [`chat`](backend/app/services/chat/README.md)
 - [`backend/catalog/README.md`](backend/catalog/README.md) — the product catalog: where each list comes from, the loader's checks, how to add a row
 
 ## License

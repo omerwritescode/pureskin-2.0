@@ -12,12 +12,46 @@
 <body>
   <nav id="app-nav" class="app-nav" aria-label="Main"></nav>
 
-  <main class="page">
+  <main class="page chat">
     <h1 class="page__title">Chat</h1>
-    <p class="page__placeholder">Coming soon — ask a skincare advisor that knows your Skin Profile.</p>
+    <section class="warning-box chat-disclaimer" aria-label="About this chat">
+      <p>PureSkin's chat answers from a small set of skincare notes and your Skin Profile. Its answers can be
+        wrong or incomplete, and they are not medical advice. For a skin problem, a reaction to a product, a
+        medicine, pregnancy or anything that worries you, ask a doctor or pharmacist. In an emergency, call
+        112.</p>
+      <p class="chat-disclaimer__small">Nothing you type is saved: the conversation is cleared when you leave
+        or reload this page, and the chat only sees your last three questions and answers. For adults (18+),
+        in English.</p>
+    </section>
+
+    <ol id="chat-log" class="chat-log" role="log" aria-label="Conversation"></ol>
+
+    <div class="chat-composer">
+      <!-- Shown, never announced (a countdown changes every second)... -->
+      <div id="chat-notice" class="chat-notice"></div>
+      <!-- ...and announced once, here. -->
+      <p id="chat-announce" class="visually-hidden" role="status"></p>
+      <p id="chat-alert" class="visually-hidden" role="alert"></p>
+
+      <form id="chat-form" class="chat-form" autocomplete="off" novalidate>
+        <label class="chat-form__label" for="chat-input">Your question</label>
+        <textarea id="chat-input" class="chat-form__input" name="message" rows="3" maxlength="500"
+          enterkeyhint="send" autocomplete="off" aria-describedby="chat-count chat-keys"></textarea>
+        <p id="chat-keys" class="visually-hidden">Enter sends. Shift and Enter starts a new line. Escape stops
+          an answer.</p>
+        <div class="chat-form__row">
+          <p id="chat-count" class="chat-form__count">0/500</p>
+          <button type="button" id="chat-clear" class="btn btn--secondary" disabled>Clear conversation</button>
+          <button type="button" id="chat-stop" class="btn btn--secondary" hidden>Stop</button>
+          <button type="submit" id="chat-send" class="btn" disabled>Send</button>
+        </div>
+      </form>
+    </div>
   </main>
 
   <script src="/static/js/nav.js"></script>
+  <script src="/static/js/ui.js"></script>
+  <script src="/static/js/chat-stream.js"></script>
   <script src="/app/chat/chat.js"></script>
 </body>
 </html>

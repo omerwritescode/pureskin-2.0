@@ -99,7 +99,17 @@ before auth, the DB schema, and the static frontend shell are working. Currently
             flag and banner removed; README results regenerated), the "Global ingredient
             list" badge and the list notes on the catalog and routine pages, the API's
             provenance fields and `config_versions["catalog"]`, spec addendum items 7-9.
-  - [ ] 7d. Conversational AI
+  - [ ] 7d. Conversational AI (`backend/app/services/chat/README.md`)
+    - [x] Units 1-3: the knowledge base and BM25 retrieval, the red-flag router and templates,
+          the output gate, the Ollama client, `POST /api/chat` and its limits, the model
+          bake-off (qwen3.5:4b chosen).
+    - [x] Unit 4: the chat page at `/app/chat` (`frontend/static/js/chat-stream.js` reads the
+          NDJSON stream; a reply is shown only once its `end` arrives); chat-1.5.0 added
+          `EMERGENCY_NUMBER`. The manual browser checklist was run by the author; its
+          real-phone item was not run (listed in the chat README; still to do, together with
+          the outstanding real-phone scan test).
+    - [ ] Unit 5: the chat README's "For Unit 5" list (the rate limiter before the router, a
+          manual faithfulness check, the evaluation write-up).
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
 
@@ -131,8 +141,9 @@ before auth, the DB schema, and the static frontend shell are working. Currently
 - Bump `CONFIG_VERSION` (questionnaire_config.py), `MERGE_CONFIG_VERSION`
   (skin_profile_config.py), `INGREDIENT_CONFIG_VERSION` (ingredient_config.py, now
   ingredients-1.2.0), `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.3.0),
-  `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.1) or
-  `CATALOG_CONFIG_VERSION` (catalog_config.py, now catalog-1.0.0) whenever a value there
+  `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.1),
+  `CATALOG_CONFIG_VERSION` (catalog_config.py, now catalog-1.0.0) or `CHAT_CONFIG_VERSION`
+  (chat_config.py, now chat-1.5.0) whenever a value there
   changes. `app/tests/test_config_versions.py` fingerprints the values and fails on any
   change without a bump; record the new version's fingerprint there (a version not yet
   committed may have its fingerprint updated in place). `backend/catalog/products.json`
@@ -172,6 +183,13 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   `unpinned_model`, `unreachable`, `missing_model` or `moved_tag`. Red flags never reach the
   model. Never log chat text, chunk ids, red-flag groups or the user (one metadata line per
   request). Details: `backend/app/services/chat/README.md`.
+- Chat page (7d Unit 4): only `frontend/static/js/chat-stream.js` reads `POST /api/chat`. A
+  reply is shown only once its `end` event arrives, never in part (the caution line comes after
+  the answer). Everything is set as text, nothing is stored in the browser, history is the
+  reply's text only (never caution lines), and a 503 shows its reason code, never the server's
+  detail. The page has no answer text of its own. `chat_config.EMERGENCY_NUMBER` is the one
+  source of the emergency number for the templates and the page. `test_frontend_contract.py`
+  checks all of this against the backend.
 
 ## Commands
 
@@ -245,3 +263,6 @@ Checks a person still has to do. Until they are done, the catalog's ingredient l
 - **After the catalog additions above**: re-run the evaluation (`--update-readme`) and fix
   its duplicate "Catalog:" header line then.
 - **The real-phone scan** and **the manual checklist** (still outstanding).
+- **The chat page's manual browser checklist** (`backend/app/services/chat/README.md`, "The chat
+  page"): run by the author on 2026-10-13. Its real-phone item was not run and is still to
+  do, together with the real-phone scan above.
