@@ -42,6 +42,7 @@ RECORDED = {
     "chat-1.2.0": "09d9585d7c777fc8",  # STOP 5 (never committed)
     "chat-1.3.0": "3ae603759adf0b7a",  # STOP 5 decisions and the pinned models: frozen for the bake-off
     "chat-1.4.0": "3aea9264031ff51c",  # STOP 6 fixes (not yet committed: updated in place until Unit 3 is)
+    "chat-1.5.0": "8708b138d431d2b2",  # Unit 4: EMERGENCY_NUMBER only (every other value unchanged)
 }
 
 CONFIGS = [

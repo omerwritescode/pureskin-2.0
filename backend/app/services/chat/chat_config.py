@@ -13,7 +13,7 @@ settings below.
 from app.services.questionnaire.questionnaire_config import PRESCRIPTION_RETINOID_TERMS
 from app.services.recommendation.routine_config import RETINOID_CAUTION
 
-CHAT_CONFIG_VERSION = "chat-1.4.0"
+CHAT_CONFIG_VERSION = "chat-1.5.0"
 
 # ======================================================================================
 # Knowledge base (kb/kb.json): what a chunk must hold to load
@@ -305,6 +305,10 @@ SRC_112 = {"url": "https://www.pib.gov.in/newsite/PrintRelease.aspx?relid=188727
            "supports": "People in these states and UTs can now call a single pan India number 112 for any "
                        "emergency.",
            "deferred_verification": "coverage: the release covers the launch in 16 states/UTs and Mumbai"}
+# India's emergency number (SRC_112): the one source for the templates below and for the chat
+# page's disclaimer and urgent-help line (frontend/static/js/chat-stream.js EMERGENCY_NUMBER;
+# app/tests/test_frontend_contract.py checks they match).
+EMERGENCY_NUMBER = "112"
 SRC_TELEMANAS = {"url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2118790&reg=48&lang=2",
                  "publisher": "Press Information Bureau, Ministry of Health and Family Welfare (4 Apr 2025)",
                  "section": "Update on National Tele Mental Health Programme (NTMHP)",
@@ -358,7 +362,7 @@ SRC_ADULTS = {"url": "repo:backend/app/services/chat/README.md", "publisher": _R
 
 # The generic escalation line in the infection templates (STOP 3 decision 3: 112, and not in
 # the reaction template, which keeps only its sourced anaphylaxis sentence).
-GENERIC_ESCALATION = "If you feel very unwell, call 112 (India's emergency number)."
+GENERIC_ESCALATION = f"If you feel very unwell, call {EMERGENCY_NUMBER} (India's emergency number)."
 # User-approved wording (STOP 1 review, decision 1) where no public-domain page says it.
 BEFORE_USING_AGAIN = "talk to a pharmacist or doctor before using it again"
 
@@ -367,15 +371,15 @@ BEFORE_USING_AGAIN = "talk to a pharmacist or doctor before using it again"
 # in the text, and the claim list applies (tests check).
 TEMPLATES = {
     "emergency_allergy": {
-        "text": "This could be a serious allergic reaction, which can start quickly and be life-threatening. "
-                "Call 112, India's emergency number, now. PureSkin can't help in an emergency.",
+        "text": f"This could be a serious allergic reaction, which can start quickly and be life-threatening. "
+                f"Call {EMERGENCY_NUMBER}, India's emergency number, now. PureSkin can't help in an emergency.",
         "sources": (SRC_ANAPHYLAXIS, SRC_112),
         "author_written": ("PureSkin can't help in an emergency.",),
     },
     "crisis": {
-        "text": "I'm sorry you're going through this, and you don't have to face it alone. If you might act "
-                "on these thoughts or you're in danger, call 112, India's emergency number, now. You can also "
-                "call Tele-MANAS, the national mental health helpline, free at any time on 14416.",
+        "text": f"I'm sorry you're going through this, and you don't have to face it alone. If you might act "
+                f"on these thoughts or you're in danger, call {EMERGENCY_NUMBER}, India's emergency number, now. "
+                f"You can also call Tele-MANAS, the national mental health helpline, free at any time on 14416.",
         "sources": (SRC_112, SRC_TELEMANAS),
         "author_written": ("I'm sorry you're going through this, and you don't have to face it alone.",
                            "If you might act on these thoughts or you're in danger"),
@@ -409,7 +413,7 @@ TEMPLATES = {
                 f"cosmetics, fragrances and preservatives are the most common causes. "
                 f"{BEFORE_USING_AGAIN[0].upper()}{BEFORE_USING_AGAIN[1:]}, and see a doctor if the rash is "
                 f"bad, doesn't go away or comes with other symptoms. If your lips, tongue or throat swell, or "
-                f"you have trouble breathing or swallowing, call 112, India's emergency number, now.",
+                f"you have trouble breathing or swallowing, call {EMERGENCY_NUMBER}, India's emergency number, now.",
         "sources": (SRC_COSMETICS, SRC_RASHES, SRC_ANAPHYLAXIS, SRC_112),
         "author_written": (BEFORE_USING_AGAIN[0].upper() + BEFORE_USING_AGAIN[1:],),
     },
