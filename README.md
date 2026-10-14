@@ -39,11 +39,13 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
   (qwen3.5:4b through Ollama, on the same machine; no cloud model).
   - Messages with red flags (such as a severe allergic reaction or thoughts of self-harm) get
     fixed, sourced safety replies before any model call.
-  - Every sentence of an answer is checked before it is released, and the answer arrives
-    whole, once the model has finished, not word by word.
+  - Every sentence of an answer is checked against fixed rules (such as a list of forbidden
+    claims) before it is released, and the answer arrives whole, once the model has
+    finished, not word by word. Nothing checks that a sentence is supported by the notes.
   - Questions the notes don't cover often, but not always, get a fixed "I don't know" (12 of
     22 such test questions did); the model sometimes answers from general knowledge, and
-    sometimes wrongly.
+    sometimes wrongly. Whether its answers are faithful to the notes has not been measured:
+    a check was designed but not done.
   - It is not a clinical tool, and its answers are not medical advice. Nothing typed is
     stored.
 
@@ -59,7 +61,10 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
 - Progress tracking, a privacy dashboard, notifications and subscriptions (step 8). The
   progress and settings pages exist only as empty shells. **The step 8 data export
   must include each Skin Profile's `questionnaire_tags`** (the current products, avoid
-  list and goal saved since 7c-i c); they are already deleted with the user.
+  list and goal saved since 7c-i c); they are already deleted with the user. **It must also
+  say that the chat stores nothing**: no messages, answers or history; the rate-limit
+  counters (user ids and request times) live only in the server's memory and reset on
+  restart; the log has one metadata line per request, with no user id or text.
 
 Full feature list, sitemap, architecture and NFRs (the original target):
 [`docs/spec.md`](docs/spec.md).
@@ -214,14 +219,15 @@ Tracking against the roadmap in [`docs/spec.md`](docs/spec.md) §8:
     - [x] 7c-i (c). The user's current products and avoid list (questionnaire tags)
     - [x] 7c-ii. Content-based ranker, explanations, evaluation
     - [x] 7c-iii. Catalog expansion (sourced ingredient lists)
-  - [ ] 7d. Conversational AI
+  - [x] 7d. Conversational AI
     - [x] Units 1-3. Knowledge base and retrieval, red-flag router, output gate, local model
           and endpoint, model bake-off
     - [x] Unit 4. Chat page. The manual browser checklist was run by the author; its
           real-phone item was not run and is still to do, together with the outstanding
           real-phone scan test (see the [chat README](backend/app/services/chat/README.md))
-    - [ ] Unit 5. Open items: the rate limiter before the router, a manual faithfulness
-          check, the evaluation write-up
+    - [x] Unit 5 (trimmed). Red-flag safety replies are served even past the chat's rate
+          limit (they have their own). The faithfulness check and the evaluation write-up
+          were designed but not done (future work in the chat README)
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
 

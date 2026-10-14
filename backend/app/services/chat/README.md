@@ -1,18 +1,22 @@
 # Conversational AI (roadmap step 7d)
 
-A retrieval-grounded chat: a local LLM (Ollama) answers only from a small knowledge base
-written for PureSkin and from the user's own Skin Profile and routine. It is not a clinical
-tool. For adults (18+); English only.
+A retrieval-augmented chat: a local LLM (Ollama) is given a few notes from a small knowledge
+base written for PureSkin and the user's own Skin Profile and routine, and is told to answer
+only from them. It doesn't always: it sometimes answers from general knowledge, sometimes
+wrongly (Known limitations), and whether its answers are supported by the notes has not been
+measured (the faithfulness check was designed but not done; see "Unit 5"). It is not a
+clinical tool. For adults (18+); English only.
 
-**Status: Units 1-4 done; Unit 5 open** (the "For Unit 5" list below). Unit 1: the knowledge
+**Status: 7d is done** (Units 1-5; Unit 5 was trimmed: see "Unit 5"). Unit 1: the knowledge
 base (KB), its loader, the claim list, hand-written BM25 retrieval and the retrieval
 evaluation. Unit 2: the red-flag router and templates, the context, the output gate, the
 term-coverage check and the pipeline, all tested with a fake model. Unit 3: the Ollama
 client, `POST /api/chat` and `GET /api/chat/status`, the limits, the model-side safety rule
 (part 3a); the model bake-off (part 3b, `bakeoff.py`, frozen setup and results in
 `eval/bakeoff/`, written up below). Unit 4: the chat page at `/app/chat` ("The chat page",
-below). Its manual browser checklist was run by the author: 20 of 21 items passed, none
-failed, and the real-phone item was not run.
+below). Its manual browser checklist was run by the author (its result: "The chat page").
+Unit 5: red-flag templates are served before the model's rate limit, with their own limit
+(chat-1.6.0); the page no longer disables Send on a 429.
 
 ## The knowledge base (`kb/kb.json`, kb-1.0.0)
 
@@ -202,7 +206,9 @@ and the gate (Unit 2), never on this line.
 
 Deterministic and rule-based (`chat_config.ROUTER_GROUPS`), it runs first, before
 retrieval and before any Ollama check, so its fixed templates are served even when Ollama
-is down (the one documented exception to "chat returns 503"). Ten groups, highest priority
+is down (the one documented exception to "chat returns 503"). Since Unit 5 it also runs
+before the rate limit: a template counts only toward the templates' own limit, never the
+model's ("`POST /api/chat`", below). Ten groups, highest priority
 first: E1 severe allergic reaction, S1 self-harm, E2 infection with fever, U1 infection, U2
 changing mole, U3 reaction to a product, P1 pregnancy with a retinoid, P2 prescription
 medicine, C1 child, D1 diagnosis request. Whole words only; negation is ignored (a false
@@ -335,10 +341,18 @@ echoes input), 429 with `Retry-After` (10 a minute, 100 a day per user), 503 wit
 (the model can't be used, no fallback answer), or 503 `busy` with `Retry-After` (one answer
 is generated at a time: one GPU). Red-flag templates are still served when Ollama is down,
 and templates and the fixed "I don't know" are still served while another answer is being
-generated. Events, one JSON object a line: `start` (route, request id, config versions),
-`text` (one sentence and its citations), `citations` (the cited notes with their
-publishers), `caution`, `end` (an outcome code), or `error` if the model fails after the
-start. The limits live in this process's memory (one process; they reset on restart).
+generated. **Templates and the rate limit (Unit 5, chat-1.6.0):** the endpoint routes the
+message first; a message routed to a template counts only toward the templates' own limit
+(`TEMPLATE_RATE_LIMITS`: 30 a minute, 300 a day, three times the model's; a template costs no
+model, slot or profile read), so a red-flag message past the 10/100 still gets its template,
+and templates don't use up the 10/100. Every other request is limited exactly as before (the
+same counter, at the same point: after 413/422, before the profile read, the availability
+check and the slot). The pipeline routes the same message and history objects with the same
+function, and a test checks that both make the same template decision. Events, one JSON
+object a line: `start` (route, request id, config versions), `text` (one sentence and its
+citations), `citations` (the cited notes with their publishers), `caution`, `end` (an outcome
+code), or `error` if the model fails after the start. The limits live in this process's
+memory (one process; they reset on restart).
 
 **The client going away** (Stop, a closed tab) ends the turn at once: the response closes
 its body explicitly (Starlette cancels it but doesn't close it), the model's HTTP stream is
@@ -356,9 +370,10 @@ version)` or `Chat unavailable (reason): ...`. Startup never waits for it.
 id, an outcome code, the model's tag, timings (first sentence, total, the model's load,
 prompt and generation) and token counts. Never the message, history, prompt or answer,
 chunk ids, the red-flag group or the user. A test sends sentinel text down every path
-through the real endpoint (15: template, unavailable, below the line, below coverage, the
+through the real endpoint (16: template, unavailable, below the line, below coverage, the
 ingredient check, context too large, answered with the fake and with the real client, gate
-stop, the model's no-answer, broken stream, busy, rate-limited, invalid, too large).
+stop, the model's no-answer, broken stream, busy, rate-limited, a template over its own limit
+(`rate_limited_template`), invalid, too large).
 
 **Privacy.** `OLLAMA_NO_CLOUD=1` took effect on 2026-10-12 at 23:02, when Ollama was restarted
 (earlier server starts logged "Ollama cloud disabled: false"); every bake-off and after-fixes
@@ -550,6 +565,10 @@ python -m pytest app/tests/test_frontend_contract.py   # the chat page against t
 - **Citation validity is not support.** A citation is valid when the cited note was sent with
   the question; nothing checks that the note supports the sentence. The bake-off's answers
   cited notes that don't say what the sentence says.
+- **Faithfulness has not been measured.** No person has checked, sentence by sentence, whether
+  the model's answers are supported by the notes and profile they were given, so there is no
+  faithfulness or groundedness figure for the chat (spec §9's "chatbot groundedness rate" is
+  not met). A check was designed in Unit 5 but not done ("Unit 5", below).
 - **The ingredient check contributed 1 of the 22.** It sees only names in the INCI vocabulary
   (`services/ingredients`), so common names pass unseen (bakuchiol, snail mucin, tea tree
   oil, "vitamin C", a bare "ceramide", coconut oil, peptides), and "water" inside "micellar
@@ -581,15 +600,16 @@ python -m pytest app/tests/test_frontend_contract.py   # the chat page against t
 - **A question only the profile answers can be refused by the BM25 line.** c04 ("What is the
   zinc in my niacinamide serum there for?") is answered by the routine's own why text, but the
   line scores only the notes, so it got the fixed "I don't know".
-- **The rate limiter runs before the router** (open). After 10 messages in a minute or 100 in
-  a day, even a red-flag message gets a 429, not its template. The page's 429 message carries
-  an urgent-help line with the emergency number. Planned fix (Unit 5 list): serve the
-  templates before the model limits, with their own limit.
+- **No evaluation write-up for the chat exists beyond this README.** The planned
+  `EVALUATION.md` and the check of its numbers against the result files were not built
+  ("Unit 5", below); the numbers here are copied from the recorded result files by hand.
 
 **Future work** (each to be judged on new questions only): a common-name list for the
 ingredient check (the questionnaire's free-text lexicon already maps names such as "vitamin
 c", "bha", "aha" and "arbutin"); not matching "water" inside a compound name ("micellar
-water", "rice water"); letting a question the profile answers past the BM25 line.
+water", "rice water"); letting a question the profile answers past the BM25 line. Also the
+faithfulness check, the evaluation write-up and its number check, designed in Unit 5 but not
+built ("Unit 5", below).
 
 ## The chat page (Unit 4)
 
@@ -625,11 +645,13 @@ apart (8,484) and byte by byte, and get the same 7 events every time. Every pair
   something new has been typed), and a message says why:
   - 401: logged out to /auth/;
   - 413 or 422: the message couldn't be sent;
-  - 429: a countdown with Send disabled (the server refuses everything until then), and an
-    urgent-help line with the emergency number;
+  - 429: a countdown and an urgent-help line with the emergency number. Since Unit 5 Send stays
+    enabled (it used to be disabled until 0): ordinary questions are still refused until then,
+    but a red-flag message gets its template (the templates' own limit). Sending anything
+    clears the countdown; an ordinary question then gets a fresh 429, which isn't counted;
   - 503 busy: a countdown with Send still enabled (templates and the fixed reply are served
-    while busy). There is no automatic retry: every request counts toward the rate limit, busy
-    ones too;
+    while busy). There is no automatic retry: every request the server accepts counts toward a
+    rate limit (busy ones too; a template only toward the templates' own);
   - 503 for any other reason: a friendly line and a collapsed "Technical detail" with the reason
     code only. The server's detail texts are fixed, but one names loopback addresses, so none is
     shown;
@@ -692,8 +714,13 @@ and that the page names no other emergency number. Sources, opened on 2026-10-13
   tall; on phones the sticky nav already takes the top.
 
 **Manual browser checklist**, run by the author on 2026-10-13. A ticked item was run and
-passed; an item marked "not run" was not run. Nothing here was checked by anyone else.
-Result: 20 of the 21 items passed, none failed, and the real-phone item was not run.
+passed; an item marked "not run" was not run; an item marked "run; result not recorded" was
+run, but whether it passed was not recorded. Nothing here was checked by anyone else.
+Result of that run: 20 of the 21 items passed, none failed, and the phone-width item was not
+run. Since then (Unit 5) the phone-width item has been split in two: the 360 px devtools check
+was run by the author (its result was not recorded), and the real-phone check was not run.
+The "eleven messages" item changed with Unit 5 (a 429 no longer disables Send); its
+2026-10-13 pass was of the old form, and the new form has not been run.
 
 - [x] Warm up first: sign in, ask one ordinary question, and check that `ollama ps` shows 100% GPU.
 - [x] An ordinary question: "Thinking…", then the reply appears whole, with sources (titles and publishers) whose links open in a new tab; no NHS source is shown.
@@ -703,7 +730,7 @@ Result: 20 of the 21 items passed, none failed, and the real-phone item was not 
 - [x] "What's the weather today?" gets the fixed "I don't know".
 - [x] Stop while thinking (easiest on a cold model), and again with Escape: the question goes back in the box with "Stopped…". Asking again at once is not refused as busy, and the server's log line says `outcome=stopped`.
 - [x] Two tabs: the second gets the busy countdown, Send stays enabled, and it ends with "You can send again."
-- [x] Eleven messages within a minute: the 429 message with the urgent-help line and a countdown; Send stays disabled until 0, then "You can send again."
+- [ ] **Not run** (the new form, since Unit 5; the old form, with Send disabled until 0, passed on 2026-10-13): Eleven messages within a minute: the 429 message with the urgent-help line and a countdown; Send stays enabled; a red-flag message sent during the countdown gets its template, labelled "Safety information"; an ordinary question gets the 429 again; at 0, "You can send again."
 - [x] Change or delete the token in devtools, then send: you land on /auth/.
 - [x] `CHAT_MODEL` set to an unpinned tag (restart the server): the "switched off" message; "Technical detail" shows `unpinned_model` and no host or path.
 - [x] Devtools offline: "We couldn't reach PureSkin…", and the question stays in the box.
@@ -712,41 +739,47 @@ Result: 20 of the 21 items passed, none failed, and the real-phone item was not 
 - [x] Keyboard only: Tab order (box, then Clear, then Send or Stop), Enter, Shift+Enter, Escape; focus returns to the box after a reply, Stop and Clear; the focus ring is visible.
 - [x] With at least one exchange on screen (Clear is disabled, and skipped by Tab, when there's nothing to clear), Tab to "Clear conversation" and press Space once: confirm it is clear what it did.
 - [x] The cold-start case: the first question after starting Ollama shows "Still thinking…" after 10 s, then either the reply or "may still have been starting up".
-- [ ] **Not run** (still to do, together with the outstanding real-phone scan test): Phone width (devtools at 360 px and, if possible, a real phone over the LAN): no sideways scroll, the box doesn't zoom, long names and sources wrap, and buttons are easy to tap.
+- [ ] **Run; result not recorded**: 360 px devtools: phone width in devtools at 360 px: no sideways scroll, the box doesn't zoom, long names and sources wrap, and buttons are easy to tap.
+- [ ] **Not run** (still to do, together with the outstanding real-phone scan test): Real phone: the same on a real phone over the LAN: no sideways scroll, the box doesn't zoom, long names and sources wrap, and buttons are easy to tap.
 - [x] Paste 600 characters: the box keeps 500 and the counter shows 500/500.
 - [x] Send `<img src=x onerror=alert(1)>`: it shows as plain text, and nothing runs.
 - [x] With "reduce motion" on, scrolling to a reply is instant; the console shows no errors.
 
-## For Unit 5
+## Unit 5
 
-- Move the deferred verification below into CLAUDE.md.
-- **The rate limiter before the router:** serve the red-flag templates before the model
-  limits (the rate limit and the generation slot), with their own limit (Known limitations).
-- **A manual faithfulness check:** a person reads the model's answers from the after-fixes
-  run against the notes and profile they were given, and marks each sentence supported or
-  not (a valid citation is not support). It includes n15 and n21 (a profile that isn't
-  sensitive treated as sensitive) and n16 (alpha arbutin called "a form of vitamin C").
-- **The evaluation write-up** for the report: retrieval, the router, the bake-off, the
-  after-fixes run and the faithfulness check, each with its n, its intervals and its limits.
-- The chat page checklist's real-phone item (not run; above), together with the outstanding
-  real-phone scan test.
+Trimmed to fit the deadline (15 Oct).
 
-## Deferred verification (to move into CLAUDE.md in Unit 5)
+**Done:**
+- Red-flag templates before the model's rate limit, with their own limit (chat-1.6.0; "`POST
+  /api/chat`", above), and the page's 429 no longer disables Send.
+- This README's deferred verification moved into CLAUDE.md (its "Deferred verification").
+- The checklist's phone-width item split into the 360 px devtools check and the real phone.
 
-- A person reviews every chunk against its cited pages (then `review.status: "checked"`,
-  with the date and `text_sha256`, and a new KB version).
-- The 11 conflict-pair reason texts in `backend/seed.py` need sources or rewording.
-- 112 nationwide today: the PIB release (19 Feb 2019) covers the launch in 16 states/UTs and
-  Mumbai. An MHA document (dated 24 April 2018 by its file name) says DoT routes 112 calls to
-  Dial 100 in all States & UTs ("The emergency number", above). No current official page that
-  says 112 is answered nationwide has been found (112.gov.in could not be reached on
-  2026-10-13).
+**Designed, not done** (future work; nothing below has been built or measured):
+- **The faithfulness check.** Every answer from the after-fixes run that reached the user (a
+  census: 24 answers, 22 answered and 2 stopped by the gate, about 100 sentences; it includes
+  n15, n16 and n21) would go on a sheet generated by code from
+  `eval/bakeoff/after_fixes_qwen3.5_4b-q4_K_M.json`. The code would rebuild exactly what the
+  model was sent and stop on any mismatch, and show each answer sentence by sentence with its
+  cited ids, beside the notes and profile lines it was given. A person, not Claude, would mark
+  each sentence supported, not supported or not a factual claim, judged against everything
+  sent and never by the citation (a valid citation is not support). Results per answer and
+  per sentence with 95% Wilson intervals, the blank sheet's hash recorded before labelling so
+  that no label can change unseen, and the provenance stated (labelled by the author, one
+  person, not independent, not blind).
+- **The evaluation write-up** (`EVALUATION.md`): retrieval, the router, the bake-off, the
+  after-fixes run and the faithfulness check, each with its n, its intervals and its limits;
+  **and its number check**, a test that every number in it matches the recorded result file
+  it names.
+
+**Not run:** the checklist's real-phone item, together with the outstanding real-phone scan
+test, and the new form of its "eleven messages" item (CLAUDE.md, "Deferred verification").
 
 ## Files
 
 | File | What |
 |---|---|
-| `chat_config.py` | KB rules, claim list, BM25 parameters, the no-answer line, router, templates, model and limits (fingerprinted; now chat-1.5.0) |
+| `chat_config.py` | KB rules, claim list, BM25 parameters, the no-answer line, router, templates, model and limits (fingerprinted; now chat-1.6.0) |
 | `claims.py` | the claim list as a function |
 | `kb/kb.json`, `kb/__init__.py`, `kb/__main__.py` | the KB, its loader, the load report |
 | `kb_check.py` | the 8-word copying check and the evidence helper |
@@ -756,7 +789,7 @@ Result: 20 of the 21 items passed, none failed, and the real-phone item was not 
 | `eval/` | the questions, `metadata.json` (hashes), `freeze.json`, `test_results.json` (after the test run) |
 | `redflags.py` | the red-flag router (Unit 2) |
 | `context.py`, `gate.py`, `coverage.py`, `pipeline.py`, `llm.py` | context, output gate, term coverage, one chat turn, the model client's interface |
-| `ollama.py`, `limits.py`, `app/api/chat.py` | the Ollama client (Unit 3), the per-user limits and the generation slot, the endpoints |
+| `ollama.py`, `limits.py`, `app/api/chat.py` | the Ollama client (Unit 3), the per-user limits (the templates' own since Unit 5) and the generation slot, the endpoints |
 | `ingredient_check.py` | the ingredient check (Unit 3, STOP 6) |
 | `bakeoff.py`, `eval/bakeoff/` | the bake-off and the after-fixes run: harness, freezes, results, the router-bypass replies |
 | `eval/dev_injection_probes.json`, `eval/new_*.json`, `eval/metadata_new_questions.json` | dev injection probes; the after-fixes questions and their recorded hashes |

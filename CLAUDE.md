@@ -99,7 +99,7 @@ before auth, the DB schema, and the static frontend shell are working. Currently
             flag and banner removed; README results regenerated), the "Global ingredient
             list" badge and the list notes on the catalog and routine pages, the API's
             provenance fields and `config_versions["catalog"]`, spec addendum items 7-9.
-  - [ ] 7d. Conversational AI (`backend/app/services/chat/README.md`)
+  - [x] 7d. Conversational AI (`backend/app/services/chat/README.md`)
     - [x] Units 1-3: the knowledge base and BM25 retrieval, the red-flag router and templates,
           the output gate, the Ollama client, `POST /api/chat` and its limits, the model
           bake-off (qwen3.5:4b chosen).
@@ -108,8 +108,12 @@ before auth, the DB schema, and the static frontend shell are working. Currently
           `EMERGENCY_NUMBER`. The manual browser checklist was run by the author; its
           real-phone item was not run (listed in the chat README; still to do, together with
           the outstanding real-phone scan test).
-    - [ ] Unit 5: the chat README's "For Unit 5" list (the rate limiter before the router, a
-          manual faithfulness check, the evaluation write-up).
+    - [x] Unit 5 (trimmed for the 15 Oct deadline): red-flag templates are routed before the
+          model's rate limit and count only toward their own (chat-1.6.0,
+          `TEMPLATE_RATE_LIMITS`); the page's 429 no longer disables Send. **Designed, not
+          done** (future work, chat README "Unit 5"): the faithfulness check (sheet, a person's
+          labels), the evaluation write-up `EVALUATION.md` and its number check. No
+          faithfulness or groundedness figure exists for the chat; never claim one.
   - [ ] 7e. Generative Visualizer
 - [ ] 8. Secondary features, testing, deploy
 
@@ -143,7 +147,7 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   ingredients-1.2.0), `ROUTINE_CONFIG_VERSION` (routine_config.py, now routine-2.3.0),
   `RECOMMENDATION_CONFIG_VERSION` (recommendation_config.py, now recommendation-1.0.1),
   `CATALOG_CONFIG_VERSION` (catalog_config.py, now catalog-1.0.0) or `CHAT_CONFIG_VERSION`
-  (chat_config.py, now chat-1.5.0) whenever a value there
+  (chat_config.py, now chat-1.6.0) whenever a value there
   changes. `app/tests/test_config_versions.py` fingerprints the values and fails on any
   change without a bump; record the new version's fingerprint there (a version not yet
   committed may have its fingerprint updated in place). `backend/catalog/products.json`
@@ -177,19 +181,25 @@ before auth, the DB schema, and the static frontend shell are working. Currently
 - The questionnaire page's input names/values ARE the scorer's field names/values, and the
   score-band cutoffs exist only in `skin_profile_config.py` and `frontend/static/js/bands.js`.
   `app/tests/test_frontend_contract.py` checks both, so keep them in sync.
-- Chat (7d, in progress): a local Ollama on loopback only, and only a model pinned to its
+- Chat (7d): a local Ollama on loopback only, and only a model pinned to its
   full digest in `chat_config.ALLOWED_MODELS` (never a cloud tag). Otherwise the chat is a
   503 whose reason `GET /api/chat/status` names: `non_loopback_host`, `cloud_tag`,
   `unpinned_model`, `unreachable`, `missing_model` or `moved_tag`. Red flags never reach the
-  model. Never log chat text, chunk ids, red-flag groups or the user (one metadata line per
-  request). Details: `backend/app/services/chat/README.md`.
+  model, and are routed before the rate limit: a template counts only toward
+  `TEMPLATE_RATE_LIMITS`, never the model's `RATE_LIMITS`. Never log chat text, chunk ids,
+  red-flag groups or the user (one metadata line per request). **The step 8 data export must
+  say the chat stores nothing**: no messages, answers or history; the rate-limit counters (user
+  ids and request times) live only in the server's memory and reset on restart; the log has
+  one metadata line per request, with no user id or text. Details:
+  `backend/app/services/chat/README.md`.
 - Chat page (7d Unit 4): only `frontend/static/js/chat-stream.js` reads `POST /api/chat`. A
   reply is shown only once its `end` event arrives, never in part (the caution line comes after
   the answer). Everything is set as text, nothing is stored in the browser, history is the
   reply's text only (never caution lines), and a 503 shows its reason code, never the server's
-  detail. The page has no answer text of its own. `chat_config.EMERGENCY_NUMBER` is the one
-  source of the emergency number for the templates and the page. `test_frontend_contract.py`
-  checks all of this against the backend.
+  detail. A 429 or a busy 503 only advises (a countdown); Send stays enabled, because the
+  server still serves red-flag templates. The page has no answer text of its own.
+  `chat_config.EMERGENCY_NUMBER` is the one source of the emergency number for the templates
+  and the page. `test_frontend_contract.py` checks all of this against the backend.
 
 ## Commands
 
@@ -264,5 +274,16 @@ Checks a person still has to do. Until they are done, the catalog's ingredient l
   its duplicate "Catalog:" header line then.
 - **The real-phone scan** and **the manual checklist** (still outstanding).
 - **The chat page's manual browser checklist** (`backend/app/services/chat/README.md`, "The chat
-  page"): run by the author on 2026-10-13. Its real-phone item was not run and is still to
-  do, together with the real-phone scan above.
+  page"): run by the author on 2026-10-13. Its phone-width item was split in Unit 5: the 360 px
+  devtools check was run (its result was not recorded); **the real-phone item was not run** and
+  is still to do, together with the real-phone scan above. **The "eleven messages" item in its
+  new form** (since Unit 5, Send stays enabled on a 429) **was not run**: still to do.
+- **The chat's knowledge base**: a person reviews every chunk against its cited pages (then
+  `review.status: "checked"`, with the date and `text_sha256`, and a new KB version). No person
+  has checked any chunk yet.
+- **The 11 conflict-pair reason texts** in `backend/seed.py` need sources or rewording.
+- **112 nationwide today**: the PIB release (19 Feb 2019) covers the launch in 16 states/UTs
+  and Mumbai. An MHA document (dated 24 April 2018 by its file name) says DoT routes 112 calls
+  to Dial 100 in all States & UTs (chat README, "The emergency number"). No current official
+  page that says 112 is answered nationwide has been found (112.gov.in could not be reached on
+  2026-10-13).
