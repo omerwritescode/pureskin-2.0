@@ -51,20 +51,38 @@ MSc Data Science project, NMIMS NSOMASA, Mumbai.
 
   See the [chat README](backend/app/services/chat/README.md).
 - **Accounts.** Sign up and log in. The Dashboard and Skin Profile pages show the latest
-  scan.
+  scan. Settings (`/app/settings/`) links to Account (email, name, Log out) and Privacy.
+- **Privacy page** (`/app/settings/privacy/`). It says, in plain sentences, what is stored
+  (the account, each saved scan's scores, skin type, sensitivity, how each score was worked
+  out and the questionnaire tags), and what isn't: photos, questionnaire answers and chat
+  messages. It covers the login token in localStorage, the pre-signup result in
+  sessionStorage, the local chat model, and what the logs hold. It also says the database
+  isn't encrypted at rest and the standard setup uses plain HTTP. Each sentence is backed by
+  the code, and a test checks the ones that can drift. It is a student project's statement,
+  not legal advice.
+  - **Download my data:** a JSON file with the account (never the password hash), every
+    Skin Profile with its `questionnaire_tags` and `score_sources`, the scan history, any
+    subscription rows, and statements of what isn't stored (including that the chat stores
+    nothing).
+  - **Delete my account:** needs the password. It deletes the account and every row that
+    belongs to it (ON DELETE CASCADE), clears this browser's login token and pending scan,
+    and goes to the login page. The account's old login token is then refused. It doesn't
+    reach the chat's in-memory rate-limit counters (they reset when the server restarts),
+    log lines already printed, or database backups made before.
+- **Progress** (`/app/progress/`). A table of the saved scans, oldest first, each score shown
+  as its band and number ("Moderate (42)"). With no scans it offers a scan; with one it shows
+  that scan's scores. Two notes say the scores are unvalidated heuristics and self-reports,
+  and that a change between scans may come from the photo/answers weighting or the lighting,
+  not only from the skin. There is no chart.
+- **Logs.** uvicorn's access log drops query strings (catalog searches put words there), and
+  a database error is logged with only its class, the method and path, and the constraint
+  name, never with the values involved.
 
 **Planned, not implemented yet:**
 
 - A conflict check for a single scanned or looked-up product. The product page says
   "coming soon".
 - A generative "4 weeks from now" preview (7e).
-- Progress tracking, a privacy dashboard, notifications and subscriptions (step 8). The
-  progress and settings pages exist only as empty shells. **The step 8 data export
-  must include each Skin Profile's `questionnaire_tags`** (the current products, avoid
-  list and goal saved since 7c-i c); they are already deleted with the user. **It must also
-  say that the chat stores nothing**: no messages, answers or history; the rate-limit
-  counters (user ids and request times) live only in the server's memory and reset on
-  restart; the log has one metadata line per request, with no user id or text.
 
 Full feature list, sitemap, architecture and NFRs (the original target):
 [`docs/spec.md`](docs/spec.md).
@@ -74,7 +92,7 @@ Full feature list, sitemap, architecture and NFRs (the original target):
 What is in the repo today:
 
 - **Frontend:** plain HTML, CSS and vanilla JavaScript. No framework and no external
-  libraries.
+  libraries; no page loads anything from another website (a test checks it).
 - **Backend:** Python 3.14, FastAPI, SQLAlchemy, Alembic. One FastAPI app; each AI
   capability is its own service package under `backend/app/services/`, buildable and
   testable on its own.
@@ -102,10 +120,18 @@ What is in the repo today:
 
 It is not in the repo yet.
 
-**Not implemented:**
+**Not implemented** (NOT BUILT):
 - **MLOps and monitoring:** MLflow/Kubeflow, Kubernetes, Prometheus/Grafana.
 - **Microservices:** splitting the services into separately deployed microservices.
 - **Containers:** the app itself isn't containerised; Docker runs PostgreSQL only.
+- **Deployment:** the app runs locally only (`uvicorn`, plain HTTP on localhost).
+- **On-device inference:** the photo is always analysed on the server, in memory.
+- **Object storage:** photos are never stored, so there is none.
+- **Notifications:** no browser push and no email reminders.
+- **Subscription and checkout:** no paid plan and no payment provider; Settings says
+  subscriptions aren't available in this version.
+- **Scan detail page** (`/app/progress/:scanId`): Progress shows every scan in one table.
+- **Change-password form.**
 
 [`docs/spec.md`](docs/spec.md) §7 lists the original target stack; its addendum records
 what changed.
@@ -229,7 +255,14 @@ Tracking against the roadmap in [`docs/spec.md`](docs/spec.md) §8:
           limit (they have their own). The faithfulness check and the evaluation write-up
           were designed but not done (future work in the chat README)
   - [ ] 7e. Generative Visualizer
-- [ ] 8. Secondary features, testing, deploy
+- [x] 8. Secondary features (trimmed for the deadline): done except what is NOT BUILT
+  - [x] 8 (1). Account export and delete, progress API, log privacy (backend)
+  - [x] 8 (2). Settings hub, Account and Privacy pages
+  - [x] 8 (3). Progress as a band table
+  - NOT BUILT: notifications, subscription/checkout, deployment, containerisation,
+    on-device inference, object storage, the scan detail page, a change-password form,
+    MLOps/monitoring (see [Not implemented](#tech-stack)). The step 8 browser checklist has
+    not been run.
 
 The details of each step, and where the code lives, are in [`CLAUDE.md`](CLAUDE.md).
 
@@ -261,6 +294,12 @@ an addendum at its end records these deviations:
   sentence and releases the answer only when the model has finished, so the spec's "chat
   streams within 1-2 s of first token" doesn't hold. After the fixes, the whole answer took a
   median of 1.7 s (p90 2.4 s) on the development machine.
+- **No subscription, checkout or notifications.** Settings says subscriptions aren't
+  available in this version; there is no subscription or checkout page.
+- **No on-device/server toggle on the Privacy page.** The photo is always analysed on the
+  server, in memory.
+- **Progress is a table, not a line chart**, with band labels and no chart library. The data
+  export is a JSON download, and deleting the account needs the password.
 
 ## Documentation
 

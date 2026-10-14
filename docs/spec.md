@@ -203,6 +203,26 @@ The sections above are the original specification and are left unchanged. As bui
     as a stream of events, but the answer's text comes in one piece at the end, so §6's
     "chat streams within 1–2 s of first token" does not hold: the user waits for the whole
     answer (measured times: `backend/app/services/chat/README.md`).
+11. **Subscription, checkout and notifications are not built** (added in step 8; §4 items 13
+    and 14, §5's `/app/settings/subscription` and `/app/settings/subscription/checkout`). The
+    Settings hub shows Subscription as text only: "Subscriptions aren't available in this
+    version." There is no link, no payment provider and no paid plan, and the `subscriptions`
+    table is never written to.
+12. **The Privacy page has no on-device/server toggle** (added in step 8; §4 item 12, §3's
+    "Privacy by design"). The photo is always analysed on the server, in memory, and never
+    stored (see 5 and 6). The page describes what this version stores and doesn't, and offers
+    the data export and account deletion.
+13. **Progress is a table with band labels, not a line chart** (added in step 8; §4 item 11).
+    Each saved scan is a row, oldest first, and each score shows its band and number
+    ("Moderate (42)"), with the bands from the shared bands module. There is no chart and no
+    chart library, so no page loads anything from another website. The data export is a JSON
+    download (`GET /api/account/export`), and deleting the account (`DELETE /api/account`)
+    needs the password and removes every row that belongs to it (ON DELETE CASCADE).
+
+**Not built** (step 8 was trimmed for the 15 October deadline): notifications,
+subscription/checkout, deployment, containerisation of the app (Docker runs PostgreSQL only),
+on-device inference, object storage, the scan detail page (`/app/progress/:scanId`, §5 Tier 2),
+a change-password form, and the MLOps and monitoring layer (§3, §7).
 
 Details: `backend/app/services/image_analysis/README.md`,
 `backend/app/services/questionnaire/README.md`,

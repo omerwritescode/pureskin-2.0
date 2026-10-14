@@ -115,7 +115,21 @@ before auth, the DB schema, and the static frontend shell are working. Currently
           labels), the evaluation write-up `EVALUATION.md` and its number check. No
           faithfulness or groundedness figure exists for the chat; never claim one.
   - [ ] 7e. Generative Visualizer
-- [ ] 8. Secondary features, testing, deploy
+- [x] 8. Secondary features (trimmed for the 15 Oct deadline): done except what is NOT BUILT below.
+  - [x] 8 (1) backend. `api/account.py`: `GET /api/account`, `GET /api/account/export` (JSON
+        download, `Cache-Control: no-store`, never the password hash) and `DELETE /api/account`
+        (password re-entry, 403 on a wrong one, ON DELETE CASCADE). `api/progress.py`:
+        `GET /api/progress`. uvicorn's access log loses query strings (`core/access_log.py`);
+        the engine hides bound parameters and `main.py` logs a database error by class,
+        method, path and constraint name only.
+  - [x] 8 (2) Settings hub, Account (email, name, Log out) and Privacy (`/app/settings/privacy/`:
+        what is stored and what isn't, Download my data, Delete my account) pages.
+  - [x] 8 (3) Progress (`/app/progress/`): a table of the saved scans with band labels from
+        `bands.js`, the 0 / 1 / 2+ scan states and two notes. No chart and no chart library.
+  - NOT BUILT: notifications, subscription/checkout (Settings says "not available in this
+    version"), deployment, containerisation of the app, on-device inference, object storage,
+    the scan detail page (`/app/progress/:scanId`), a change-password form, MLOps/monitoring.
+    The step 8 browser checks were not run (see "Deferred verification").
 
 (Check off steps here as they're completed, so a new session knows where the project stands.)
 
@@ -177,7 +191,7 @@ before auth, the DB schema, and the static frontend shell are working. Currently
 - `skin_profiles.questionnaire_tags` holds a fixed vocabulary only (never raw text, skin
   conditions or lifestyle tags), validated by `QuestionnaireTags`. Missing or invalid tags
   never fail a save: the profile is stored with NULL tags and the response says so. Never
-  log tags. The step 8 data export must include them.
+  log tags. The data export (`GET /api/account/export`) includes them.
 - The questionnaire page's input names/values ARE the scorer's field names/values, and the
   score-band cutoffs exist only in `skin_profile_config.py` and `frontend/static/js/bands.js`.
   `app/tests/test_frontend_contract.py` checks both, so keep them in sync.
@@ -187,11 +201,11 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   `unpinned_model`, `unreachable`, `missing_model` or `moved_tag`. Red flags never reach the
   model, and are routed before the rate limit: a template counts only toward
   `TEMPLATE_RATE_LIMITS`, never the model's `RATE_LIMITS`. Never log chat text, chunk ids,
-  red-flag groups or the user (one metadata line per request). **The step 8 data export must
-  say the chat stores nothing**: no messages, answers or history; the rate-limit counters (user
-  ids and request times) live only in the server's memory and reset on restart; the log has
-  one metadata line per request, with no user id or text. Details:
-  `backend/app/services/chat/README.md`.
+  red-flag groups or the user (one metadata line per request). **The data export says the chat
+  stores nothing** (`EXPORT_STATEMENTS` in `api/account.py`): no messages, answers or history;
+  the rate-limit counters (user ids and request times) live only in the server's memory and
+  reset on restart (deleting an account doesn't clear them); the log has one metadata line per
+  request, with no user id or text. Details: `backend/app/services/chat/README.md`.
 - Chat page (7d Unit 4): only `frontend/static/js/chat-stream.js` reads `POST /api/chat`. A
   reply is shown only once its `end` event arrives, never in part (the caution line comes after
   the answer). Everything is set as text, nothing is stored in the browser, history is the
@@ -200,6 +214,23 @@ before auth, the DB schema, and the static frontend shell are working. Currently
   server still serves red-flag templates. The page has no answer text of its own.
   `chat_config.EMERGENCY_NUMBER` is the one source of the emergency number for the templates
   and the page. `test_frontend_contract.py` checks all of this against the backend.
+- Account (step 8): every query is scoped to the token's user; no endpoint takes a user id.
+  Each column of each table that holds a user's data is in `EXPORTED_COLUMNS` or
+  `NOT_EXPORTED` (only `users.hashed_password`), and every table hanging off `users` is
+  exported and ON DELETE CASCADE: `test_account_api.py` reads the database's own columns and
+  foreign keys and fails on anything new. A wrong password on delete is a 403, never a 401
+  (`apiFetch` logs the user out on any 401). A deleted user's token gets a 401 from
+  `get_current_user`; user ids are never reused.
+- Privacy page (step 8): every sentence is backed by the code, and `test_frontend_settings.py`
+  checks the six `EXPORT_STATEMENTS` (word for word), the numbers, the logging sentences and
+  words for things PureSkin doesn't do (compliance, on-device analysis, encryption). Change the
+  page when the code it describes changes. No page loads anything from another website and no
+  script talks to one; a page that ever does must name the site, and the Privacy page's
+  sentence must change first.
+- Logs (step 8): uvicorn's access log drops query strings (`core/access_log.py`; a line in an
+  unknown format is dropped). The engine hides bound parameters (`core/database.py`), and
+  `main.py`'s database error handler logs only the class, method, path and constraint name,
+  because PostgreSQL's DETAIL line holds row values.
 
 ## Commands
 
@@ -278,6 +309,16 @@ Checks a person still has to do. Until they are done, the catalog's ingredient l
   devtools check was run (its result was not recorded); **the real-phone item was not run** and
   is still to do, together with the real-phone scan above. **The "eleven messages" item in its
   new form** (since Unit 5, Send stays enabled on a 429) **was not run**: still to do.
+- **The step 8 browser checklist: not run.** With a throwaway account (never the dev user):
+  Progress with 1 and then 2 scans; Settings -> Privacy / Account (2 clicks; Subscription is
+  text only); Account's email and Log out (Back returns to /auth/); Download my data (no hash,
+  both scans with tags and score_sources, `Cache-Control: no-store`); Delete with a wrong
+  password (nothing deleted) and then the right one (no `pureskin_token`, no `pureskin_scan_*`
+  keys); the old token gets a 401 from `curl`; no email, password or search words in the
+  server console; the new pages at 360 px; the dev user's data intact; then a read-only
+  `count(*)` of the throwaway email (0). Only automated tests (and, for Progress, a Node render
+  with a stub DOM) have been run on these pages; no browser has opened them.
+- The multi-person selfie session (5-10 people, with consent, ~4 selfies each in different lighting): not run.
 - **The chat's knowledge base**: a person reviews every chunk against its cited pages (then
   `review.status: "checked"`, with the date and `text_sha256`, and a new KB version). No person
   has checked any chunk yet.
