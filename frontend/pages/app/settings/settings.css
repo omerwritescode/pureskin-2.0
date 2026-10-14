@@ -1,1 +1,163 @@
-/* Settings page styles — supplements /static/css/main.css. Nothing page-specific yet. */
+/* Settings hub, Account and Privacy pages — supplements /static/css/main.css. */
+
+/* ---- Hub ------------------------------------------------------------- */
+
+.settings-links {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  max-width: 720px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings-link {
+  display: block;
+  height: 100%;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+}
+
+a.settings-link:hover {
+  border-color: var(--accent);
+}
+
+.settings-link__title {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.settings-link__text {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Not a link: shown so the hub is honest about what this version has. */
+.settings-link--unavailable {
+  background: var(--bg);
+  border-style: dashed;
+}
+
+.settings-link--unavailable .settings-link__title {
+  color: var(--muted);
+}
+
+/* ---- Account and Privacy -------------------------------------------- */
+
+.settings-back {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+}
+
+.settings-section {
+  max-width: 720px;
+  margin: 0 0 16px;
+}
+
+.settings-section h2 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+
+.settings-section p,
+.settings-section ul {
+  margin: 0 0 10px;
+}
+
+.settings-section ul {
+  padding-left: 20px;
+}
+
+.settings-section li + li {
+  margin-top: 6px;
+}
+
+.settings-section > :last-child {
+  margin-bottom: 0;
+}
+
+.account-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.account-details dt {
+  color: var(--muted);
+}
+
+.account-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.settings-actions .btn {
+  min-height: 44px;
+}
+
+/* ---- Delete ---------------------------------------------------------- */
+
+.danger-zone {
+  border-color: #e3b3ae;
+}
+
+.delete-form {
+  display: grid;
+  gap: 8px;
+  max-width: 420px;
+  margin-top: 12px;
+}
+
+.delete-form label {
+  font-weight: 600;
+}
+
+.delete-form input[type="password"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+}
+
+.delete-form__confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-weight: 400 !important;
+}
+
+.delete-form__confirm input {
+  margin-top: 4px;
+}
+
+.btn--danger {
+  min-height: 44px;
+  border-color: #8c1d18;
+  background: #8c1d18;
+}
+
+@media (min-width: 640px) {
+  .settings-links {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: none;
+  }
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy and your data — PureSkin</title>
+  <!-- Must stay first: redirects to /auth/ before render if there's no token. -->
+  <script src="/static/js/auth-guard.js"></script>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/app/settings/settings.css">
+</head>
+<body>
+  <nav id="app-nav" class="app-nav" aria-label="Main"></nav>
+
+  <!-- Every sentence here is backed by the code; app/tests/test_frontend_settings.py checks
+       the statements the export repeats, the numbers, and the words this page must not use. -->
+  <main class="page">
+    <p class="settings-back"><a href="/app/settings/">Settings</a></p>
+    <h1 class="page__title">Privacy and your data</h1>
+
+    <section class="card settings-section" aria-labelledby="about-title">
+      <h2 id="about-title">About this page</h2>
+      <p>PureSkin is a student project (MSc Data Science, NMIMS). This page describes what this version of the code does with your data. It isn't legal advice, and PureSkin doesn't claim to meet any data-protection law or standard.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="stored-title">
+      <h2 id="stored-title">What PureSkin stores</h2>
+      <p>Your data is kept in a PostgreSQL database on the computer that runs PureSkin. It isn't encrypted at rest, and PureSkin's standard setup uses plain HTTP, not HTTPS.</p>
+      <ul>
+        <li>Your account: your email address (stored in lower case), your full name, and when the account was created and last changed.</li>
+        <li>Your password is stored only as a bcrypt hash, which is never included in the data download.</li>
+        <li>For each scan you save: the five scores, your skin type, whether your answers point to sensitive skin, and the date.</li>
+        <li>How each score was worked out: the score from your photo, the score from your answers, how the two were combined (photo only, answers only, or a set blend) and the versions of the rules used. This never holds your answers themselves, your photo or anything you typed.</li>
+        <li>A short list of tags chosen from fixed options: the kinds of products and actives you said you use, the ingredients you want to avoid, and your main goal. A tag can come from words you typed, matched against a fixed list, but the words themselves are never stored.</li>
+        <li>A scan-history record for each saved scan: its time and which scan it belongs to.</li>
+        <li>The database also has a column for a photo's location. The scan pages never send one, so it is empty for every scan saved from them.</li>
+        <li>There is a subscriptions table, but this version never writes to it: there are no paid plans.</li>
+      </ul>
+      <p>Your routine isn't stored: it is worked out from your latest scan each time you open it.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="photo-title">
+      <h2 id="photo-title">Your photo</h2>
+      <p>Your photo is sent to the PureSkin server, analysed in memory and discarded: it is never saved to the database or to disk, and PureSkin never logs it.</p>
+      <p>There is no option to analyse the photo on your own device.</p>
+      <p>While you take the scan, the photo is kept in this browser tab (sessionStorage). It is removed when the scan finishes, when you open the report, the login page or the Dashboard, or when you close the tab.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="answers-title">
+      <h2 id="answers-title">Your answers</h2>
+      <p>Your questionnaire answers, including anything you type, are scored in memory and never stored; only the results are saved.</p>
+      <p>If your photo is turned down at the last step, your answers, including anything you typed, are kept in this tab while you retake it, then put back into the form and removed.</p>
+      <p>If you scan before you have an account, the result waits in this tab (sessionStorage) until it is saved to your account after you sign up or log in, and is then removed. Closing the tab removes it too.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="login-title">
+      <h2 id="login-title">Your login</h2>
+      <p>When you log in, a login token is kept in this browser's localStorage. It holds your user number and an expiry time; it is signed, not encrypted, and it expires after 60 minutes in the default setup.</p>
+      <p>Logging out or deleting your account removes it from this browser. A token on another device keeps working until it expires, unless the account is deleted.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="chat-title">
+      <h2 id="chat-title">The chat</h2>
+      <p>The chat's language model runs on the same computer as the PureSkin server (through Ollama, on a local-only address), not on a cloud AI service.</p>
+      <p>To answer, it is given your skin type, whether your skin is sensitive, your score bands (not the numbers), your routine and your tags, along with the last three questions and answers on the page.</p>
+      <p>The chat stores nothing: no messages, answers or history.</p>
+      <p>The chat's rate-limit counters (your user number and the times of your recent chat requests) live only in the server's memory and reset when it restarts.</p>
+      <p>Ollama is separate software; what it records is outside what this page covers.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="logs-title">
+      <h2 id="logs-title">Logs</h2>
+      <p>The app's log has one line per chat request, with metadata only: no user id and no text.</p>
+      <p>The web server prints one line per request to its console: the IP address, the method, the page or API address without anything after a "?" (such as catalog search words), and the status code. PureSkin itself doesn't write these lines to a file.</p>
+      <p>PureSkin's code doesn't log request bodies, passwords, emails, answers or chat text, and a database error is logged with only its type, the page or API address and the name of the rule it broke, never with the values involved.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="sites-title">
+      <h2 id="sites-title">Other websites</h2>
+      <p>No PureSkin page sends your account or skin data to another website.</p>
+      <p>No PureSkin page loads files from another website, and none has advertising or analytics scripts.</p>
+      <p>The chat's source links open other websites only when you click them, in a new tab, without telling the site which page you came from.</p>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="download-title">
+      <h2 id="download-title">Download your data</h2>
+      <p>The download is a JSON file with your account details (not the password hash), every saved scan with its tags and how its scores were worked out, your scan history and any subscription records. It also repeats what PureSkin doesn't store. It is made when you ask for it, and PureSkin keeps no copy.</p>
+      <div class="settings-actions">
+        <button type="button" id="download" class="btn">Download my data</button>
+      </div>
+      <div id="download-status" aria-live="polite"></div>
+    </section>
+
+    <section class="card settings-section danger-zone" aria-labelledby="delete-title">
+      <h2 id="delete-title">Delete your account</h2>
+      <p>Deleting your account removes your account, every saved scan, your scan history and any subscription records from the database straight away. It can't be undone, and you need your password to do it.</p>
+      <p>It doesn't reach the chat's rate-limit counters, which stay in the server's memory until it restarts; log lines the server has already printed; or copies of the database made before you delete, such as the developer's backup files.</p>
+      <form id="delete-form" class="delete-form" novalidate>
+        <label for="delete-password">Your password</label>
+        <input id="delete-password" name="password" type="password" autocomplete="current-password" maxlength="256" required>
+        <label class="delete-form__confirm">
+          <input id="delete-confirm" name="confirm" type="checkbox" required>
+          <span>I understand that this deletes my account and all my data, and that it can't be undone.</span>
+        </label>
+        <p id="delete-error" class="status status--error" role="alert"></p>
+        <div class="settings-actions">
+          <button type="submit" class="btn btn--danger">Delete my account</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="/static/js/nav.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/ui.js"></script>
+  <!-- No data-requires: loaded for the pre-signup scan keys/helpers (cleared on delete).
+       data-outside-funnel drops any leftover photo / retake answers from the tab. -->
+  <script src="/static/js/scan-guard.js" data-outside-funnel></script>
+  <script src="/app/settings/privacy/privacy.js"></script>
+</body>
+</html>

@@ -14,7 +14,27 @@
 
   <main class="page">
     <h1 class="page__title">Settings</h1>
-    <p class="page__placeholder">Coming soon — privacy, subscription and account settings.</p>
+
+    <ul class="settings-links">
+      <li>
+        <a class="settings-link" href="/app/settings/privacy/">
+          <span class="settings-link__title">Privacy and your data</span>
+          <span class="settings-link__text">What PureSkin stores, download your data, delete your account</span>
+        </a>
+      </li>
+      <li>
+        <a class="settings-link" href="/app/settings/account/">
+          <span class="settings-link__title">Account</span>
+          <span class="settings-link__text">Your email address and name; log out</span>
+        </a>
+      </li>
+      <li>
+        <div class="settings-link settings-link--unavailable">
+          <span class="settings-link__title">Subscription</span>
+          <span class="settings-link__text">Subscriptions aren't available in this version.</span>
+        </div>
+      </li>
+    </ul>
   </main>
 
   <script src="/static/js/nav.js"></script>

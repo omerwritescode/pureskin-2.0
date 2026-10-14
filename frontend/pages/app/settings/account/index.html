@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account — PureSkin</title>
+  <!-- Must stay first: redirects to /auth/ before render if there's no token. -->
+  <script src="/static/js/auth-guard.js"></script>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/app/settings/settings.css">
+</head>
+<body>
+  <nav id="app-nav" class="app-nav" aria-label="Main"></nav>
+
+  <main class="page">
+    <p class="settings-back"><a href="/app/settings/">Settings</a></p>
+    <h1 class="page__title">Account</h1>
+
+    <section class="card settings-section" aria-labelledby="details-title">
+      <h2 id="details-title">Your details</h2>
+      <div id="account-details" aria-live="polite">
+        <p class="status">Loading your account…</p>
+      </div>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="logout-title">
+      <h2 id="logout-title">Log out</h2>
+      <p>Logging out removes your login token from this browser only. A token on another device keeps working until it expires, after 60 minutes in the default setup.</p>
+      <div class="settings-actions">
+        <button type="button" id="logout" class="btn btn--secondary">Log out</button>
+      </div>
+    </section>
+
+    <section class="card settings-section" aria-labelledby="data-title">
+      <h2 id="data-title">Your data</h2>
+      <p>To download your data or delete your account, go to <a href="/app/settings/privacy/">Privacy and your data</a>.</p>
+    </section>
+  </main>
+
+  <script src="/static/js/nav.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/ui.js"></script>
+  <script src="/app/settings/account/account.js"></script>
+</body>
+</html>
