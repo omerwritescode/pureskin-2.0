@@ -8,18 +8,22 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.api import (
+    account,
     auth,
     catalog,
     chat,
     image_analysis,
     profile,
+    progress,
     questionnaire,
     routine,
     scan_analyze,
 )
 from app.api.validation_errors import public_errors
+from app.core import access_log
 from app.core.config import settings
 from app.services import image_analysis as image_analysis_service
 
@@ -33,6 +37,9 @@ if not _app_log.handlers:
     _handler.setFormatter(logging.Formatter("%(levelname)s:     %(message)s"))
     _app_log.addHandler(_handler)
     _app_log.setLevel(logging.INFO)
+
+# uvicorn's access log, without query strings (catalog searches put the user's words there).
+access_log.install()
 
 # Absolute, so it works whatever directory uvicorn is started from.
 # backend/app/main.py -> parent = app/, parent.parent = backend/, then up to the repo root.
@@ -73,6 +80,20 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     )
 
 
+# A database error's message can hold the values of the row involved (PostgreSQL's DETAIL:
+# "Key (email)=(...)", "Failing row contains (...)"), which the engine's hide_parameters
+# doesn't cover, and uvicorn would log it with the traceback. Logged here as its class and
+# constraint name only; the client gets a plain 500.
+@app.exception_handler(SQLAlchemyError)
+async def database_error_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
+    constraint = getattr(getattr(getattr(exc, "orig", None), "diag", None), "constraint_name", None)
+    logger.error("Database error on %s %s: %s%s", request.method, request.url.path, type(exc).__name__,
+                 f" (constraint {constraint})" if constraint else "")
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": "Internal Server Error"}
+    )
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -89,6 +110,8 @@ app.include_router(catalog.router)
 app.include_router(image_analysis.router)
 app.include_router(questionnaire.router)
 app.include_router(chat.router)
+app.include_router(account.router)
+app.include_router(progress.router)
 
 
 @app.get("/health")
