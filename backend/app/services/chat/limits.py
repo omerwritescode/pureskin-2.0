@@ -4,6 +4,8 @@ API runs as one process).
 - Per user: rolling windows from chat_config.RATE_LIMITS (10 a minute, 100 a day). A request
   over a limit is refused (429) with the seconds until one would be allowed; a refused
   request isn't counted. Keyed by user id, which is never logged.
+- Red-flag templates count separately (Unit 5), against chat_config.TEMPLATE_RATE_LIMITS (30
+  a minute, 300 a day): they never reach the model, and neither counter uses the other's.
 - One generation at a time (one GPU): a slot taken just before the model is called and
   given back when its stream ends, however it ends.
 """
@@ -64,4 +66,5 @@ class GenerationSlot:
 @dataclass
 class ChatLimits:
     rate: RateLimiter = field(default_factory=RateLimiter)
+    template_rate: RateLimiter = field(default_factory=lambda: RateLimiter(cfg.TEMPLATE_RATE_LIMITS))
     slot: GenerationSlot = field(default_factory=GenerationSlot)

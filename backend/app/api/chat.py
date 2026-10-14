@@ -12,7 +12,7 @@ POST /api/chat, signed in, body {"message": str, "history": [{"role", "content"}
 | 401 | not signed in |
 | 413 | {"detail": ...}: body over 16 KB |
 | 422 | {"detail": [{loc, msg, type}]}: malformed body (input never echoed) |
-| 429 | {"detail": ...} and Retry-After: over 10 a minute or 100 a day |
+| 429 | {"detail": ...} and Retry-After: over 10 a minute or 100 a day. A message routed to a red-flag template counts only toward the templates' own limit (30 a minute, 300 a day), so it is still served past the model's. |
 | 503 | {"detail", "reason"}: the model can't be used (chat_config.STATUS_REASONS), or "busy" with Retry-After (one answer at a time). Red-flag templates are served even when Ollama is down; while another answer is being generated, templates and the fixed "I don't know" are still served. |
 
 Events: {"type": "start", "route", "request_id", "config_versions"}; {"type": "text", "text",
@@ -46,6 +46,7 @@ from app.api.request_body import (
 from app.core.config import settings
 from app.models import User
 from app.services.chat import chat_config as cfg
+from app.services.chat import redflags
 from app.services.chat.context import load_profile_context
 from app.services.chat.kb import load_kb
 from app.services.chat.limits import ChatLimits
@@ -214,16 +215,20 @@ async def chat(request: Request, user: User = Depends(get_current_user), db: Ses
         log_turn(request_id, "invalid", model)
         return validation_error_response(exc)
 
-    wait = limits.rate.hit(user.id)
+    # Red-flag templates first (Unit 5): they never reach the model, so they count toward
+    # their own limit, not the model's. The pipeline routes the same message and history
+    # again with the same function, so it serves the template this limit was chosen for.
+    history = [Turn(t.role, t.content) for t in req.history]
+    templated = redflags.route(req.message, history).kind == "template"
+    wait = (limits.template_rate if templated else limits.rate).hit(user.id)
     if wait is not None:
-        log_turn(request_id, "rate_limited", model)
+        log_turn(request_id, "rate_limited_template" if templated else "rate_limited", model)
         return JSONResponse(status_code=status.HTTP_429_TOO_MANY_REQUESTS, content={"detail": cfg.RATE_LIMITED_TEXT},
                             headers={"Retry-After": str(wait)})
 
-    profile = await run_in_threadpool(load_profile, db, user)
+    profile = None if templated else await run_in_threadpool(load_profile, db, user)  # a template never reads it
     db.close()  # nothing more to read: no connection is held while the answer streams
     kb, index = knowledge()
-    history = [Turn(t.role, t.content) for t in req.history]
     events = respond(req.message, history, llm, kb=kb, index=index, profile=profile, slot=limits.slot,
                      request_id=request_id)
     # The first event decides the status code: everything that can fail before an answer

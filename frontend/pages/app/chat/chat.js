@@ -21,7 +21,6 @@ const alerter = document.getElementById("chat-alert");
 let exchanges = []; // { user, assistant }: answered exchanges only; the last 3 are sent
 let pending = null; // the question being answered: { controller, question, userItem, thinking, slowTimer }
 let countdown = null; // { timer, rateLimited }
-let blockedUntil = 0; // a 429: the server refuses everything until then
 
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -55,11 +54,11 @@ function technicalDetail(reason) {
     el("p", { text: `Reason code: ${reason || "unknown"}` }));
 }
 
-// ---- Countdowns: a 429 blocks Send; a busy 503 only advises (templates still get through) ----
+// ---- Countdowns: a 429 and a busy 503 only advise, and Send stays enabled: the server still
+// serves red-flag templates (a 429 has its own, larger limit for them) and, while busy, the fixed reply ----
 function startCountdown(result) {
   const until = Date.now() + result.wait * 1000;
   const rateLimited = result.kind === "rate_limited";
-  if (rateLimited) blockedUntil = until;
   const text = notice.querySelector(".chat-notice__text");
   const tick = () => {
     const left = Math.ceil((until - Date.now()) / 1000);
@@ -77,7 +76,6 @@ function startCountdown(result) {
 function stopCountdown() {
   if (!countdown) return;
   clearInterval(countdown.timer);
-  if (countdown.rateLimited) blockedUntil = 0;
   countdown = null;
   updateControls();
 }
@@ -147,13 +145,13 @@ function updateControls() {
   counter.textContent = `${input.value.length}/${Chat.MAX_MESSAGE_CHARS}`;
   sendButton.hidden = Boolean(pending);
   stopButton.hidden = !pending;
-  sendButton.disabled = !Chat.canSend(input.value) || Date.now() < blockedUntil;
+  sendButton.disabled = !Chat.canSend(input.value);
   clearButton.disabled = !pending && !log.children.length;
 }
 
 async function ask() {
   const question = input.value.trim();
-  if (pending || !Chat.canSend(question) || Date.now() < blockedUntil) return;
+  if (pending || !Chat.canSend(question)) return;
   const keepFocus = document.activeElement === sendButton || document.activeElement === input;
   clearNotice();
   const request = {
@@ -253,7 +251,7 @@ stopButton.addEventListener("click", stop);
 
 clearButton.addEventListener("click", () => {
   reset();
-  if (!countdown || !countdown.rateLimited) clearNotice(); // a 429 still holds on the server
+  if (!countdown || !countdown.rateLimited) clearNotice(); // a 429 still holds on the server for ordinary questions
   updateControls();
   input.focus();
   speak(announcer, "Conversation cleared.");

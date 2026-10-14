@@ -3,7 +3,8 @@ model or the real Ollama client on a mock server. No database (the user and the 
 injected; test_chat_api_db.py covers real sign-in) and no Ollama.
 
 Every status code; the NDJSON events; templates served with Ollama down; the limits (429
-and the one-generation 503 across real concurrent requests); the client going away closing
+and the one-generation 503 across real concurrent requests; templates past the model's
+limits, with their own); the client going away closing
 the model's stream; the startup probe; and one metadata-only log line on every path.
 """
 
@@ -255,6 +256,143 @@ def test_429_after_a_hundred_a_day(h, client):
         clock.now += 61
     response = post(client, OFF_TOPIC)
     assert response.status_code == 429 and int(response.headers["retry-after"]) == 86400 - 100 * 61
+
+
+# Red-flag templates past the model's limits (Unit 5): their own counter, checked before the
+# model's; ordinary questions are limited exactly as before.
+CRISIS = "I want to die because of my acne"
+
+
+def use_up_the_models_limit(client):
+    for _ in range(10):
+        assert post(client, OFF_TOPIC).status_code == 200
+    assert post(client, OFF_TOPIC).status_code == 429
+
+
+def assert_template(response, name):
+    assert response.status_code == 200
+    evs = events(response)
+    assert evs[0]["route"] == "template" and evs[-1] == {"type": "end", "reason": "template"}
+    assert " ".join(texts(evs)) == cfg.TEMPLATES[name]["text"]
+
+
+def test_a_crisis_message_after_ten_a_minute_still_gets_its_template(h, client):
+    use_up_the_models_limit(client)
+    assert_template(post(client, CRISIS), "crisis")
+    assert_template(post(client, RED_FLAG), "emergency_allergy")
+    assert h.llm.calls == [] and h.loaded == 10  # a template never reads the profile
+    assert post(client, OFF_TOPIC).status_code == 429  # ordinary questions are still limited
+
+
+def test_a_red_flag_after_a_hundred_a_day_still_gets_its_template(h, client):
+    clock = SimpleNamespace(now=0.0)
+    h.limits.rate.clock = h.limits.template_rate.clock = lambda: clock.now
+    for _ in range(100):
+        assert post(client, OFF_TOPIC).status_code == 200
+        clock.now += 61
+    assert post(client, OFF_TOPIC).status_code == 429
+    assert_template(post(client, CRISIS), "crisis")
+
+
+def test_a_red_flag_in_the_history_still_gets_its_template_after_the_limit(h, client):
+    use_up_the_models_limit(client)
+    history = [{"role": "user", "content": "I've been thinking about suicide"}, {"role": "assistant", "content": "Noted."}]
+    assert_template(post(client, "Which sunscreen should I buy?", history), "crisis")
+    assert post(client, "Which sunscreen should I buy?").status_code == 429
+
+
+def test_templates_have_their_own_limit_and_never_use_the_models(h, client):
+    for _ in range(30):
+        assert_template(post(client, RED_FLAG), "emergency_allergy")
+    response = post(client, RED_FLAG)
+    assert response.status_code == 429 and response.json() == {"detail": cfg.RATE_LIMITED_TEXT}
+    assert 1 <= int(response.headers["retry-after"]) <= 60
+    assert h.loaded == 0 and h.llm.calls == []
+    for _ in range(10):  # all ten of the model's minute are still there
+        assert post(client).status_code == 200
+    assert post(client).status_code == 429
+
+
+def test_busy_and_over_the_limit_a_red_flag_still_gets_its_template(h, client):
+    use_up_the_models_limit(client)
+    assert h.limits.slot.try_acquire()  # another answer is being generated
+    assert_template(post(client, CRISIS), "crisis")
+    assert post(client).status_code == 429  # an ordinary question: the limit comes before busy, as before
+    h.limits.slot.release()
+
+
+def test_with_ollama_down_and_over_the_limit_a_red_flag_still_gets_its_template(h, client):
+    use_up_the_models_limit(client)
+    h.llm = FakeLLM(available=False)
+    assert_template(post(client, CRISIS), "crisis")
+    assert post(client).status_code == 429  # an ordinary question: still the 429, not the 503
+    assert h.llm.availability_checks == 0
+
+
+def spy(limiter) -> list:
+    """Records every key the limiter is asked to count, whether or not it allows it."""
+    calls, real = [], limiter.hit
+
+    def hit(key):
+        calls.append(key)
+        return real(key)
+
+    limiter.hit = hit
+    return calls
+
+
+MOLE = "my mole is itchy and changing colour"
+
+
+def exchanges(*user_turns: str) -> list[dict]:
+    return [m for t in user_turns for m in ({"role": "user", "content": t}, {"role": "assistant", "content": "Noted."})]
+
+
+# The oldest user turn of three exchanges (the most the API takes), the message, and what both
+# the endpoint's limit and the pipeline's route must make of them.
+ROUTE_PARITY = {
+    "self-harm in the oldest turn": ("I've been thinking about suicide", "Which sunscreen should I buy?", True),
+    "pregnancy in the oldest turn, retinol now": ("I'm pregnant", "Can I keep using my retinol serum?", True),
+    "a mole in the oldest turn (a caution line only)": (MOLE, "Which sunscreen should I buy?", False),
+    "nothing": ("I have oily skin", "Which sunscreen should I buy?", False),
+}
+
+
+@pytest.mark.parametrize("case", ROUTE_PARITY)
+def test_the_endpoint_and_the_pipeline_make_the_same_template_decision(h, client, case):
+    oldest, message, template = ROUTE_PARITY[case]
+    model_counted, template_counted = spy(h.limits.rate), spy(h.limits.template_rate)
+    evs = events(post(client, message, exchanges(oldest, "ok", "thanks")))
+    assert len(model_counted) + len(template_counted) == 1
+    assert bool(template_counted) == (evs[0]["route"] == "template") == template
+    cautions = [e["text"] for e in evs if e["type"] == "caution"]
+    assert cautions == ([cfg.CAUTIONS["mole"]["text"]] if oldest == MOLE else [])  # the oldest turn was read
+
+
+def test_more_than_three_exchanges_is_refused_before_anything_routes_or_counts(h, client):
+    model_counted, template_counted = spy(h.limits.rate), spy(h.limits.template_rate)
+    history = exchanges("I've been thinking about suicide", "ok", "thanks", "and another")  # the flag only in the oldest
+    assert post(client, "Which sunscreen should I buy?", history).status_code == 422
+    assert model_counted == template_counted == [] and h.loaded == 0 and h.llm.calls == []
+
+
+def test_a_non_template_message_never_counts_toward_the_templates_limit(h, client):
+    model_counted, template_counted = spy(h.limits.rate), spy(h.limits.template_rate)
+    assert client.post("/api/chat", content=b"{").status_code == 422  # not counted at all
+    assert events(post(client))[0]["route"] == "model"
+    assert events(post(client, OFF_TOPIC))[0]["route"] == "no_answer"
+    soft = events(post(client, "My retinol serum stings a little after I put it on"))
+    assert soft[0]["route"] != "template" and any(e["type"] == "caution" for e in soft)  # a soft flag
+    mole = events(post(client, "Which sunscreen should I buy?", exchanges(MOLE)))
+    assert mole[0]["route"] != "template" and any(e["type"] == "caution" for e in mole)  # a flag in history only
+    assert h.limits.slot.try_acquire()
+    assert post(client).status_code == 503  # busy
+    h.limits.slot.release()
+    h.llm = FakeLLM(available=False)
+    for _ in range(5):
+        assert post(client).status_code == 503  # unavailable
+    assert post(client).status_code == 429  # the eleventh: over the model's limit
+    assert template_counted == [] and len(model_counted) == 11
 
 
 # --- 503 ------------------------------------------------------------------------------------
@@ -518,6 +656,10 @@ def _case(name, h, monkeypatch):
         for _ in range(10):
             h.limits.rate.hit(USER_ID)
         return message, 429, "rate_limited"
+    if name == "rate_limited_template":
+        for _ in range(30):
+            h.limits.template_rate.hit(USER_ID)
+        return f"{SENTINEL} my lips are swelling", 429, "rate_limited_template"
     if name == "invalid":
         return message + "x" * cfg.MAX_MESSAGE_CHARS, 422, "invalid"
     if name == "too_large":
@@ -526,7 +668,7 @@ def _case(name, h, monkeypatch):
 
 
 LOG_PATHS = ("template", "unavailable", "line", "coverage", "ingredient", "context", "answered", "answered_ollama", "gate",
-             "no_answer_model", "stream_error", "busy", "rate_limited", "invalid", "too_large")
+             "no_answer_model", "stream_error", "busy", "rate_limited", "rate_limited_template", "invalid", "too_large")
 
 
 @pytest.mark.parametrize("name", LOG_PATHS)

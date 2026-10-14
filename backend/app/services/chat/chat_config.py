@@ -13,7 +13,7 @@ settings below.
 from app.services.questionnaire.questionnaire_config import PRESCRIPTION_RETINOID_TERMS
 from app.services.recommendation.routine_config import RETINOID_CAUTION
 
-CHAT_CONFIG_VERSION = "chat-1.5.0"
+CHAT_CONFIG_VERSION = "chat-1.6.0"
 
 # ======================================================================================
 # Knowledge base (kb/kb.json): what a chunk must hold to load
@@ -602,6 +602,11 @@ MAX_DRAINED_BYTES = 64 * 1024  # read (and dropped) past the cap, so the client 
 MAX_HISTORY_ASSISTANT_CHARS = 3000
 # Per user, in this process's memory (it resets on restart): (window in seconds, requests).
 RATE_LIMITS = ((60, 10), (24 * 60 * 60, 100))
+# Red-flag templates have their own counter (Unit 5): they never reach the model, so the
+# model's limits don't apply to them, and a person in crisis is never refused a template
+# because of earlier questions. Three times the model's limits: one message every 2 s for a
+# whole minute, which no one typing reaches; a template costs no model, slot or profile read.
+TEMPLATE_RATE_LIMITS = ((60, 30), (24 * 60 * 60, 300))
 # One GPU: one answer is generated at a time. Others get a 503 with Retry-After (templates
 # and the fixed "I don't know" need no model and are still served).
 MAX_CONCURRENT_GENERATIONS = 1

@@ -1,7 +1,8 @@
-"""Per-user rolling limits (10 a minute, 100 a day) and the one generation slot."""
+"""Per-user rolling limits (10 a minute, 100 a day; templates 30 and 300) and the one
+generation slot."""
 
 from app.services.chat import chat_config as cfg
-from app.services.chat.limits import GenerationSlot, RateLimiter
+from app.services.chat.limits import ChatLimits, GenerationSlot, RateLimiter
 
 
 class Clock:
@@ -14,6 +15,17 @@ class Clock:
 
 def test_the_configured_limits():
     assert cfg.RATE_LIMITS == ((60, 10), (86400, 100)) and cfg.MAX_CONCURRENT_GENERATIONS == 1
+    assert cfg.TEMPLATE_RATE_LIMITS == ((60, 30), (86400, 300))
+
+
+def test_templates_and_the_model_count_separately():
+    limits = ChatLimits()
+    assert limits.rate.limits == cfg.RATE_LIMITS and limits.template_rate.limits == cfg.TEMPLATE_RATE_LIMITS
+    for _ in range(10):
+        limits.rate.hit("u1")
+    assert limits.rate.hit("u1") is not None
+    assert all(limits.template_rate.hit("u1") is None for _ in range(30))
+    assert limits.template_rate.hit("u1") is not None and limits.rate.hit("u2") is None
 
 
 def test_ten_a_minute_then_the_wait_until_the_oldest_leaves_the_window():
