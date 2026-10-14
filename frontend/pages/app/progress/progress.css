@@ -1,1 +1,82 @@
-/* Progress page styles — supplements /static/css/main.css. Nothing page-specific yet. */
+/* Progress page styles — supplements /static/css/main.css. A table, no chart. */
+
+.progress {
+  max-width: 720px;
+  margin-top: 16px;
+}
+
+.progress-heading {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+}
+
+.progress-legend {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* The table scrolls sideways inside its own box on narrow screens, never the page. */
+.progress-table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.progress-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.progress-table caption {
+  padding: 10px 12px 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.progress-table th,
+.progress-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.progress-table thead th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.progress-table tbody th {
+  font-weight: 600;
+}
+
+.progress-table tbody tr:last-child > * {
+  border-bottom: none;
+}
+
+.progress-rescan {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+}
+
+.progress-notes {
+  max-width: 720px;
+  margin: 24px 0 0;
+  padding: 10px 14px;
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.progress-notes p {
+  margin: 0;
+}
+
+.progress-notes p + p {
+  margin-top: 6px;
+}
