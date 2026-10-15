@@ -30,7 +30,7 @@ with ingredient-conflict checks and a reason for every product left out, and a *
 answers skincare questions from a small knowledge base and the user's own profile. It replaces
 guesswork and generic advice with a routine built for this person.
 
-MSc Data Science project, NMIMS NSOMASA, Mumbai. The spec's evaluation plan (§9) names usability
+MSc Data Science project, NMIMS NSoMASA, Mumbai. The spec's evaluation plan (§9) names usability
 sessions and a trust score above 4/5 as product measures.
 
 ## Positioning
@@ -105,9 +105,25 @@ questionnaire, the routine is rule-based, and the ranker uses hand-set weights, 
 
 - A range of Indian skin tones, showing real, unretouched skin.
 - Nothing that implies a result: no before/after pairs, no flawless "after" skin.
-- No stock models posing with products.
-- Every image is self-hosted (served from `/static`, like everything else), and its source and
-  licence are recorded in a credits file.
+- Team-owned photos and video of people who agreed to appear, including close-ups of a product
+  being applied to skin, are allowed on the landing page, About, Contact, Dashboard, Skin
+  Profile, Routine, Catalog and Settings. No packaging, brand, logo or on-screen text may be
+  visible, and no shot may suggest a result.
+- Stock photos only as listed here: two photos from Canva's library (licence as the team
+  recorded it: Open-To-Use), each a close-up of a cream being applied to a cheek, as the photo
+  backgrounds and the About and Contact header band (`docs/redesign.md` §5). Whether they were
+  retouched isn't known. No other stock models posing with products.
+- One licensed film: Dove (Unilever), "Your skin. Our planet.", used with written permission for
+  this project (granted 15 October 2026; academic project only; use as is only; the email is kept
+  outside the repository). Wherever it appears it carries the visible credit "Video: Dove, used
+  with permission", and no wording may suggest that Dove endorses or partners with PureSkin. It
+  isn't used today: "as is" rules out the planned hero (`docs/redesign.md` §4).
+- Full-page photo backgrounds sit behind solid cards. Only large ink text or an ink link sits on
+  a photo, and each photo is cropped, blurred and washed with the page ground until ink measures
+  at least 4.5:1 at its darkest point.
+- Every image and video is self-hosted (served from `/static`, like everything else), and its
+  source and licence or permission are recorded in a credits file, never as "own work" unless
+  the team made it.
 
 ## Evidence on Hand
 

@@ -1,6 +1,6 @@
 # PureSkin — Project Specification
 
-AI-driven personalized skincare platform. MSc Data Science project, NMIMS NSOMASA.
+AI-driven personalized skincare platform. MSc Data Science project, NMIMS NSoMASA.
 
 ## 1. Overview
 

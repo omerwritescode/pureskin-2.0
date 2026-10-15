@@ -34,15 +34,22 @@ tabular figures).
 
 ## Photos and video
 
-None has been supplied yet. Each slot is wired to the path below and shows a plain
-chip-colour block until its file is dropped into `frontend/static/media/`.
+None is served yet. Each slot is wired to the path below and shows a plain chip-colour
+block until its file is dropped into `frontend/static/media/`.
 
-Rules for every file:
+Rules for team-shot photos and video:
 
 - A real adult (18+) who gave written consent. The consent forms are kept outside this
   repository, and nothing here names the person.
 - Natural daylight. No retouching, smoothing, filters, beauty mode or portrait mode. No
-  products in the frame, no before/after pairs, no stock models.
+  packaging, brand, logo or on-screen text in the frame (a product being applied is fine), no
+  before/after pairs, no stock models.
+
+Licensed media: only the files `PRODUCT.md` (Imagery) names. Each row gives its source and
+licence or permission, never "own work".
+
+Rules for every file:
+
 - GPS and other metadata stripped on export.
 - One row per file below: what it shows, who made it, the date, and the licence or
   permission.
@@ -56,3 +63,7 @@ Rules for every file:
 | M4 Pigmentation | `media/m4-pigmentation.jpg` | not supplied yet | | |
 | M5 Pores | `media/m5-pores.jpg` | not supplied yet | | |
 | G1-G3 selfie guide (optional) | `media/g1-light-window.jpg`, `media/g2-light-backlit.jpg`, `media/g3-light-overhead.jpg` | not supplied yet | | |
+| B1 photo background (Dashboard, Skin Profile, Routine, Catalog, product detail) | `media/backdrop-1-desktop.{webp,jpg}`, `media/backdrop-1-phone.{webp,jpg}` | supplied, not processed yet (Unit 4b) | Canva library: a close-up of a cream being applied under a closed eye (stock) | Open-To-Use, as recorded by the team |
+| B2 photo background (Settings hub, Account, Privacy) | `media/backdrop-2-desktop.{webp,jpg}`, `media/backdrop-2-phone.{webp,jpg}` | supplied, not processed yet (Unit 4b) | Canva library: a close-up of a cream being applied to a cheek (stock) | Open-To-Use, as recorded by the team |
+| A1 header band (About, Contact) | `media/band-desktop.{webp,jpg}`, `media/band-phone.{webp,jpg}` | supplied, not processed yet (Unit 1c) | the B2 photo, a clear crop | as B2 |
+| Hero video | none | not served: the permission is for use as is only, so the planned hero is on hold (`docs/redesign.md` §4) | Dove (Unilever) | Film: Dove (Unilever), 'Your skin. Our planet.' Used with written permission for this project, granted 15th October, 2026. |

@@ -5,7 +5,7 @@ structured Skin Profile, which drives a rule-based AM/PM routine with ingredient
 checks. A chat answers skincare questions from a small knowledge base and the user's own
 profile, with a local model. A generative "4 weeks from now" preview is planned.
 
-MSc Data Science project, NMIMS NSOMASA, Mumbai.
+MSc Data Science project, NMIMS NSoMASA, Mumbai.
 
 > **Status:** in development. See [Build status](#build-status) for where things stand, and
 > [Deviations from the original spec](#deviations-from-the-original-spec) for what differs
@@ -310,4 +310,4 @@ an addendum at its end records these deviations:
 
 ## License
 
-Academic project — MSc Data Science, NMIMS NSOMASA.
+Academic project — MSc Data Science, NMIMS NSoMASA.
