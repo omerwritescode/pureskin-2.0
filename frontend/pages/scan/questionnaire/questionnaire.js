@@ -148,7 +148,9 @@ function tipsList() {
 
 nextButton.addEventListener("click", () => {
   if (!stepIsComplete(steps[current])) {
-    showError("Please choose an answer for each question to continue. \"Not sure\" is fine.");
+    // Only some questions offer "Not sure" (not the goal, sleep or stress): say so only there.
+    const offersNotSure = steps[current].querySelector(`input[value="${NOT_SURE}"]`);
+    showError("Please choose an answer for each question to continue." + (offersNotSure ? " \"Not sure\" is fine." : ""));
     return;
   }
   showStep(current + 1);

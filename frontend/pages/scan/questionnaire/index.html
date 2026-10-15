@@ -14,11 +14,16 @@
 <body>
   <header class="site-header"><div class="site-header__inner">PureSkin</div></header>
 
-  <main class="page">
-    <p class="scan-step">Step 2 of 3</p>
+  <main class="page page--funnel q-page">
+    <ol class="step-rail" aria-hidden="true">
+      <li>Selfie</li>
+      <li class="step-rail__current">Questions</li>
+      <li>Report</li>
+    </ol>
+    <p class="visually-hidden">Step 2 of 3</p>
     <h1 class="page__title">A few quick questions</h1>
-    <p class="q-intro">There are no right or wrong answers, and "Not sure" is always fine.
-      This isn't a medical assessment.</p>
+    <p class="q-intro">There are no right or wrong answers, and most questions have a "Not sure"
+      answer. This isn't a medical assessment.</p>
 
     <div class="q-progress" aria-hidden="true"><div class="q-progress__fill"></div></div>
     <p class="q-counter" aria-live="polite"></p>

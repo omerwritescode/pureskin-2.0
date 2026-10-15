@@ -1,57 +1,68 @@
-/* Skin Report — supplements /static/css/main.css (score bars and bands live there). */
-
-.report-type {
-  margin: 0 0 4px;
-  font-size: 1.05rem;
-}
-
-.report-tips {
-  max-width: 560px;
-  margin-top: 12px;
-}
-
-.report-heading {
-  margin: 16px 0 0;
-  font-size: 1.2rem;
-}
+/* Skin Report (/scan/report/): the five scores on a card (the strips and bands live in
+   main.css), and beside them from 1024px the skin type with the call to sign up, any notes
+   on the photo and how it was measured. Supplements /static/css/main.css. */
 
 .report-help {
-  max-width: 560px;
-  margin: 4px 0 12px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  margin: 0 0 var(--space-4);
+  color: var(--ink-2);
+  font-size: 0.92rem;
 }
 
-.report-method {
-  max-width: 560px;
-  margin: 8px 0 0;
-  padding: 10px 12px;
-  background: var(--accent-soft);
-  border-radius: var(--radius);
-  font-size: 0.9rem;
+.report-scores .scores {
+  max-width: none;
+  margin-bottom: 0;
 }
 
-.report-method summary {
-  cursor: pointer;
-  font-weight: 600;
+.report-side {
+  display: grid;
+  gap: var(--stack);
 }
 
-.report-method ul {
-  margin: 8px 0 0;
-  padding-left: 20px;
+.report-type {
+  margin: 0 0 var(--space-1);
+  font-size: 1.15rem;
 }
 
+.report-summary .sensitive-indicator {
+  margin-bottom: 0;
+}
+
+/* The call to sign up, under a hairline in the same slip. */
 .report-cta {
-  max-width: 560px;
-  margin-top: 28px;
-  text-align: center;
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--rule);
 }
 
 .report-cta .btn {
-  display: block;
+  width: 100%;
 }
 
 .report-login {
-  margin: 12px 0 0;
-  color: var(--muted);
+  margin: var(--space-3) 0 0;
+  color: var(--ink-2);
+}
+
+.report-tips {
+  margin: 0;
+}
+
+.report-method {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink-2);
+  font-size: 0.92rem;
+}
+
+.report-method summary {
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.report-method ul {
+  margin: var(--space-2) 0 0;
+  padding-left: 20px;
 }

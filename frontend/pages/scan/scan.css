@@ -1,17 +1,56 @@
-/* Selfie Capture — supplements /static/css/main.css. */
+/* Selfie (/scan/): guidance and controls beside the camera from 900px; on phones one column
+   (guidance, camera, controls). The camera is a card-stock slip with a window, like the
+   swatch window of a shade card. Supplements /static/css/main.css. */
+
+.selfie {
+  display: grid;
+  grid-template-areas:
+    "intro"
+    "camera"
+    "flow";
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.selfie__intro {
+  grid-area: intro;
+}
+
+.selfie__camera {
+  grid-area: camera;
+}
+
+.selfie__flow {
+  grid-area: flow;
+}
+
+.selfie__lede {
+  max-width: 46ch;
+  margin: 0;
+  color: var(--ink-2);
+}
+
+/* ---- The camera ------------------------------------------------------------- */
 
 .camera {
+  max-width: 26rem;
+  padding: var(--space-3);
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--lift);
+}
+
+.camera__window {
   position: relative;
-  width: 100%;
-  max-width: 480px;
   aspect-ratio: 3 / 4;
-  margin: 20px 0 16px;
   overflow: hidden;
-  background: #2a2f2c;
   border-radius: var(--radius);
+  background: var(--band-off);
 }
 
 .camera__view {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -22,74 +61,100 @@
   transform: scaleX(-1);
 }
 
+/* Before there's a photo: a face-shaped guide and one line. */
 .camera__idle {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #c9cfcb;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  color: var(--ink-2);
+  text-align: center;
 }
 
-.scan-error {
-  max-width: 480px;
-  margin: 0 0 16px;
-  padding: 12px;
-  border-radius: var(--radius);
-  background: #fbeceb;
-  color: #8c1d18;
+.camera__idle p {
+  margin: 0;
+  font-size: 0.95rem;
 }
+
+.camera__guide {
+  width: 52%;
+  aspect-ratio: 3 / 4;
+  border: 2px dashed var(--control);
+  border-radius: 50%;
+}
+
+/* ---- Controls: the camera and the upload side by side ------------------------- */
 
 .scan-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  max-width: 480px;
+  gap: var(--space-2);
 }
 
-.scan-actions .btn {
-  flex: 1 1 140px;
+/* Full width and stacked on phones; two to a row from about 400px. */
+.scan-actions > * {
+  flex: 1 1 12rem;
 }
 
 .upload {
-  max-width: 480px;
-  margin-top: 20px;
-  padding: 16px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
+  display: flex;
 }
 
-.upload__label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
+.upload__button {
+  flex: 1;
 }
 
-.upload input {
-  max-width: 100%;
+/* The file input stays in the page, invisible, so the keyboard and screen readers reach
+   it; its focus ring is drawn on the label beside it. */
+.upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-/* Photo check (7b-ii): "checking", the retake screen and the gentle tip. */
+.upload__input:focus-visible + .upload__button {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.privacy-note {
+  max-width: 46ch;
+  margin: var(--space-3) 0 0;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+
+/* ---- The photo check: checking, errors, the retake screen, the gentle tip ----------- */
+
 .photo-checking {
-  max-width: 480px;
-  margin: 0 0 16px;
-  color: var(--accent);
+  margin: 0 0 var(--space-4);
   font-weight: 600;
+}
+
+.scan-error {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--error);
 }
 
 .retake {
-  max-width: 480px;
-  margin: 0 0 16px;
-  padding: 16px;
-  background: #fbeceb;
-  border-radius: var(--radius);
-  color: #5c1612;
+  margin: 0 0 var(--space-4);
 }
 
 .retake__title {
-  margin: 0 0 8px;
-  font-size: 1.15rem;
+  margin: 0 0 var(--space-2);
+  font-size: 1.35rem;
+  font-stretch: 106%;
+  line-height: 1.15;
 }
 
 .retake__title:focus {
@@ -98,33 +163,43 @@
 
 .retake__issues,
 .retake__tips {
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-2);
   padding-left: 20px;
 }
 
+.retake__issues {
+  font-weight: 600;
+}
+
+.retake__tips {
+  color: var(--ink-2);
+}
+
 .retake__kept {
-  margin: 8px 0;
+  margin: var(--space-3) 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
   font-weight: 600;
 }
 
 .retake__tips-title {
-  margin: 12px 0 4px;
-  font-weight: 600;
+  margin: var(--space-3) 0 var(--space-1);
+  font-weight: 700;
 }
 
 .photo-tip {
-  max-width: 480px;
-  margin: 0 0 16px;
-  padding: 12px 14px;
-  background: #fff6e5;
-  border: 1px solid #f0d9a8;
+  margin: 0 0 var(--space-4);
+  padding: 14px var(--space-4);
+  border: 1px solid var(--notice-rule);
   border-radius: var(--radius);
-  color: #5c4100;
+  background: var(--notice-bg);
+  color: var(--notice-ink);
 }
 
 .photo-tip__title {
   margin: 0 0 6px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .photo-tip ul {
@@ -132,9 +207,19 @@
   padding-left: 20px;
 }
 
-.privacy-note {
-  max-width: 480px;
-  margin: 12px 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
+/* ---- Laptops: guidance and controls on the left, the camera on the right ----------- */
+
+@media (min-width: 900px) {
+  .selfie {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "intro camera"
+      "flow camera";
+    column-gap: var(--space-7);
+  }
+
+  .scan-actions {
+    max-width: 30rem;
+  }
 }

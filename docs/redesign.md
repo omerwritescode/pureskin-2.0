@@ -14,10 +14,11 @@ tests"). Unit 3 is done: the auth page (commit "Frontend redesign (3): auth page
 page, About and Contact pages, photo backgrounds and more Dashboard and Settings content
 (section 6). The approved order of the remaining units is **1b → 1c → 4 → 4b → 5a → 5b → 5c
 → 6 → 1d → 7**; 1d (the hero video) is on hold (section 4). Unit 1b (the shell revision) is
-done (`07b7565`); Unit 1c (the public header, About and Contact, the way home) is done (its
-commit: "Frontend redesign (1c): public header, About and Contact, the way home"). Next: Unit
-4, when the user says so. Every unit stops for the user's review at 360 px and 1440 px, then
-waits for a separate commit authorisation (section 9).
+done (`07b7565`); Unit 1c (the public header, About and Contact, the way home) is done
+(`a2fe7ee`); Unit 4 (the scan funnel) is done (its commit: "Frontend redesign (4): scan
+funnel"). Next: Unit 4b, when the user says so (it waits for the Canva licence check).
+Every unit stops for the user's review at 360 px and 1440 px, then waits for a separate
+commit authorisation (section 9).
 
 ## 1. The direction
 
@@ -548,6 +549,38 @@ feels cold.
     `test_storage_keys_are_defined_only_in_scan_guard`, `test_frontend_logic_in_node` (`scan-api.js`)
 - **Detector findings to clear:** the captured-photo `<img>` with no `src` until the script
   sets one, and the camera box with no inner padding.
+- **As built (2026-10-15), where it differs from the plan or adds to it:**
+  - **A funnel frame:** `--container-funnel` (1024px) for the three pages and their header
+    (`.page--funnel`, `.site-header__inner`). The step rail (`.step-rail`, in `main.css`)
+    is three chips, the current one ink, `aria-hidden`; "Step n of 3" is a visually hidden
+    paragraph beside it. `.scan-step` is gone.
+  - **Selfie:** guidance and controls on the left, the camera on the right from 900px (one
+    column on phones: guidance, camera, controls). The camera is a card slip with a window
+    (`--band-off` until there is a picture) and a dashed face guide; "Camera is off" became
+    "Your photo will show here." "Use your camera" (was "Start camera") and "Upload a photo"
+    are two equal action buttons from the start, stacked on phones; while the camera is
+    live, Capture comes first and the upload turns outlined. The file input stays in the
+    page (focusable, invisible) behind its button-styled label, which draws its focus ring.
+  - **`scan.js`:** `show()` also shows or hides the upload, a `source` flag ("camera" or
+    "upload") decides what Retake does, and the captured photo's `<img>` is made only when
+    there is a photo (the detector's empty-`src` finding). Its messages, endpoints, the
+    photo check and the storage keys are unchanged.
+  - **Questionnaire:** one centred 40rem column. Each answer is a chip (a white slip with a
+    `--control` edge), and the chosen one turns ink with a white mark; the native input
+    stays over the whole chip, invisible, so clicks, the keyboard and screen readers reach
+    it, and the chip shows its focus ring. From 600px the goal and the two checkbox lists
+    share rows two by two; the scales stay one per row, in order. The intro now says "most
+    questions have a "Not sure" answer"; the "please answer" message mentions "Not sure"
+    only on steps that offer it (`questionnaire.js`, one line).
+  - **Report:** the scores on a card; beside them from 1024px (`.split`), the skin type with
+    the call to sign up in one slip, then any photo notes and "How this was measured".
+  - **The landing's and About's selfie sentence:** "Take one with your camera, or upload a
+    photo you already have: either works."
+  - **Tokens:** the three funnel stylesheets use no alias and no colour literal except
+    `#ffffff` (white on an ink chip, as in `main.css`). Errors are `--error` on a white slip
+    with a 1px `--error` edge; the photo tip uses the notice tokens.
+  - **Not done:** the optional G1–G3 light guide (no photos).
+  - **Detector:** no findings on the funnel's files, the landing or About.
 
 **Unit 4b: photo backgrounds (the haze).**
 - **Files:** B1 and B2 (section 5) in `frontend/static/media/`, made with Pillow (crop, blur,
@@ -710,17 +743,17 @@ heuristics, not clinical; the catalog is not "verified"; the chat is not medical
 
 `main.css` maps the old token names onto B's tokens, so pages not yet restyled keep working.
 Each goes when the last stylesheet using it is restyled; Unit 7's check (section 6) enforces
-that. Usage as of Unit 3 (paths under `frontend/pages/`):
+that. Usage as of Unit 4 (paths under `frontend/pages/`; the funnel's stylesheets use none):
 
 | Alias | Maps to | Still used in |
 |---|---|---|
 | `--bg` | `--ground` | `app/chat/chat.css`, `app/settings/settings.css` |
-| `--surface` | `--card` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
+| `--surface` | `--card` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/settings/settings.css` |
 | `--text` | `--ink` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/routine/routine.css`, `app/settings/settings.css` |
-| `--muted` | `--ink-2` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/report/report.css`, `scan/scan.css` |
-| `--border` | `--rule` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
-| `--accent` | `--ink` | `app/catalog/catalog.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
-| `--accent-soft` | `--band-off` | `app/chat/chat.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `scan/questionnaire/questionnaire.css`, `scan/report/report.css` |
+| `--muted` | `--ink-2` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css` |
+| `--border` | `--rule` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css` |
+| `--accent` | `--ink` | `app/catalog/catalog.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css` |
+| `--accent-soft` | `--band-off` | `app/chat/chat.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css` |
 
 Since Unit 3, `auth/auth.css` loads after `main.css` and uses none of these aliases; its own
 `:root` with the old sage-green values is gone.
@@ -730,8 +763,6 @@ to replace with tokens in their units:
 - `app/chat/chat.css`: `#5c4100`, `#8a3a06`, `#8c1d18`, `#b54708`, `#f0d9a8`, `#fff6e5`
 - `app/routine/routine.css`: `#5c4100`, `#f0d9a8`, `#fff6e5`
 - `app/settings/settings.css`: `#8c1d18`, `#e3b3ae`
-- `scan/questionnaire/questionnaire.css`: `#8c1d18`
-- `scan/scan.css`: `#2a2f2c`, `#5c1612`, `#5c4100`, `#8c1d18`, `#c9cfcb`, `#f0d9a8`, `#fbeceb`, `#fff6e5`
 
 ## 9. Working rules
 

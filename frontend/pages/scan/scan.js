@@ -1,5 +1,6 @@
 // Selfie Capture: live camera preview -> capture -> photo check -> /scan/questionnaire/.
-// Falls back to a file upload if the camera is unavailable or permission is denied.
+// The camera and a file upload are equal ways in, both offered from the start: a phone
+// that opens PureSkin over plain HTTP gets no camera, so upload is how it scans.
 //
 // Every photo (camera or upload) is checked right away with POST
 // /api/services/image/analyze, so an unusable photo gets a retake screen here instead
@@ -15,7 +16,7 @@ const MAX_SIDE = 720;       // px; the analyzer works at this resolution anyway
 const JPEG_QUALITY = 0.92;  // 7b-ii: up from 0.85 (see the image analysis README)
 
 const video = document.getElementById("camera-video");
-const photo = document.getElementById("camera-photo");
+const cameraWindow = document.getElementById("camera-window");
 const idle = document.getElementById("camera-idle");
 const canvas = document.getElementById("capture-canvas");
 const errorBox = document.getElementById("scan-error");
@@ -27,8 +28,9 @@ const retakeTips = document.getElementById("retake-tips");
 const retakeKept = document.getElementById("retake-kept");
 const photoTip = document.getElementById("photo-tip");
 const photoTipList = document.getElementById("photo-tip-list");
-const fallback = document.getElementById("upload-fallback");
+const uploadOption = document.getElementById("upload-option");
 const uploadInput = document.getElementById("upload-input");
+const uploadButton = uploadOption.querySelector(".upload__button");
 const buttons = {
   start: document.getElementById("start-camera"),
   capture: document.getElementById("capture"),
@@ -40,15 +42,37 @@ const buttons = {
 let stream = null;
 let capturedImage = null; // base64 data URL of the photo awaiting confirmation
 let photoApproved = false; // set only by a successful photo check
+let source = null; // "camera" or "upload": where the current photo came from
+let photo = null; // the captured photo's <img>, made once there is a photo
 
+// The controls to show; "upload" is the file upload, offered beside the camera. It is the
+// camera's equal, except while the camera is live: then Capture is the action and the
+// upload steps back to the outlined style.
 function show(...visible) {
   for (const [name, button] of Object.entries(buttons)) button.hidden = !visible.includes(name);
+  uploadOption.hidden = !visible.includes("upload");
+  uploadButton.classList.toggle("btn--secondary", visible.includes("capture"));
 }
 
 function showError(message, { offerUpload = true } = {}) {
   errorBox.textContent = message;
   errorBox.hidden = false;
-  if (offerUpload) fallback.hidden = false;
+  if (offerUpload) uploadOption.hidden = false;
+}
+
+// An <img> without a src draws as a broken image, so it's only made for a real photo.
+function photoElement() {
+  if (!photo) {
+    photo = document.createElement("img");
+    photo.className = "camera__view";
+    photo.alt = "Your captured photo";
+    cameraWindow.append(photo);
+  }
+  return photo;
+}
+
+function hidePhoto() {
+  if (photo) photo.hidden = true;
 }
 
 function fillList(list, items) {
@@ -91,11 +115,11 @@ async function startCamera() {
   clearMessages();
   capturedImage = null;
   photoApproved = false;
-  photo.hidden = true;
+  hidePhoto();
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     // Also happens on plain-http pages other than localhost (camera needs a secure context).
-    show();
+    show("upload");
     showError("This browser can't open the camera here. You can upload a photo instead.");
     return;
   }
@@ -108,7 +132,7 @@ async function startCamera() {
     });
   } catch (error) {
     buttons.start.disabled = false;
-    show("start");
+    show("start", "upload");
     showError(cameraErrorMessage(error));
     return;
   }
@@ -117,7 +141,7 @@ async function startCamera() {
   video.srcObject = stream;
   video.hidden = false;
   idle.hidden = true;
-  show("capture");
+  show("capture", "upload"); // a file can still be chosen instead
 }
 
 // Draw a video frame or image onto the canvas, scaled down to MAX_SIDE, and return a JPEG data URL.
@@ -132,8 +156,9 @@ function toDataUrl(source, width, height) {
 function showCaptured(dataUrl) {
   capturedImage = dataUrl;
   photoApproved = false;
-  photo.src = dataUrl;
-  photo.hidden = false;
+  const img = photoElement();
+  img.src = dataUrl;
+  img.hidden = false;
   video.hidden = true;
   idle.hidden = true;
   checkPhoto();
@@ -173,6 +198,7 @@ function capture() {
   if (!video.videoWidth) return; // camera not ready yet
   const dataUrl = toDataUrl(video, video.videoWidth, video.videoHeight);
   stopCamera();
+  source = "camera";
   showCaptured(dataUrl);
 }
 
@@ -187,6 +213,7 @@ function useUploadedFile(file) {
   img.onload = () => {
     clearMessages();
     stopCamera();
+    source = "upload";
     showCaptured(toDataUrl(img, img.naturalWidth, img.naturalHeight));
     URL.revokeObjectURL(url);
   };
@@ -214,14 +241,14 @@ function retake() {
   clearMessages();
   capturedImage = null;
   photoApproved = false;
-  if (fallback.hidden) {
+  if (source === "camera") {
     startCamera();
   } else {
-    // Came from the upload path — let them pick another file.
-    photo.hidden = true;
+    // An uploaded photo: back to the start, with both ways in.
+    hidePhoto();
     idle.hidden = false;
     uploadInput.value = "";
-    show("start");
+    show("start", "upload");
   }
 }
 
@@ -254,8 +281,7 @@ if (retakeIssuesFromSubmit) {
   fillList(retakeIssues, retakeIssuesFromSubmit);
   retakeScreen.hidden = false;
   retakeKept.hidden = false;
-  fallback.hidden = false; // camera or upload, whichever they used before
-  show("start");
+  show("start", "upload"); // camera or upload, whichever they like
   retakeHeading.focus();
 }
 buttons.start.addEventListener("click", startCamera);

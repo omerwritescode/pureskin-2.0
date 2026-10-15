@@ -15,37 +15,50 @@
 <body>
   <header class="site-header"><div class="site-header__inner">PureSkin</div></header>
 
-  <main class="page">
-    <p class="scan-step">Step 3 of 3</p>
+  <main class="page page--funnel">
+    <ol class="step-rail" aria-hidden="true">
+      <li>Selfie</li>
+      <li>Questions</li>
+      <li class="step-rail__current">Report</li>
+    </ol>
+    <p class="visually-hidden">Step 3 of 3</p>
     <h1 class="page__title">Your Skin Report</h1>
-    <p class="report-type">Skin type: <strong id="skin-type"></strong></p>
-    <div id="skin-type-extra"></div>
 
-    <div id="photo-tips" class="warning-box report-tips" hidden>
-      <h2 class="warning-box__title">About your photo</h2>
-      <ul id="photo-tip-list"></ul>
-    </div>
+    <!-- The scores on a card; beside them from 1024px (after them on phones) the skin type
+         and the call to sign up, any notes on the photo, and how it was measured. -->
+    <div class="split report">
+      <section class="card report-scores" aria-labelledby="scores-heading">
+        <h2 id="scores-heading" class="card__title">Scores</h2>
+        <p id="scores-help" class="report-help">Higher means more noticeable.</p>
+        <div id="scores"></div>
+      </section>
 
-    <section aria-labelledby="scores-heading">
-      <h2 id="scores-heading" class="report-heading">Scores</h2>
-      <p id="scores-help" class="report-help">Higher means more noticeable.</p>
-      <div id="scores"></div>
-    </section>
+      <div class="report-side">
+        <div class="card report-summary">
+          <p class="report-type">Skin type: <strong id="skin-type"></strong></p>
+          <div id="skin-type-extra"></div>
+          <div class="report-cta">
+            <a href="/auth/#signup" class="btn">Save your results — Sign Up</a>
+            <p class="report-login">Already have an account? <a href="/auth/">Log in</a></p>
+            <p class="report-login"><a href="/scan/">Start a new scan</a></p>
+          </div>
+        </div>
 
-    <details class="report-method">
-      <summary>How this was measured</summary>
-      <ul>
-        <li>Your scores combine your photo with your answers to the questions.</li>
-        <li>Lighting and your camera affect the photo-based scores, so a different photo can
-          give somewhat different numbers.</li>
-        <li>These are estimates to guide your routine, not a medical diagnosis.</li>
-      </ul>
-    </details>
+        <div id="photo-tips" class="warning-box report-tips" hidden>
+          <h2 class="warning-box__title">About your photo</h2>
+          <ul id="photo-tip-list"></ul>
+        </div>
 
-    <div class="report-cta">
-      <a href="/auth/#signup" class="btn">Save your results — Sign Up</a>
-      <p class="report-login">Already have an account? <a href="/auth/">Log in</a></p>
-      <p class="report-login"><a href="/scan/">Start a new scan</a></p>
+        <details class="report-method">
+          <summary>How this was measured</summary>
+          <ul>
+            <li>Your scores combine your photo with your answers to the questions.</li>
+            <li>Lighting and your camera affect the photo-based scores, so a different photo can
+              give somewhat different numbers.</li>
+            <li>These are estimates to guide your routine, not a medical diagnosis.</li>
+          </ul>
+        </details>
+      </div>
     </div>
   </main>
 

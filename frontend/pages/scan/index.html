@@ -14,50 +14,68 @@
 <body>
   <header class="site-header"><div class="site-header__inner">PureSkin</div></header>
 
-  <main class="page">
-    <p class="scan-step">Step 1 of 3</p>
-    <h1 class="page__title">Take a selfie</h1>
-    <p class="page__placeholder">
-      Face the camera in even, natural light, without makeup if you can.
-    </p>
-
-    <div class="camera">
-      <video id="camera-video" class="camera__view" autoplay playsinline muted hidden></video>
-      <img id="camera-photo" class="camera__view" alt="Your captured photo" hidden>
-      <div id="camera-idle" class="camera__idle">Camera is off</div>
+  <!-- Guidance and controls beside the camera from 900px; on phones guidance, camera,
+       controls. The camera and a file upload are equal ways in (PRODUCT.md). -->
+  <main class="page page--funnel selfie">
+    <div class="selfie__intro">
+      <ol class="step-rail" aria-hidden="true">
+        <li class="step-rail__current">Selfie</li>
+        <li>Questions</li>
+        <li>Report</li>
+      </ol>
+      <p class="visually-hidden">Step 1 of 3</p>
+      <h1 class="page__title">Take a selfie</h1>
+      <p class="selfie__lede">Use your camera, or upload a photo you already have: either works. The
+        photo works best with your face in even, natural light, without makeup if you can.</p>
     </div>
 
-    <p id="photo-checking" class="photo-checking" role="status" hidden>Checking your photo…</p>
-    <p id="scan-error" class="scan-error" role="alert" hidden></p>
-
-    <!-- Retake screen: a state of this page, shown when the photo can't be used. -->
-    <section id="retake-screen" class="retake" aria-labelledby="retake-heading" hidden>
-      <h2 id="retake-heading" class="retake__title" tabindex="-1">Let's try another photo</h2>
-      <ul id="retake-issues" class="retake__issues"></ul>
-      <p id="retake-kept" class="retake__kept" hidden>Your answers are kept: after a new photo
-        you'll go straight back to the last question.</p>
-      <p class="retake__tips-title">A few tips:</p>
-      <ul id="retake-tips" class="retake__tips"></ul>
-    </section>
-
-    <!-- Soft warnings: the photo can be used, but could be better. -->
-    <div id="photo-tip" class="photo-tip" role="status" hidden>
-      <p class="photo-tip__title">Your photo works. For an even better result next time:</p>
-      <ul id="photo-tip-list"></ul>
+    <div class="selfie__camera">
+      <div class="camera">
+        <!-- scan.js adds the captured photo's <img> here once there is a photo. -->
+        <div id="camera-window" class="camera__window">
+          <video id="camera-video" class="camera__view" autoplay playsinline muted hidden></video>
+          <div id="camera-idle" class="camera__idle">
+            <span class="camera__guide" aria-hidden="true"></span>
+            <p>Your photo will show here.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="scan-actions">
-      <button type="button" id="start-camera" class="btn">Start camera</button>
-      <button type="button" id="capture" class="btn" hidden>Capture</button>
-      <button type="button" id="continue" class="btn" hidden>Use this photo</button>
-      <button type="button" id="check-again" class="btn" hidden>Try again</button>
-      <button type="button" id="retake" class="btn btn--secondary" hidden>Retake</button>
-    </div>
-    <p class="privacy-note">Your photo is analysed in memory and never saved on our servers.</p>
+    <div class="selfie__flow">
+      <p id="photo-checking" class="photo-checking" role="status" hidden>Checking your photo…</p>
+      <p id="scan-error" class="scan-error" role="alert" hidden></p>
 
-    <div id="upload-fallback" class="upload" hidden>
-      <label for="upload-input" class="upload__label">Upload a photo instead</label>
-      <input id="upload-input" type="file" accept="image/*">
+      <!-- Retake screen: a state of this page, shown when the photo can't be used. -->
+      <section id="retake-screen" class="card retake" aria-labelledby="retake-heading" hidden>
+        <h2 id="retake-heading" class="retake__title" tabindex="-1">Let's try another photo</h2>
+        <ul id="retake-issues" class="retake__issues"></ul>
+        <p id="retake-kept" class="retake__kept" hidden>Your answers are kept: after a new photo
+          you'll go straight back to the last question.</p>
+        <p class="retake__tips-title">A few tips:</p>
+        <ul id="retake-tips" class="retake__tips"></ul>
+      </section>
+
+      <!-- Soft warnings: the photo can be used, but could be better. -->
+      <div id="photo-tip" class="photo-tip" role="status" hidden>
+        <p class="photo-tip__title">Your photo works. For an even better result next time:</p>
+        <ul id="photo-tip-list"></ul>
+      </div>
+
+      <div class="scan-actions">
+        <button type="button" id="start-camera" class="btn">Use your camera</button>
+        <button type="button" id="capture" class="btn" hidden>Capture</button>
+        <button type="button" id="continue" class="btn" hidden>Use this photo</button>
+        <button type="button" id="check-again" class="btn" hidden>Try again</button>
+        <button type="button" id="retake" class="btn btn--secondary" hidden>Retake</button>
+        <!-- The file input stays focusable (keyboard and screen readers); its label is the
+             button people see. -->
+        <div id="upload-option" class="upload">
+          <input id="upload-input" class="upload__input" type="file" accept="image/*">
+          <label for="upload-input" class="btn upload__button">Upload a photo</label>
+        </div>
+      </div>
+      <p class="privacy-note">Your photo is analysed in memory and never saved on our servers.</p>
     </div>
 
     <canvas id="capture-canvas" hidden></canvas>

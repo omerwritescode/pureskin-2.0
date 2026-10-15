@@ -76,6 +76,7 @@
      box (nav, headers, footer, page) is centred with its content exactly 1320px wide. */
   --container: 1320px;
   --container-narrow: 560px;  /* single forms */
+  --container-funnel: 1024px; /* the scan funnel's pages */
   --measure: 68ch;            /* running prose */
   --frame: calc(var(--container) + 2 * var(--gutter));
 
@@ -528,7 +529,9 @@ html[data-account="member"] .if-guest {
   cursor: not-allowed;
 }
 
-/* ---- Public header (scan funnel): the wordmark alone, no app nav ---------- */
+/* ---- The scan funnel: its header, frame and step rail ------------------------
+   The three funnel pages (selfie, questions, report) share a narrower frame and a header
+   with the wordmark alone, so the visitor stays on the task. */
 
 .site-header {
   background: var(--ground);
@@ -536,17 +539,52 @@ html[data-account="member"] .if-guest {
 
 .site-header__inner {
   display: flex;
-  max-width: var(--frame);
+  max-width: calc(var(--container-funnel) + 2 * var(--gutter));
   margin: 0 auto;
   padding: 18px var(--gutter) 6px;
 }
 
-/* "Step 1 of 3" above funnel page titles (the funnel's own unit replaces it). */
-.scan-step {
-  margin: 0 0 4px;
+.page--funnel {
+  max-width: calc(var(--container-funnel) + 2 * var(--gutter));
+}
+
+/* Where you are in the scan: three chips, the current one ink, like a score strip. It's
+   drawn for sighted visitors only (aria-hidden); screen readers hear the visually hidden
+   "Step n of 3" beside it. */
+.step-rail {
+  display: flex;
+  gap: 2px;
+  max-width: 22rem;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.step-rail li {
+  flex: 1 1 0;
+  padding: var(--space-1) 10px;
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--rule);
   color: var(--ink-2);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  font-stretch: 87.5%;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.step-rail li:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.step-rail li:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.step-rail .step-rail__current {
+  background: var(--ink);
+  box-shadow: none;
+  color: #ffffff;
 }
 
 /* ---- Cards: card-stock slips with a rivet hole --------------------------- */

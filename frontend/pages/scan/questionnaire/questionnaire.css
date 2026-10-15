@@ -1,156 +1,265 @@
-/* Questionnaire — supplements /static/css/main.css. */
+/* Questionnaire (/scan/questionnaire/): one centred column. Each answer is a chip, and the
+   chosen one turns ink, like the current band. The inputs, fieldsets, legends and the live
+   counter are the scorer's contract (app/tests/test_frontend_contract.py): only their look
+   changes here. Supplements /static/css/main.css. */
+
+.q-page {
+  max-width: calc(40rem + 2 * var(--gutter));
+}
+
+.q-intro {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--ink-2);
+}
+
+/* ---- Progress through the eight steps ------------------------------------------- */
 
 .q-progress {
-  max-width: 560px;
   height: 6px;
-  margin-top: 16px;
+  margin-top: var(--space-5);
   overflow: hidden;
-  background: var(--border);
   border-radius: 3px;
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--rule);
 }
 
 .q-progress__fill {
   width: 0;
   height: 100%;
-  background: var(--accent);
-  transition: width 0.2s ease;
+  background: var(--ink);
+  transition: width 0.2s var(--ease-out);
 }
 
 .q-counter {
-  margin: 8px 0 16px;
-  color: var(--muted);
+  margin: var(--space-2) 0 var(--space-5);
+  color: var(--ink-2);
   font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
-.q-form {
-  max-width: 560px;
-}
+/* ---- Steps, questions and their help -------------------------------------------- */
 
 .q-step,
 .q-group {
+  min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
 }
 
 .q-step > legend {
-  margin-bottom: 12px;
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.q-group {
-  margin-bottom: 16px;
-}
-
-.q-group > legend {
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.q-help {
-  margin: 0 0 12px;
-  color: var(--muted);
-}
-
-/* Big, tappable option rows. */
-.q-step label:not(.q-text) {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-  padding: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-
-.q-step label:not(.q-text):has(input:checked) {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.q-step input[type="radio"],
-.q-step input[type="checkbox"] {
-  flex: none;
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  accent-color: var(--accent);
-}
-
-.q-text {
-  display: block;
-  margin-top: 16px;
-  font-weight: 600;
-}
-
-.q-text input {
-  display: block;
-  width: 100%;
-  margin-top: 6px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font: inherit;
-  font-weight: 400;
-}
-
-.q-error {
-  margin: 12px 0 0;
-  color: #8c1d18;
-}
-
-.q-loading {
-  margin: 12px 0 0;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.q-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.q-actions .btn {
-  flex: 1;
-}
-
-/* 7b-ii additions. */
-.q-intro {
-  max-width: 560px;
-  margin: 0;
-  color: var(--muted);
+  margin-bottom: var(--space-4);
+  padding: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-stretch: 106%;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 .q-step > legend:focus {
   outline: none;
 }
 
+.q-group {
+  margin-bottom: var(--space-5);
+}
+
+.q-group > legend {
+  margin-bottom: var(--space-3);
+  padding: 0;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.q-help {
+  margin: -4px 0 var(--space-4);
+  color: var(--ink-2);
+}
+
 .q-optional {
-  color: var(--muted);
+  color: var(--ink-2);
   font-weight: 400;
 }
 
+/* ---- The answers: chips ------------------------------------------------------------ */
+
+.q-step label:not(.q-text) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 48px;
+  margin-bottom: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  background: var(--card);
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease-out), border-color 0.2s var(--ease-out),
+    color 0.2s var(--ease-out);
+}
+
+.q-step label:not(.q-text):hover {
+  border-color: var(--ink);
+}
+
+/* The native control stays in place, invisible, over the whole chip: a click, the
+   keyboard and screen readers all reach it. The chip draws its mark instead. */
+.q-step label:not(.q-text) input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.q-step label:not(.q-text)::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--control);
+  border-radius: 50%;
+  background: var(--card);
+}
+
+.q-step label:not(.q-text):has(input[type="checkbox"])::before {
+  border-radius: 4px;
+}
+
+.q-step label:not(.q-text):has(input:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* Chosen: the ink chip, its mark drawn in white. */
+.q-step label:not(.q-text):has(input:checked) {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.q-step label:not(.q-text):has(input[type="radio"]:checked)::before {
+  border-color: #ffffff;
+  background: radial-gradient(circle, var(--ink) 0 3px, #ffffff 3.5px);
+}
+
+.q-step label:not(.q-text):has(input[type="checkbox"]:checked)::before {
+  border-color: #ffffff;
+  background: #ffffff;
+}
+
+/* The tick in a chosen checkbox. */
+.q-step label:not(.q-text):has(input[type="checkbox"]:checked)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(var(--space-4) + 6px);
+  width: 6px;
+  height: 11px;
+  margin-top: -7px;
+  border: solid var(--ink);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* While the answers are sent, the step is disabled. */
+.q-step:disabled label:not(.q-text) {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+/* ---- The two optional text fields ----------------------------------------------------- */
+
+.q-text {
+  display: block;
+  margin-top: var(--space-4);
+  font-weight: 700;
+}
+
+.q-text input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: var(--space-3);
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  background: var(--card);
+  font-weight: 400;
+}
+
+/* ---- Messages and the buttons ------------------------------------------------------------ */
+
+.q-error {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--error);
+}
+
 .q-error p {
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-2);
+}
+
+.q-error p:last-child {
+  margin-bottom: 0;
 }
 
 .q-error ul {
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-2);
   padding-left: 20px;
 }
 
 .q-error .btn {
-  display: inline-block;
-  margin-top: 8px;
+  margin-top: var(--space-2);
+}
+
+.q-loading {
+  margin: var(--space-3) 0 0;
+  font-weight: 600;
 }
 
 .q-resumed {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  background: var(--accent-soft);
+  margin: var(--space-3) 0 0;
+  padding: 10px var(--space-3);
+  border: 1px solid var(--ink);
   border-radius: var(--radius);
+  background: var(--card);
+}
+
+.q-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.q-actions .btn {
+  flex: 1;
+}
+
+/* ---- Wider screens: unordered choices in two columns -----------------------------------
+   Scales (rarely ... often) stay one per row, in order; the goal and the checkbox lists
+   have no order, so they share rows. */
+@media (min-width: 600px) {
+  .q-group:has(> label > input[type="checkbox"]),
+  .q-step:has(> label > input[type="checkbox"]),
+  .q-step:has(> label > input[name="primary_concern"]) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-2);
+  }
+
+  .q-step > .q-help,
+  .q-step > .q-text,
+  .q-group > .q-text {
+    grid-column: 1 / -1;
+  }
 }
