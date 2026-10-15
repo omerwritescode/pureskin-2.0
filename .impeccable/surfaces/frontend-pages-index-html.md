@@ -13,7 +13,7 @@ The whole PureSkin frontend, redesigned, plus a new landing page at `/`. The lan
 
 THESIS: The Skin Profile as a paint-shop shade card: the five scores are named blades of one fan deck, each band is a labelled chip, and every left-out product carries a printed reason. It refuses the beauty landing (dewy model, product bottles, cream ground with a serif) and the clinical white page with percentages.
 
-OWN-WORLD: Counter-grey ground (#eeeff0), white card-stock slips with a soft lift and a rivet hole, ink (#191a1c) for text and current states, deep brown (#3d261a) for the one action, five decorative skin chips (never data, never ordered by tone). Archivo only: expanded black headings, normal-width text, 87.5% condensed for chips. Scores are band strips: three labelled chips sized by their range.
+OWN-WORLD: Warm linen ground (#f2ede6; the user's choice in Unit 1b, replacing the counter-grey #eeeff0), white card-stock slips with a soft lift and a rivet hole, ink (#191a1c) for text and current states, deep brown (#3d261a) for the one action, five decorative skin chips (never data, never ordered by tone). Archivo only: expanded black headings, normal-width text, 87.5% condensed for chips. Scores are band strips: three labelled chips sized by their range.
 
 STORY: A beginner sees what PureSkin reads (five named scores), that the photo is not kept, and that every product decision has a reason; they start a free scan.
 

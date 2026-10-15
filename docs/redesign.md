@@ -8,16 +8,21 @@ tokens, the assets, the remaining units and the working rules.
 **Status (2026-10-15).** Unit 1 is done: Archivo, the tokens and the shared shell
 (`ffcf85e`), plus a Skin Profile fix (`96f2c87`). Unit 2 is done: the landing page at `/`
 and `test_frontend_landing.py` (commit "Frontend redesign (2): landing page at /, landing
-tests"). Unit 3 is done: the auth page (commit "Frontend redesign (3): auth page"). Next:
-Unit 4, the scan funnel. Every unit stops for the user's review at 360 px and 1440 px, then
-waits for a separate commit authorisation (section 9).
+tests"). Unit 3 is done: the auth page (commit "Frontend redesign (3): auth page").
+
+**Plan revised (2026-10-15).** The user added a shell revision, a way back to the landing
+page, About and Contact pages, photo backgrounds and more Dashboard and Settings content
+(section 6). The approved order of the remaining units is **1b → 1c → 4 → 4b → 5a → 5b → 5c
+→ 6 → 1d → 7**; 1d (the hero video) is on hold (section 4). Unit 1b (the shell revision) is
+built and waiting for the user's review; next: Unit 1c. Every unit stops for the user's
+review at 360 px and 1440 px, then waits for a separate commit authorisation (section 9).
 
 ## 1. The direction
 
 **Concept.** The Skin Profile as a paint-shop shade card (a fan deck). The five scores are
 the deck's blades, each band is a labelled chip, and every product left out of a routine
-carries a printed reason. White card-stock slips with a rivet hole sit on a counter-grey
-ground. There is one action colour, a deep brown.
+carries a printed reason. White card-stock slips with a rivet hole sit on a warm linen
+ground (until Unit 1b, a counter-grey one). There is one action colour, a deep brown.
 
 **The five score blades:** Acne, Redness, Wrinkles, Pigmentation, Pores, the five scores
 the Skin Profile shows. Skin type and sensitivity come from the questionnaire and are shown
@@ -61,7 +66,7 @@ formula. The requirement is 4.5:1 for text and 3:1 for non-text, under WCAG 2.2 
 
 | Token | Value | Role |
 |---|---|---|
-| `--counter` | `#eeeff0` | page ground |
+| `--ground` | `#f2ede6` | page ground, a warm linen (Unit 1b; replaced `--counter` `#eeeff0`) |
 | `--card` | `#ffffff` | cards, raised controls |
 | `--ink` | `#191a1c` | text; the current band; the current nav item |
 | `--ink-2` | `#55575c` | secondary text |
@@ -75,24 +80,43 @@ formula. The requirement is 4.5:1 for text and 3:1 for non-text, under WCAG 2.2 
 
 | Pair | Ratio | Needed |
 |---|---|---|
-| ink on counter / card / band-off | 15.13 / 17.41 / 15.29 | 4.5 |
-| ink-2 on counter / card / band-off | 6.28 / 7.23 / 6.35 | 4.5 |
+| ink on ground / card / band-off | 14.95 / 17.41 / 15.29 | 4.5 |
+| ink-2 on ground / card / band-off | 6.21 / 7.23 / 6.35 | 4.5 |
 | white on ink / action / action-hover | 17.41 / 14.09 / 16.73 | 4.5 |
 | notice-ink on notice-bg | 8.62 | 4.5 |
-| error on card / counter | 7.48 / 6.49 | 4.5 |
+| error on card / ground | 7.48 / 6.42 | 4.5 |
 | ink on chip-4 (text selection) | 9.12 | 4.5 |
-| control on card / counter | 4.06 / 3.53 | 3.0 (non-text) |
-| action on counter (a button against the page) | 12.24 | 3.0 (non-text) |
-| focus ring (3px ink, 3px offset) on counter / card | 15.13 / 17.41 | 3.0 (non-text) |
+| control on card / ground | 4.06 / 3.48 | 3.0 (non-text) |
+| action on ground (a button against the page) | 12.10 | 3.0 (non-text) |
+| focus ring (3px ink, 3px offset) on ground / card | 14.95 / 17.41 | 3.0 (non-text) |
+| card on ground (separated by `--lift`) | 1.17 | decorative only |
 | rule on card | 1.40 | decorative only |
 
-**Shape, space, depth and motion tokens:**
+Before Unit 1b, on the old `#eeeff0` ground: ink 15.13, ink-2 6.28, error 6.49, control
+3.53, action 12.24. Text on the photo backgrounds is measured in section 5.
+
+**Shape, depth and motion tokens:**
 - `--radius` 6px and `--radius-card` 8px.
-- `--gutter` 16px, or 32px from 900px wide.
-- `--content-width` 1040px.
 - `--lift`: `0 1px 2px rgb(0 0 0 / .08), 0 14px 28px -16px rgb(0 0 0 / .45)`.
 - `--ease-out`: `cubic-bezier(0.16, 1, 0.3, 1)`.
 - `--chip-strip`: the wordmark's five chips, drawn as a gradient.
+
+**Space and containers (Unit 1b):**
+- **Scale:** `--space-1` to `--space-9` = 4, 8, 12, 16, 24, 32, 48, 64, 96px. New spacing
+  uses the scale; component values off it (the rivet's offsets, chip padding) stay as they are.
+- **Roles:** `--gutter` (the page's side margin: 16px, 24px from 600px, 32px from 900px);
+  `--stack` (24px, the gap between cards); `--section-y` (`clamp(48px, 24px + 4vw, 88px)`,
+  above and below a landing section: 48px on phones, about 82px at 1440px).
+- **Containers:** `--container` 1320px is the content width; `--frame`
+  (`--container` + two gutters) is the max-width of every frame box (the app nav, the public
+  and funnel headers, `.page`, the landing's sections and footer), so content is exactly
+  1320px wide on a wide screen (measured: a 1384px frame at 1440px). `--container-narrow`
+  560px for single forms; `--measure` 68ch for running prose.
+- **Grids:** `.split` (7fr 5fr from 1024px: 751px and 537px at 1440px), `.split.split--even`
+  (two equal columns from 1024px: 644px each), `.tiles` (`repeat(auto-fill, minmax(min(18rem,
+  100%), 1fr))`: four 312px tiles at 1440px, three at 1024px, one at 360px). Rows are
+  `--stack` apart; `.split`'s columns are `--space-6` apart, `.tiles`' `--stack`. Both splits
+  are one column below 1024px.
 
 **Light only.** Every page has `<meta name="color-scheme" content="light">`, and the CSS
 sets `color-scheme: light`.
@@ -166,15 +190,55 @@ the hero's one motion and a video inside a ~100px blade would be too small to re
 - **`aria-hidden="true"` on the video:** the three steps beside it carry the meaning.
 - 6–8 s seamless loop, no audio track, at most 2 MB per format.
 
+**Hero video (Unit 1d): on hold.** The plan for the landing page's first screen is a
+video covering the viewport below the header, with no text over it (Unit 1d, section 6). The
+only footage supplied can't be used for it:
+- **The file:** `media_originals/hero-video.mp4` (local only) is Dove's film "Your skin. Our
+  planet." (30 s, 1920×1080, no audio track). The Dove logo is in the top-left corner of
+  every shot up to 26 s, and the film carries on-screen captions, among them "Dove is
+  partnering with the Rimba Collective in Southeast Asia" and "Discover our actions at
+  Dove.com". It also has scar and stretch-mark close-ups.
+- **The permission:** written permission from Dove (Unilever), granted 15 October 2026 by
+  email (kept outside the repository). Scope: this academic project only. Edits: none (use
+  as is only). Credit: none requested.
+- **Why it's on hold:** "as is" rules out trimming the film to a loop without the logo,
+  captions and the scar and stretch-mark shots, and cropping it for phones; as it stands, the
+  film puts text over the hero and names a Dove partnership, while nothing on the page may
+  suggest Dove endorses or partners with PureSkin. The user rethinks the hero.
+- **If the film is ever used:** a small visible credit "Video: Dove, used with permission"
+  (in the footer or beside the pause button), never wording that suggests endorsement or
+  partnership, and its CREDITS.md row (already there), never "own work".
+- **Decided (the user, 2026-10-15):** 1d stays on hold and the landing keeps its current
+  first screen (the centred-wordmark header still comes in 1c). If the team shoots its own
+  footage later, 1d resumes with it. The Dove film stays unused; its CREDITS.md row stays
+  "not served".
+
 ## 5. Assets
 
-Nothing has been supplied yet.
+**Supplied (2026-10-15).** The originals are in `media_originals/` at the repository root:
+local only (in `.git/info/exclude`), never committed and never served. Processed copies go in
+`frontend/static/media/`.
+- **img1 and img2:** two stock photos from Canva's library (licence as the team recorded it:
+  Open-To-Use), 1920×1080 PNG, each a close-up of a cream being applied to a cheek. img1:
+  lighter skin with freckles, cream under the closed eye, warm low light. img2: deeper brown
+  skin, cream on the cheek, a grey wall behind. Both were darkened before export: the
+  brightest pixel in each is mid-grey (L 0.38). The only metadata is an XMP "CreatorTool:
+  Canva" tag, stripped on export.
+- **hero-video:** Dove's film, on hold (section 4).
+- M1–M5, V1 and G1–G3 are still not supplied.
 
-**Rules for every photo and video:**
+**Rules for team-shot photos and video:**
 - A real adult (18+) with written consent. The consent forms stay outside the repository,
   and nothing in it names the person.
 - Natural daylight. No retouching, smoothing, filters, beauty mode or portrait mode.
-- No products in the frame, no before/after pairs, no stock models.
+- No packaging, brand, logo or on-screen text in the frame (a product being applied is
+  fine), no before/after pairs, no stock models.
+
+**Rules for licensed media:** only the files `PRODUCT.md` (Imagery) names: the two Canva
+photos and the Dove film. The source and licence or permission go in CREDITS.md; never
+"own work".
+
+**Rules for every file:**
 - GPS and other metadata stripped on export.
 - Each file gets a row in `frontend/static/CREDITS.md`: what it shows, who made it, the date
   and the licence or permission.
@@ -207,12 +271,57 @@ set aspect ratio, with the photo as a background image:
 - Use root-absolute paths (`/static/...`) inside the custom property.
 - The paths are listed in `CREDITS.md`. The pages that use them arrive in Units 2–4.
 
+**The two Canva photos (the user's assignment, confirmed 2026-10-15).** The user checks the
+Canva licence terms before Unit 4b; until then the photos stay "not processed yet" (no file
+is made from them, the A1 band included).
+
+| Slot | Paths under `frontend/static/` | From | Treatment | Ship | Used on | Unit |
+|---|---|---|---|---|---|---|
+| B1 | `media/backdrop-1-desktop.{webp,jpg}`, `media/backdrop-1-phone.{webp,jpg}` | img1 | haze | 960×540 and 360×800 | Dashboard, Skin Profile, Routine, Catalog, product detail | 4b |
+| B2 | `media/backdrop-2-desktop.{webp,jpg}`, `media/backdrop-2-phone.{webp,jpg}` | img2 | haze | as B1 | Settings hub, Account, Privacy | 4b |
+| A1 | `media/band-desktop.{webp,jpg}`, `media/band-phone.{webp,jpg}` | img2 | clear band | 1920×533 and 720×480 | About and Contact header band | 1c |
+
+**Haze (the data pages):** a fixed, full-page layer behind solid cards.
+- **Crops:** img1 desktop x 560–1840, y 60–780 (cheek, cream stroke, closed eye; no ear,
+  hair or lips); phone x 1100–1586, full height. img2 desktop x 380–1660, y 160–880 (ear,
+  cheek, cream stroke; no lips); phone x 700–1186, full height.
+- **In the file:** a Gaussian blur of radius 24 (at a 1920-wide rendering) baked in, then
+  saved small: blurred images upscale without visible loss. Measured test encodes: WebP
+  2.4–4.8 KB, JPEG 7.3–15.5 KB.
+- **In CSS:** `--backdrop-wash`, the ground at 72%, laid over the image.
+- **Measured at the darkest pixel (decoded test files, wash applied):** ink 7.59 (img1
+  desktop), 8.26 (img1 phone), 8.20 (img2 desktop), 8.38 (img2 phone); ink-2 3.15–3.48,
+  which fails. So only ink text (a page title, a back link) sits on the haze; every other
+  text sits on a solid white slip. Cards are solid `--card`, so the scores and bands keep
+  their current ratios (ink on band-off 15.29, white on the current band 17.41).
+- **Rejected:** blur 6 with a 55% wash (the eye and lips stay sharp; ink 4.57), blur 16 with
+  65% (a recognisable face behind the data), an 80% wash (plain beige).
+- **Mobile:** a `position: fixed` pseudo-element, `height: 100lvh` (no resize when the address
+  bar hides); never `background-attachment: fixed`, `backdrop-filter` or CSS `filter: blur()`.
+
+**Clear band (About and Contact):** the photo shown as it is, full width under the public
+header (about 400 px tall at 1440 px, 240 px on phones), with no haze on those pages.
+- **Crops:** desktop the full width, y 220–753; phone x 560–1370, y 220–760.
+- **Text:** the page title and a one-line lede on a panel of the ground at 90%, placed over
+  the calm left part of the band; the rest of the band has no overlay.
+- **Measured under the panel (darkest pixel):** ink 12.22 / ink-2 5.07 (img2 desktop), 12.23 /
+  5.08 (img2 phone). For reference, img1 would give 11.98 / 4.98 and 12.45 / 5.17. At 85%
+  ink-2 drops to 4.42 on img1, so 90% is the floor.
+- **Not chosen:** white text on a dark scrim (it needed only 20–35%, but brings a new text
+  colour onto photos).
+
 ## 6. Remaining units
 
 Each unit ends with a stop: screenshots at 360 px and 1440 px, the detector output, the file
 list and full pytest counts. Then a separate commit authorisation. Existing contract tests
 are never edited; new test files are added only when the user approves them. Test names
 below are from `backend/app/tests/`.
+
+**Approved on 2026-10-15:** three new test files (`test_frontend_public_pages.py` in 1c,
+`test_frontend_backdrops.py` in 4b, `test_frontend_dashboard.py` in 5a) and these edits to
+existing ones: `test_frontend_landing.py` (1c; and 1d's video checks, if 1d goes ahead) and
+`test_frontend_settings.py` (1c, the link rules; 5c, the hub summary). Each is described in
+its unit below.
 
 **Unit 2: the landing page at `/`. Done.**
 - **Files:** `frontend/pages/index.html`, `frontend/pages/landing.css` and
@@ -292,6 +401,90 @@ below are from `backend/app/tests/`.
   - **No test was added or edited.** auth.css uses no legacy alias, no `:root` and no
     colour literal except `#ffffff` for white on ink, the same literal `main.css` uses.
 
+**Unit 1b: shell revision.** The user's brief: too much empty space, and the grey ground
+feels cold.
+- **Ground:** `--ground: #f2ede6` (warm linen) replaces `--counter` (#eeeff0). Every use
+  moves over, `--counter` is deleted, and the `--bg` alias points at `--ground`.
+- **Containers:** `--container: 1320px` (the content width) replaces `--content-width`
+  (1040px), which is deleted; `--frame` adds the two gutters. `--measure: 68ch` for prose;
+  `--container-narrow: 560px` for single forms.
+- **Gutter:** 16px; 24px from 600px; 32px from 900px.
+- **Spacing:** `--space-1` to `--space-9` (4, 8, 12, 16, 24, 32, 48, 64, 96px); `--stack`
+  (24px, the gap between cards); `--section-y` (`clamp(48px, 24px + 4vw, 88px)`).
+- **Grid helpers** in `main.css`: `.split` (7fr 5fr from 1024px), `.split.split--even`
+  (1fr 1fr from 1024px) and `.tiles` (`repeat(auto-fill, minmax(min(18rem, 100%), 1fr))`).
+  Pages adopt them in their own units.
+- **Files:** `main.css`, `landing.css`, `auth/auth.css`, section 2 of this file, the surface
+  brief's OWN-WORLD line.
+- **Tests:** none touched.
+- **As built (2026-10-15):**
+  - Every stylesheet that read `--counter` or `--content-width` (`main.css`, `landing.css`,
+    `auth.css`) now reads `--ground` or `--frame`; neither old name is defined anywhere.
+  - The page's and the nav's padding use the scale (the same values as before).
+  - The landing's sections use `--section-y` (48px on phones, was 56px; about 82px at
+    1440px, was 80px).
+  - **One landing fix the wider frame needed:** in "How a scan works" the 4:5 swatch grew to
+    about 528×660px and left a tall empty band above and below the steps. Its column is now
+    `min(26rem, 40%)` (416×520px at 1440px, as before) and the steps take the rest, at
+    most `--measure` wide.
+  - **Pages not yet redesigned** keep their own widths (560px and 720px cards) inside the
+    wider frame, so at 1440px they sit further left with more empty space on the right
+    until their units adopt the grids (4: funnel; 5a–5c; 6).
+
+**Unit 1c: the way home, About and Contact.**
+- **`frontend/static/js/account-state.js` (new):** loaded in the `<head>` of `/`, `/about/`
+  and `/contact/`. It reads `pureskin_token` (in a try/catch) and sets
+  `html[data-account="member"]` when a token exists: a presence check only (the Dashboard
+  already handles an expired token). It writes nothing, makes no links and never navigates.
+  CSS shows `.if-member` links only then and hides `.if-guest` ones; without JavaScript a
+  visitor sees Log in and Sign up.
+- **Public header** (in `main.css`; `/`, `/about/`, `/contact/`): solid white like the app
+  nav. Desktop: About and Contact on the left, the wordmark centred, Log in (or "Go to your
+  dashboard") on the right. Phones: the wordmark on the first row, the three links on the
+  second, each a 44px target. The wordmark is a `<span>` on `/` and links to `/` elsewhere.
+- **Landing:** the new header; "Go to your dashboard" (`/app/`) as the `.if-member` partner of
+  Log in / Sign up in the hero actions and the footer; About and Contact in the footer.
+  Nothing else changes.
+- **`nav.js`:** the wordmark links to `/` (not `/app/`), and it adds an app footer after
+  `<main>`: the student-project sentence, About and Contact. Every `/app` page loads `nav.js`,
+  so no page's HTML changes. The funnel and the auth page get no footer.
+- **About (`frontend/pages/about/`):** what PureSkin is; how a scan works; the methods and
+  their limits (photo scores from MediaPipe landmarks and OpenCV measurements on a 720px copy,
+  unvalidated; acne leans on the answers; skin type and sensitivity from the questionnaire;
+  the skin-type model at chance, 0.309 against 0.25, not used; rules then a ranker with
+  hand-set weights, nothing trained; 37 catalog products with the catalog note word for word;
+  the chat's 24 notes, local model, and no measurement of how often its answers match its
+  sources); what PureSkin isn't (the landing's three items, word for word); what isn't built;
+  the team (Omer Raza and Arfeen Khan, MSc Data Science, NMIMS NSoMASA, Mumbai). Facts only
+  from `PRODUCT.md` and the repository. Words the tests catch: no "before/after" (call step
+  7e "a generated preview of your skin"), "checkout", "clinical", "verified", "proven" or "%".
+- **Contact (`frontend/pages/contact/`), no form:** Omer Raza and Arfeen Khan, NMIMS NSoMASA,
+  Mumbai (no street address); `omer.raza116@nmims.in` and `arfeen.khan114@nmims.in`, each
+  as a `mailto:` link beside its owner's name; the project's
+  code at `https://github.com/omerwritescode/pureskin-2.0` (new tab,
+  `rel="noopener noreferrer"`, the address shown as its text); and a line that we can't answer
+  questions about your skin: ask a doctor or pharmacist, and call 112 in an emergency.
+- **The clear band A1** on About and Contact (section 5), with no haze on those pages.
+- **The Privacy page** gains one sentence: the Contact page's GitHub link opens only on a
+  click, in a new tab, without telling GitHub which page you came from (no "https" in it:
+  the settings test counts that word).
+- **Docs:** `docs/spec.md` §5 lists `/contact`, and addendum item 14 records the public
+  pages (the addendum's first sentence names the §5 change). `PRODUCT.md`'s "Being built"
+  and "Not built" lines are updated.
+- **Tests (approved):**
+  - `test_frontend_landing.py`: `LINK_TARGETS` adds `/app/`, `/about/` and `/contact/`; the
+    "makes no links of its own" check covers `landing.js` and `account-state.js`; the
+    dashboard link carries `.if-member` and the Log in / Sign up links `.if-guest`.
+  - `test_frontend_settings.py`: an `<a href>` is a link, not a load (every other `src`,
+    `href`, `srcset`, `poster`, `data` or `action` still is); every outgoing link has
+    `rel="noopener noreferrer"` and names its site in visible text; the Privacy sentence.
+  - `test_frontend_public_pages.py` (new): the landing's claim checks on About and Contact;
+    links only to existing routes, the approved `mailto:` and the GitHub address;
+    `account-state.js` only reads; `pureskin_token` appears only in `auth-guard.js`,
+    `auth.js` and `account-state.js`; an emergency number on these pages is
+    `chat_config.EMERGENCY_NUMBER`; "37" is the catalog's length and "24" the knowledge
+    base's note count; ink and ink-2 on the band's text panel measured at 4.5:1 or more.
+
 **Unit 4: the scan funnel (selfie, questionnaire, report).**
 - **Step rail:** three chips replace the "Step 1 of 3" label above headings, which the craft
   rules ban as an eyebrow. "Step n of 3" stays as visually hidden text.
@@ -324,7 +517,38 @@ below are from `backend/app/tests/`.
 - **Detector findings to clear:** the captured-photo `<img>` with no `src` until the script
   sets one, and the camera box with no inner padding.
 
+**Unit 4b: photo backgrounds (the haze).**
+- **Files:** B1 and B2 (section 5) in `frontend/static/media/`, made with Pillow (crop, blur,
+  resize, saved from RGB so no metadata survives); the haze block in `main.css`: a
+  `body::before` layer (`position: fixed; top: 0; height: 100lvh`) painting
+  `--backdrop-wash` over an `image-set()` of the WebP then the JPEG, with the ground showing
+  until it loads; CREDITS.md rows.
+- **The rule on every haze page:** only ink text sits on the photo (a page title, a back
+  link). Status lines, notes, empty states, filters, counts and pagination sit on solid white
+  slips. Cards stay solid.
+- **Pages opt in in their own units:** Dashboard and Skin Profile (5a); Routine, Catalog and
+  product detail (5b); Settings hub, Account and Privacy (5c).
+- **Test (approved): `test_frontend_backdrops.py` (new).** It decodes the shipped files,
+  applies the wash read from `main.css` and fails if ink falls below 4.5:1 at the darkest
+  pixel; only the assigned pages carry a backdrop, each its section's photo; no stylesheet
+  uses `background-attachment: fixed`; every file has a CREDITS.md row and no EXIF or XMP.
+
 **Unit 5a: Dashboard, Skin Profile, Progress.**
+- **Dashboard, from 1024px (`.split`):** on the left, "Your skin at a glance" (as now), then
+  "Your routine": the morning and evening product names in step order from
+  `GET /api/routine`, with a link to the routine and its reasons ("Your routine", not
+  "today's": the routine is the same every day). On the right, "Progress": the number of saved
+  scans and the dates of the first and latest, from `GET /api/progress` (no deltas, no
+  "improved"); "Ask the advisor", static (what the chat answers from, that it isn't medical
+  advice, a link; no status call); a small "Product catalog" card, which replaces the Quick
+  links row. Phones: the same cards in one column. No profile yet: the scan call to action,
+  the advisor and the catalog. Both new calls start after a pending scan is saved, and a
+  failure shows an error inside its own card only.
+- **Skin Profile:** the skin type, date and rescan line move from the page ground onto a slip
+  beside the scores card.
+- **Backdrop B1** on Dashboard and Skin Profile; Progress has none (its table runs full width).
+- **Test (approved): `test_frontend_dashboard.py` (new):** the cards call only existing
+  endpoints, render text only, and use none of the Progress page's banned words.
 - **Files:** page CSS, plus the quick links in `dashboard.js`.
 - **Tests touched:**
   - `test_frontend_contract`: `test_dashboard_and_profile_show_the_same_skin_details`,
@@ -338,6 +562,9 @@ below are from `backend/app/tests/`.
 - **Detector finding to clear:** the 4px coloured side border in `progress.css`.
 
 **Unit 5b: Routine, Catalog, product detail.**
+- **Layout:** Routine: Morning and Evening side by side (`.split--even`), Left out below them.
+  Catalog: the filters, count and pagination on one slip; product tiles (`.tiles`).
+- **Backdrop B1** on all three pages.
 - **Files:** page CSS; class names only in the JS.
 - **Tests touched:** `test_catalog_and_routine_pages_carry_the_list_notes_and_no_placeholder_wording`
   (exactly one `.page-note`, both lines, no "verified" or "spot-checked"),
@@ -348,7 +575,13 @@ below are from `backend/app/tests/`.
   `test_the_placeholder_note_style_is_gone_and_the_badge_is_styled`.
 
 **Unit 5c: Settings hub, Account, Privacy.**
-- **Files:** CSS and classes only.
+- **Hub summary:** a "What PureSkin keeps" card with the photo, answers, chat and password
+  statements of `EXPORT_STATEMENTS`, word for word, and a link to Privacy and your data.
+- **Backdrop B2** on all three pages.
+- **Test edit (approved):** `test_frontend_settings.py` gains
+  `test_the_hub_summary_is_the_exports_own_words` (every item is an export statement; the
+  card links to the Privacy page).
+- **Files:** CSS and classes only, plus the hub summary's HTML.
 - **Tests touched:** all of `test_frontend_settings`, including:
   - script order, `test_the_hub_reaches_privacy_and_account_in_one_click`
   - the Subscription item: text only, no link
@@ -368,6 +601,24 @@ below are from `backend/app/tests/`.
   `test_chat_history_is_the_reply_text_only_and_nothing_survives_the_page`,
   `test_chat_scripts_render_text_only_and_store_nothing`, `test_no_answer_text_lives_in_the_frontend`.
 - **Detector finding to clear:** the 4px coloured side border in `chat.css`.
+- **Layout:** no backdrop. From 1024px the disclaimer sits in a sticky right-hand column.
+
+**Unit 1d: the landing's hero video. On hold** (section 4: the only footage is Dove's film,
+which may be used as is only). If the hero goes ahead with usable footage:
+- A `<section class="reel">` before the current hero: `<video muted loop playsinline
+  preload="metadata" aria-hidden="true">` with a poster and no `autoplay`; phone sources
+  (WebM then MP4, `media="(max-width: 767px) and (orientation: portrait)"`) before the
+  desktop ones; the pause/play button as V1's; a scroll cue (an icon-only link to the intro,
+  named "Skip the video"); height `calc(100svh - var(--header-h))`. `landing.js` handles both
+  videos and never starts one under reduced motion or Save-Data (the poster only). The fan
+  deck then opens out of view on page load; it stays unchanged.
+- Encodes: desktop 1920×1080 and phone 720×1280, an 8–10 s loop, VP9 (CRF 34, two-pass,
+  ≤3.5 MB / ≤1.5 MB) and H.264 (CRF 24, `+faststart`, ≤5 MB / ≤2 MB), `-an
+  -map_metadata -1`; the poster is the loop's first frame, 1920×1080 JPEG ≤180 KB.
+- ffmpeg is approved: `winget install --id Gyan.FFmpeg -e --source winget`, run when 1d
+  starts.
+- Test edits (approved): two videos, each with the required attributes; WebM before MP4 for
+  each size; both settings read before any automatic `play()`; the cue's target exists.
 
 **In every unit 3–6:**
 - Switch that page's input borders from `var(--border)` (a faint hairline) to `--control`.
@@ -378,7 +629,7 @@ below are from `backend/app/tests/`.
 1. **Token-alias check (a new test).** It fails if any of `--bg`, `--surface`, `--text`,
    `--muted`, `--border`, `--accent` or `--accent-soft` is still defined in `main.css`, or
    used through `var()` in any stylesheet, `auth.css` included. Then delete the alias block
-   from `main.css`.
+   from `main.css`. The same check covers `--counter` and `--content-width` (removed in 1b).
 2. Impeccable's detector over all of `frontend/`: no findings left, or each one explained.
 3. An accessibility pass: contrast (section 2), visible focus on every control, everything
    by keyboard, reduced motion, 360 px with no sideways page scroll.
@@ -396,7 +647,8 @@ below are from `backend/app/tests/`.
    into one definition in `main.css` and delete both copies.
 10. **Decide the wordmark link.** Today it is a `<span>` on the landing, auth and funnel
     pages. The user's preference: it links home (`/`) on the landing and auth pages; in the
-    funnel only if the visitor's answers are kept when they leave.
+    funnel only if the visitor's answers are kept when they leave. (Since 1c, the app nav's
+    wordmark and About's and Contact's link to `/`; the landing's stays a `<span>`.)
 11. **Auth errors, in `auth.js`:**
     - Tie each message to its field: give each `.auth__error` an id, and have `setError` add
       that id to the `aria-describedby` of each field it marks invalid (keeping
@@ -430,7 +682,7 @@ that. Usage as of Unit 3 (paths under `frontend/pages/`):
 
 | Alias | Maps to | Still used in |
 |---|---|---|
-| `--bg` | `--counter` | `app/chat/chat.css`, `app/settings/settings.css` |
+| `--bg` | `--ground` | `app/chat/chat.css`, `app/settings/settings.css` |
 | `--surface` | `--card` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
 | `--text` | `--ink` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/routine/routine.css`, `app/settings/settings.css` |
 | `--muted` | `--ink-2` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/report/report.css`, `scan/scan.css` |

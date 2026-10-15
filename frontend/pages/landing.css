@@ -67,9 +67,9 @@
 }
 
 .landing-section {
-  max-width: var(--content-width);
+  max-width: var(--frame);
   margin: 0 auto;
-  padding: 56px var(--gutter);
+  padding: var(--section-y) var(--gutter);
 }
 
 .landing-heading {
@@ -97,7 +97,7 @@
 /* ---- Header: the wordmark alone ------------------------------------------- */
 
 .landing-header {
-  max-width: var(--content-width);
+  max-width: var(--frame);
   margin: 0 auto;
   padding: 20px var(--gutter) 0;
 }
@@ -107,7 +107,7 @@
 .hero {
   display: flex;
   flex-direction: column;
-  max-width: var(--content-width);
+  max-width: var(--frame);
   margin: 0 auto;
   padding: 36px var(--gutter) 40px;
 }
@@ -170,7 +170,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--counter);
+  background: var(--ground);
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
 }
 
@@ -254,6 +254,7 @@
 }
 
 .how__step p {
+  max-width: var(--measure);
   margin: 0;
   color: var(--ink-2);
 }
@@ -466,7 +467,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 28px;
-  max-width: var(--content-width);
+  max-width: var(--frame);
   margin: 0 auto;
   padding: 28px var(--gutter) 36px;
 }
@@ -486,10 +487,6 @@
 /* ---- Laptops: the deck fans open above the copy ------------------------------ */
 
 @media (min-width: 900px) {
-  .landing-section {
-    padding-block: 80px;
-  }
-
   .hero {
     align-items: center;
     padding-top: 12px;
@@ -565,8 +562,10 @@
     height: 236px;
   }
 
+  /* The swatch keeps its size (at most 26rem, or 40% of the card on narrower laptops) and
+     the steps take the rest of the wider frame, so the 4:5 swatch never towers over them. */
   .how {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+    grid-template-columns: minmax(0, min(26rem, 40%)) minmax(0, 1fr);
     align-items: center;
   }
 
