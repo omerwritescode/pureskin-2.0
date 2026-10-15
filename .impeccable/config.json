@@ -5,5 +5,20 @@
       "maxFindings": 5,
       "maxChars": 8000
     }
+  },
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "frontend/pages/**"
+        ],
+        "createdAt": "2026-10-15T13:53:37.169Z",
+        "reason": "page ground #f2ede6 chosen deliberately, Unit 1b, 2026-10-15"
+      }
+    ]
   }
 }
