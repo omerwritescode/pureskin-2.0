@@ -16,10 +16,10 @@ page, About and Contact pages, photo backgrounds and more Dashboard and Settings
 → 6 → 1d → 7**; on the user's word (2026-10-15) 1d (the hero film) went ahead before 4b.
 Unit 1b (the shell revision) is done (`07b7565`); Unit 1c (the public header, About and
 Contact, the way home) is done (`a2fe7ee`); Unit 4 (the scan funnel) is done (`368d9a4`);
-Unit 1d (the hero film, Dove's, as is) is done (`8d79643`), with a follow-up: the film edge
-to edge, two small controls over it, the credit below it (its commit: "Frontend redesign
-(1d follow-up): the hero film edge to edge"). Next: a soft warm tint for the headers and
-footers (the user chooses from swatches), then that tint and Unit 4b together. Every unit
+Unit 1d (the hero film) is done (`8d79643`, follow-up `504d85d`). The taupe tint and Unit 4b
+are done (their commit: "Frontend redesign (4b): photo pages and the taupe bars"). Next: the
+hero film's edit (the user chooses a variant; Dove has since cleared cropping and editing),
+then Units 5a-7. Every unit
 stops for the user's review at 360 px and 1440 px, then waits for a separate commit
 authorisation (section 9).
 
@@ -74,6 +74,7 @@ formula. The requirement is 4.5:1 for text and 3:1 for non-text, under WCAG 2.2 
 |---|---|---|
 | `--ground` | `#f2ede6` | page ground, a warm linen (Unit 1b; replaced `--counter` `#eeeff0`) |
 | `--card` | `#ffffff` | cards, raised controls |
+| `--bar` | `#ddd0c3` | taupe: the public header, the app nav and the footers (Unit 4b, the user's choice of three) |
 | `--ink` | `#191a1c` | text; the current band; the current nav item |
 | `--ink-2` | `#55575c` | secondary text |
 | `--band-off` | `#f0f0f1` | a band chip that isn't the current one (inside cards) |
@@ -96,6 +97,9 @@ formula. The requirement is 4.5:1 for text and 3:1 for non-text, under WCAG 2.2 
 | action on ground (a button against the page) | 12.10 | 3.0 (non-text) |
 | focus ring (3px ink, 3px offset) on ground / card | 14.95 / 17.41 | 3.0 (non-text) |
 | card on ground (separated by `--lift`) | 1.17 | decorative only |
+| on the taupe bar: ink / ink-2 / the ink nav pill / focus ring | 11.51 / 4.78 / 11.51 / 11.51 | 4.5 / 4.5 / 3.0 / 3.0 |
+| outlined buttons on the bar: their `--ink-2` edge (`--control` would be 2.68) | 4.78 | 3.0 (non-text) |
+| the wordmark's lightest chips on the bar (so the strip sits on white there) | 1.02 / 1.26 | decorative only |
 | rule on card | 1.40 | decorative only |
 
 Before Unit 1b, on the old `#eeeff0` ground: ink 15.13, ink-2 6.28, error 6.49, control
@@ -204,8 +208,10 @@ filling the window below the header (Unit 1d, section 6).
   Collective in Southeast Asia" and "Discover our actions at Dove.com". It also has scar and
   stretch-mark close-ups.
 - **The permission:** written permission from Dove (Unilever), granted 15 October 2026 by
-  email (kept outside the repository). Scope: this academic project only. Edits: none (use
-  as is only). Credit: none requested.
+  email (kept outside the repository). Scope: this academic project only. Edits: none at
+  first (use as is only); a second email the same day cleared cropping and editing the film
+  as the team likes. Credit: none requested; the page's credit line stays. ffmpeg is
+  approved for the edit.
 - **Decided (the user, 2026-10-15):** first the hero was put on hold, because "as is" rules
   out trimming the logo, the captions and those shots. Then the user accepted the film as
   is on the hero, the logo, the captions and every shot included.
@@ -223,12 +229,14 @@ filling the window below the header (Unit 1d, section 6).
 **Supplied (2026-10-15).** The originals are in `media_originals/` at the repository root:
 local only (in `.git/info/exclude`), never committed and never served. Processed copies go in
 `frontend/static/media/`.
-- **img1 and img2:** two stock photos from Canva's library (licence as the team recorded it:
-  Open-To-Use), 1920×1080 PNG, each a close-up of a cream being applied to a cheek. img1:
-  lighter skin with freckles, cream under the closed eye, warm low light. img2: deeper brown
-  skin, cream on the cheek, a grey wall behind. Both were darkened before export: the
-  brightest pixel in each is mid-grey (L 0.38). The only metadata is an XMP "CreatorTool:
-  Canva" tag, stripped on export.
+- **img1 and img2:** two stock photos from Canva's library, used with Canva's written
+  permission by email (15 October 2026) on condition that no changes are made to the images:
+  1920×1080 PNG (3,249,050 and 2,805,909 bytes), each a close-up of a cream being applied to a
+  cheek. img1: lighter skin with freckles, cream under the closed eye, warm low light. img2:
+  deeper brown skin, cream on the cheek, a grey wall behind. Both are dark (the brightest
+  pixel in each is mid-grey, L 0.38). The only metadata is an XMP "CreatorTool: Canva" tag; no
+  location data (checked 2026-10-15). They are served byte for byte (no crop, resize, blur,
+  wash, re-export or metadata stripping).
 - **hero-video:** Dove's film, served as is as `media/hero-video.mp4` (section 4).
 - M1–M5, V1 and G1–G3 are still not supplied.
 
@@ -244,7 +252,9 @@ photos and the Dove film. The source and licence or permission go in CREDITS.md;
 "own work".
 
 **Rules for every file:**
-- GPS and other metadata stripped on export.
+- Team-shot files: GPS and other metadata stripped on export. A licensed file whose
+  permission allows no changes (the Dove film, the two Canva photos) is served byte for
+  byte, checked for location data instead, with its size and SHA-256 in CREDITS.md.
 - Each file gets a row in `frontend/static/CREDITS.md`: what it shows, who made it, the date
   and the licence or permission.
 
@@ -276,17 +286,20 @@ set aspect ratio, with the photo as a background image:
 - Use root-absolute paths (`/static/...`) inside the custom property.
 - The paths are listed in `CREDITS.md`. The pages that use them arrive in Units 2–4.
 
-**The two Canva photos (the user's assignment, confirmed 2026-10-15).** The user checks the
-Canva licence terms before Unit 4b; until then the photos stay "not processed yet" (no file
-is made from them, the A1 band included).
+**The two Canva photos (the user's assignment, confirmed 2026-10-15).** Canva's permission
+allows no changes, so each is one file, the original, and every treatment is CSS over it:
+overlays of the ground and solid cards, never a CSS `filter` on the image. The user chose
+the treatment on 2026-10-15: from 1024px the photo is the page background under the ground at
+60%, below 1024px a 200px band (Unit 4b, section 6).
 
-| Slot | Paths under `frontend/static/` | From | Treatment | Ship | Used on | Unit |
-|---|---|---|---|---|---|---|
-| B1 | `media/backdrop-1-desktop.{webp,jpg}`, `media/backdrop-1-phone.{webp,jpg}` | img1 | haze | 960×540 and 360×800 | Dashboard, Skin Profile, Routine, Catalog, product detail | 4b |
-| B2 | `media/backdrop-2-desktop.{webp,jpg}`, `media/backdrop-2-phone.{webp,jpg}` | img2 | haze | as B1 | Settings hub, Account, Privacy | 4b |
-| A1 | `media/band-desktop.{webp,jpg}`, `media/band-phone.{webp,jpg}` | img2 | clear band | 1920×533 and 720×480 | About and Contact header band | 1c |
+| Slot | File (the original, unchanged) | Used on | Unit |
+|---|---|---|---|
+| B1 | img1 | Dashboard, Skin Profile, Routine, Catalog, product detail | 4b |
+| B2 | img2 | Settings hub, Account, Privacy | 4b |
+| A1 | img2 (the same file as B2, framed by CSS `background-position`) | About and Contact header band | 4b |
 
-**Haze (the data pages):** a fixed, full-page layer behind solid cards.
+**Haze: superseded (2026-10-15).** It needed a blurred, resized copy of each photo, which
+Canva's condition rules out. Kept for the record:
 - **Crops:** img1 desktop x 560–1840, y 60–780 (cheek, cream stroke, closed eye; no ear,
   hair or lips); phone x 1100–1586, full height. img2 desktop x 380–1660, y 160–880 (ear,
   cheek, cream stroke; no lips); phone x 700–1186, full height.
@@ -306,7 +319,9 @@ is made from them, the A1 band included).
 
 **Clear band (About and Contact):** the photo shown as it is, full width under the public
 header (about 400 px tall at 1440 px, 240 px on phones), with no haze on those pages.
-- **Crops:** desktop the full width, y 220–753; phone x 560–1370, y 220–760.
+- **Framing:** by CSS on the original (`background-size: cover`, `background-position`), not
+  by cropping the file. The measurements below were made on crops of the same areas; over a
+  black pixel, the worst any framing can show, the 90% panel gives ink 11.96 and ink-2 4.97.
 - **Text:** the page title and a one-line lede on a panel of the ground at 90%, placed over
   the calm left part of the band; the rest of the band has no overlay.
 - **Measured under the panel (darkest pixel):** ink 12.22 / ink-2 5.07 (img2 desktop), 12.23 /
@@ -584,21 +599,50 @@ feels cold.
   - **Not done:** the optional G1–G3 light guide (no photos).
   - **Detector:** no findings on the funnel's files, the landing or About.
 
-**Unit 4b: photo backgrounds (the haze).**
-- **Files:** B1 and B2 (section 5) in `frontend/static/media/`, made with Pillow (crop, blur,
-  resize, saved from RGB so no metadata survives); the haze block in `main.css`: a
-  `body::before` layer (`position: fixed; top: 0; height: 100lvh`) painting
-  `--backdrop-wash` over an `image-set()` of the WebP then the JPEG, with the ground showing
-  until it loads; CREDITS.md rows.
-- **The rule on every haze page:** only ink text sits on the photo (a page title, a back
-  link). Status lines, notes, empty states, filters, counts and pagination sit on solid white
-  slips. Cards stay solid.
-- **Pages opt in in their own units:** Dashboard and Skin Profile (5a); Routine, Catalog and
-  product detail (5b); Settings hub, Account and Privacy (5c).
-- **Test (approved): `test_frontend_backdrops.py` (new).** It decodes the shipped files,
-  applies the wash read from `main.css` and fails if ink falls below 4.5:1 at the darkest
-  pixel; only the assigned pages carry a backdrop, each its section's photo; no stylesheet
-  uses `background-attachment: fixed`; every file has a CREDITS.md row and no EXIF or XMP.
+**Unit 4b: the photos, unchanged. Done** (the user chose on 2026-10-15: option A from
+1024px, option B below it; img1 on Dashboard, Skin Profile, Routine, Catalog and product
+detail, img2 on Settings, Account, Privacy, About and Contact).
+- **As built:**
+  - `frontend/static/media/backdrop-1.png` and `backdrop-2.png`, byte for byte the
+    originals. `<body data-photo="1|2">` picks the photo (`--photo` in `main.css`).
+  - **From 1024px:** a fixed `body::before` layer, `linear-gradient(var(--photo-veil) ...)`
+    over the photo (`center / cover`), `--photo-veil` the ground at 60%. Only page titles and
+    ink links sit on it; status lines and each page's loose text (one list in `main.css`) are
+    solid white slips, and About's prose column is a card.
+  - **Below 1024px:** no page background; `<div class="photo-band">` (200px, cover) right after
+    the app nav, and the page's head (its title, or the back link and the title in a
+    `.page-head` on Account and Privacy) on `--photo-panel` (the ground at 90%) straddling the
+    band's foot. About and Contact use their own `.band` the same way.
+  - `test_frontend_backdrops.py` (new) checks the files, filters, the two shares at a black
+    pixel and which pages carry which photo.
+- **The proposal, for the record:**
+- **Files:** img1 and img2 copied into `frontend/static/media/` byte for byte (PNG, 3.2 MB
+  and 2.8 MB: one file each for every screen size, since a smaller copy would be a change).
+  No blur, wash, crop or re-export, and no CSS `filter` on the image.
+- **Measured without blur** (the worst point is the darkest pixel in view: img1's hair is
+  pure black, img2's darkest is L 0.002): ink on the photo needs a ground overlay of at least
+  55% (img1) or 53% (img2) for 4.5:1, the page title 43% for 3:1, ink-2 86%. Over a black
+  pixel, 55% gives ink 4.57; 60% gives 5.35 (ink-2 2.22, which fails); 90% gives 11.96 (ink-2
+  4.97).
+- **Option A, a full-page photo under a 60% ground overlay** (a fixed layer, `height:
+  100lvh`): ink 5.35 at the worst point, so only ink text (a title, a back link) sits on it and
+  everything else on solid cards. In the mock the face is sharp and large behind and between
+  the cards (an eye, the nose, an ear), and the overlay turns the photo grey-beige.
+- **Option B, a header band on the data pages** (proposed): the photo clear and unchanged in
+  a band under the nav (`clamp(170px, 21vw, 300px)` tall, `background-size: cover`), the page
+  title on a panel of the ground at 90% over the band's foot (ink 11.96, ink-2 4.97 even over
+  black), the rest of the page on the plain ground. The same component as About's and
+  Contact's band.
+- **Option C, the margins only:** at 1440px the photo would show in about 60px on each side
+  (28px outside the frame plus the gutter), and not at all on phones.
+- **Weight:** the whole PNG downloads even for a band (3.2 MB or 2.8 MB, cached after the
+  first page that uses it).
+- **Test (approved; checks updated 2026-10-15): `test_frontend_backdrops.py` (new).** Each
+  served photo is the original: its size and SHA-256 match the ones CREDITS.md records. No
+  stylesheet puts a CSS `filter` or `backdrop-filter` on a photo or uses
+  `background-attachment: fixed`. The overlay over each photo, read from the CSS, gives ink
+  4.5:1 or more over a black pixel (and ink-2 too under any text panel). Only the assigned
+  pages carry a photo, each its section's.
 
 **Unit 5a: Dashboard, Skin Profile, Progress.**
 - **Dashboard, from 1024px (`.split`):** on the left, "Your skin at a glance" (as now), then

@@ -110,19 +110,24 @@ questionnaire, the routine is rule-based, and the ranker uses hand-set weights, 
   being applied to skin, are allowed on the landing page, About, Contact, Dashboard, Skin
   Profile, Routine, Catalog and Settings. No packaging, brand, logo or on-screen text may be
   visible, and no shot may suggest a result.
-- Stock photos only as listed here: two photos from Canva's library (licence as the team
-  recorded it: Open-To-Use), each a close-up of a cream being applied to a cheek, as the photo
-  backgrounds and the About and Contact header band (`docs/redesign.md` §5). Whether they were
-  retouched isn't known. No other stock models posing with products.
+- Stock photos only as listed here: two photos from Canva's library, each a close-up of a cream
+  being applied to a cheek, used with Canva's written permission by email (15 October 2026), on
+  condition that no changes are made to the images. They are served byte for byte (no crop,
+  resize, blur, wash, re-export or metadata stripping), as the photo backgrounds and the About and
+  Contact header band (`docs/redesign.md` §5). Whether they were retouched isn't known. No other
+  stock models posing with products.
 - One licensed film: Dove (Unilever), "Your skin. Our planet.", used with written permission for
-  this project (granted 15 October 2026; academic project only; use as is only; the email is kept
-  outside the repository). It is the landing page's first screen, shown as is, Dove's logo,
-  captions and every shot included: the file is served unchanged (no trim, crop, re-encode or
-  poster). Under it the page says "Video: Dove, used with permission. PureSkin isn't affiliated
-  with Dove.", and no PureSkin wording may suggest that Dove endorses or partners with PureSkin.
-- Full-page photo backgrounds sit behind solid cards. Only large ink text or an ink link sits on
-  a photo, and each photo is cropped, blurred and washed with the page ground until ink measures
-  at least 4.5:1 at its darkest point.
+  this project (granted 15 October 2026 by email; academic project only; the emails are kept
+  outside the repository). The first permission was for use as is; a second email the same day
+  cleared cropping and editing it as the team likes. It is the landing page's first screen;
+  today the file is served as received (an edited version waits for the user's choice). Below it
+  the page says "Video: Dove, used with permission. PureSkin isn't affiliated with Dove.", a
+  credit that stays whatever the edit, and no PureSkin wording may suggest that Dove endorses or
+  partners with PureSkin.
+- Photo backgrounds sit behind solid cards. Only large ink text or an ink link sits on a photo,
+  and readability comes only from CSS layers over the image (overlays of the page ground) and the
+  cards, never from changing the file or a CSS filter on it: ink measures at least 4.5:1 at the
+  darkest point it sits over.
 - Every image and video is self-hosted (served from `/static`, like everything else), and its
   source and licence or permission are recorded in a credits file, never as "own work" unless
   the team made it.

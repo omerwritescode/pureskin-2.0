@@ -11,8 +11,10 @@
   <link rel="stylesheet" href="/static/css/main.css">
   <link rel="stylesheet" href="/app/catalog/catalog.css">
 </head>
-<body>
+<body data-photo="1">
   <nav id="app-nav" class="app-nav" aria-label="Main"></nav>
+  <!-- Below 1024px the photo band; from 1024px the photo is the page background (main.css). -->
+  <div class="photo-band" aria-hidden="true"></div>
 
   <main class="page">
     <h1 class="page__title">Product Catalog</h1>

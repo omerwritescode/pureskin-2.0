@@ -4,29 +4,37 @@
    .card, .btn, .warning-box and the section and step headings. */
 
 /* ---- The header band ---------------------------------------------------------
-   Full width under the public header. It will show the A1 photo as it is (docs/redesign.md
-   §5); until that photo is processed it is a plain chip-colour block. The title sits on a
-   panel of the ground at 90%, the band's only overlay: even over a black pixel ink measures
-   11.94:1 on it and ink-2 4.96:1 (test_frontend_public_pages.py). */
+   The page's photo (body[data-photo], main.css; the Canva file unchanged), as the data pages
+   show it. Below 1024px a 200px band under the public header, the title panel straddling its
+   foot. From 1024px the photo is the page background under the 60% veil, so the band is clear
+   space above the panel. The panel is the ground at 90%: even over a black pixel ink 11.96:1,
+   ink-2 4.97:1 (test_frontend_public_pages.py, test_frontend_backdrops.py). */
 .band {
   display: flex;
   align-items: flex-end;
-  min-height: clamp(240px, 28vw, 400px);
-  background-color: var(--chip-1);
+  min-height: 200px;
+  background: var(--band-off) var(--photo) center / cover no-repeat;
 }
 
 .band__inner {
   width: 100%;
   max-width: var(--frame);
   margin: 0 auto;
-  padding: var(--space-7) var(--gutter) var(--space-5);
+  padding: var(--space-7) var(--gutter) 0;
 }
 
 .band__panel {
+  position: relative;
   max-width: 34rem;
+  margin-bottom: -40px;
   padding: var(--space-4) var(--space-5) var(--space-5);
   border-radius: var(--radius-card);
   background: color-mix(in srgb, var(--ground) 90%, transparent);
+}
+
+/* Room for the part of the panel that hangs below the band. */
+.band + .public-page {
+  padding-top: calc(var(--section-y) + 40px);
 }
 
 .band__panel .page__title {
@@ -255,12 +263,50 @@
 }
 
 @media (min-width: 900px) {
+  .band__panel {
+    padding: var(--space-5) var(--space-6) var(--space-6);
+  }
+}
+
+/* From 1024px the photo is the page background: the band is clear space above the panel,
+   and About's prose column is a solid slip (only titles and ink links sit on the photo). */
+@media (min-width: 1024px) {
+  .band {
+    min-height: clamp(240px, 28vw, 400px);
+    background: none;
+  }
+
   .band__inner {
     padding-bottom: var(--space-6);
   }
 
   .band__panel {
-    padding: var(--space-5) var(--space-6) var(--space-6);
+    margin-bottom: 0;
+  }
+
+  .band + .public-page {
+    padding-top: var(--section-y);
+  }
+
+  body[data-photo] .about {
+    padding: var(--space-6) var(--space-7) var(--space-7);
+    border-radius: var(--radius-card);
+    background: var(--card);
+    box-shadow: var(--lift);
+  }
+
+  /* Inside that slip the methods list drops its own card frame (no card inside a card) and
+     reads as a ruled list. */
+  body[data-photo] .about .methods {
+    padding: var(--space-5) 0 0;
+    border-top: 1px solid var(--rule);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  body[data-photo] .about .methods::before {
+    content: none;
   }
 }
 

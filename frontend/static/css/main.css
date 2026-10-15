@@ -21,6 +21,8 @@
   /* Ground and stock */
   --ground: #f2ede6;       /* page ground: warm linen */
   --card: #ffffff;         /* cards and raised controls */
+  --bar: #ddd0c3;          /* taupe: the public header, the app nav and the footers.
+                              ink 11.51:1, ink-2 4.78:1, the ink pill and focus ring 11.51:1 */
   --ink: #191a1c;          /* text; the current band; the current nav item */
   --ink-2: #55575c;        /* secondary text: 6.21:1 on ground, 7.23:1 on card */
   --band-off: #f0f0f1;     /* a band chip that isn't the current one (inside cards) */
@@ -237,13 +239,22 @@ video {
   background: var(--chip-strip);
 }
 
+/* On the taupe bars the two lightest chips would all but vanish (1.02:1 and 1.26:1), so
+   there the strip sits on white, like a paint-sample card. */
+.public-header .wordmark::after,
+.app-nav .wordmark::after,
+.site-footer .wordmark::after {
+  background-color: var(--card);
+  box-shadow: 0 0 0 2px var(--card);
+}
+
 /* ---- Nav ----------------------------------------------------------------- */
 
 .app-nav {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--card);
+  background: var(--bar);
   box-shadow: 0 1px 0 var(--rule);
 }
 
@@ -267,7 +278,7 @@ video {
   margin-left: auto;
   min-height: 40px;
   padding: 8px 14px;
-  border: 1px solid var(--control);
+  border: 1px solid var(--ink-2);  /* on the taupe bar: 4.78:1 (--control would be 2.68) */
   border-radius: var(--radius);
   background: var(--card);
   color: var(--ink);
@@ -321,7 +332,7 @@ video {
    on the left of the second, the account link on its right. From 760px, one row: About and
    Contact, the wordmark centred, the account link. The wordmark comes first in the DOM. */
 .public-header {
-  background: var(--card);
+  background: var(--bar);
   box-shadow: 0 1px 0 var(--rule);
 }
 
@@ -388,7 +399,7 @@ video {
   align-items: center;
   min-height: 40px;
   padding: var(--space-2) 14px;
-  border: 1px solid var(--control);
+  border: 1px solid var(--ink-2);  /* on the taupe bar: 4.78:1 */
   border-radius: var(--radius);
   background: var(--card);
   color: var(--ink);
@@ -833,7 +844,7 @@ body:has(> .site-footer) > main {
 
 .site-footer {
   margin-top: var(--space-5);
-  background: var(--card);
+  background: var(--bar);
   box-shadow: 0 -1px 0 var(--rule);
 }
 
@@ -873,6 +884,101 @@ body:has(> .site-footer) > main {
 @media (min-width: 600px) {
   .site-footer__links {
     margin: 0 calc(-1 * var(--space-3)) 0 auto;
+  }
+}
+
+/* ---- Photo pages (Unit 4b) ------------------------------------------------------
+   <body data-photo="1|2"> shows one of the two Canva photos, served unchanged (CREDITS.md).
+   Readability comes only from CSS layers over the photo and solid cards: never a filter on
+   the image (test_frontend_backdrops.py checks this and the numbers below).
+   - Below 1024px: no page background; a 200px band under the nav (.photo-band; About and
+     Contact use their own .band), and the page title on a panel of the ground at 90%
+     straddling the band's foot: over a black pixel ink 11.96:1, ink-2 4.97:1.
+   - From 1024px: the photo fills the page background (a fixed layer, cover) under the ground
+     at 60%: over a black pixel, the worst point either photo has, ink 5.35:1. Only page
+     titles and ink links sit on it; every other text is on a solid card or slip. */
+:root {
+  --photo-veil: color-mix(in srgb, var(--ground) 60%, transparent);
+  --photo-panel: color-mix(in srgb, var(--ground) 90%, transparent);
+}
+
+body[data-photo="1"] {
+  --photo: url("/static/media/backdrop-1.png");
+}
+
+body[data-photo="2"] {
+  --photo: url("/static/media/backdrop-2.png");
+}
+
+.photo-band {
+  height: 200px;
+  background: var(--band-off) var(--photo) center / cover no-repeat;
+}
+
+/* The page's head (its title, or a back link and the title) on the panel. */
+body[data-photo] .page > .page__title:first-child,
+body[data-photo] .page > .page-head {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: -52px;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-card);
+  background: var(--photo-panel);
+}
+
+.page-head .page__title {
+  margin-bottom: 0;
+}
+
+.page-head + * {
+  margin-top: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  body[data-photo] {
+    isolation: isolate;
+  }
+
+  body[data-photo]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(var(--photo-veil), var(--photo-veil)),
+      var(--photo) center / cover no-repeat;
+  }
+
+  .photo-band {
+    display: none;
+  }
+
+  body[data-photo] .page > .page__title:first-child,
+  body[data-photo] .page > .page-head {
+    width: auto;
+    margin-top: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+  }
+
+  /* Loose text on a photo page becomes a solid slip: status lines, and each page's own
+     (Dashboard's "Quick links" heading; Skin Profile's date and rescan line; Routine's intro
+     and notes; Catalog's filters, count and page number; product detail's placeholder). */
+  body[data-photo] :is(.status, .dashboard__heading, .profile-date, .profile-rescan,
+      .routine-intro, .routine-note, .catalog-filters, .catalog-count, .pagination__info,
+      .page__placeholder) {
+    width: fit-content;
+    max-width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    background: var(--card);
+  }
+
+  /* Settings' Subscription item (text only, no link) is a slip like the links beside it. */
+  body[data-photo] .settings-link--unavailable {
+    background: var(--card);
   }
 }
 
