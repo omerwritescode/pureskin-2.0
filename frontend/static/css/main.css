@@ -1,18 +1,80 @@
-/* Shared styles for /app pages and the public /scan funnel: palette, typography,
-   layout, buttons, nav.
+/* Shared styles for every page that loads them (/app pages, the /scan funnel, the landing
+   page): tokens, the Archivo face, base elements, the wordmark, nav, buttons, cards,
+   notices and score strips. Direction B, "shade card": counter-grey ground, white card
+   stock, ink text, one deep-brown action. Light theme only.
    Mobile-first; page stylesheets load after this one and only add page-specific rules. */
 
+/* Archivo (Omnibus-Type), SIL OFL 1.1: /static/fonts/archivo/OFL.txt. A Latin subset of the
+   variable font, both axes kept (weight 100-900, width 62-125%). See /static/CREDITS.md. */
+@font-face {
+  font-family: "Archivo";
+  src: url("/static/fonts/archivo/Archivo-Variable-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --bg: #f7f5f2;
-  --surface: #ffffff;
-  --text: #1f2421;
-  --muted: #5f6763;
-  --border: #d6d3cd;
-  --accent: #2f6f5e;
-  --accent-soft: #e3efeb;
-  --radius: 8px;
+  color-scheme: light;
+
+  /* Ground and stock */
+  --counter: #eeeff0;      /* page ground */
+  --card: #ffffff;         /* cards and raised controls */
+  --ink: #191a1c;          /* text; the current band; the current nav item */
+  --ink-2: #55575c;        /* secondary text: 6.28:1 on counter, 7.23:1 on card */
+  --band-off: #f0f0f1;     /* a band chip that isn't the current one (inside cards) */
+  --rule: #d9dadc;         /* decorative hairlines only, never a control's only edge */
+  --control: #7c7e84;      /* borders of inputs and outlined buttons: 3.53:1 / 4.06:1 */
+
+  /* The one action colour, and white on it (14.09:1; hover 16.73:1) */
+  --action: #3d261a;
+  --action-hover: #2a1a12;
+
+  /* Notices and errors */
+  --notice-bg: #fbf3e6;
+  --notice-ink: #5c4100;   /* 8.62:1 on notice-bg */
+  --notice-rule: #e3cfa6;  /* decorative */
+  --error: #a1261b;        /* 7.48:1 on card, 6.49:1 on counter */
+
+  /* Skin chips: the wordmark and the colour behind a photo or video until it loads.
+     Decorative only: never text, never data, never a scale of anything. */
+  --chip-1: #b17a50;
+  --chip-2: #ebcfb4;
+  --chip-3: #5a3724;
+  --chip-4: #ddb48e;
+  --chip-5: #774a2f;
+  --chip-strip: linear-gradient(90deg,
+    var(--chip-1) 0 5px, transparent 5px 7px,
+    var(--chip-2) 7px 12px, transparent 12px 14px,
+    var(--chip-3) 14px 19px, transparent 19px 21px,
+    var(--chip-4) 21px 26px, transparent 26px 28px,
+    var(--chip-5) 28px 33px);
+
+  /* Type, shape, space, depth, motion */
+  --type: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 6px;
+  --radius-card: 8px;
   --gutter: 16px;
-  --content-width: 960px;
+  --content-width: 1040px;
+  --lift: 0 1px 2px rgb(0 0 0 / 0.08), 0 14px 28px -16px rgb(0 0 0 / 0.45);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Legacy names, still read by page stylesheets that haven't been redesigned yet.
+     Each goes when the last page using it is restyled (build units 3-6). */
+  --bg: var(--counter);
+  --surface: var(--card);
+  --text: var(--ink);
+  --muted: var(--ink-2);
+  --border: var(--rule);
+  --accent: var(--ink);
+  --accent-soft: var(--band-off);
+}
+
+@media (min-width: 900px) {
+  :root {
+    --gutter: 32px;
+  }
 }
 
 * {
@@ -24,78 +86,183 @@
   display: none !important;
 }
 
+html {
+  color-scheme: light;
+  scrollbar-color: var(--control) var(--counter);
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--counter);
+  color: var(--ink);
+  font-family: var(--type);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  font-synthesis: none;
 }
 
 h1,
 h2,
 h3 {
-  line-height: 1.2;
+  font-weight: 800;
+  font-stretch: 112%;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
 }
 
 a {
-  color: var(--accent);
+  color: var(--ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+::selection {
+  background: var(--chip-4);
+  color: var(--ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
 }
 
-/* ---- Nav ------------------------------------------------------------- */
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  caret-color: var(--ink);
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* "Skip to main content" (added by nav.js): off-screen until it has keyboard focus. */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 20;
+  padding: 10px 16px;
+  background: var(--ink);
+  color: #ffffff;
+  border-radius: var(--radius);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  outline-color: var(--action);
+}
+
+/* ---- Wordmark: the name in lowercase, then the five chips --------------- */
+
+.wordmark,
+.site-header__inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 1.3rem;
+  font-weight: 850;
+  font-stretch: 125%;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.wordmark::after,
+.site-header__inner::after {
+  content: "";
+  flex: none;
+  width: 33px;
+  height: 16px;
+  background: var(--chip-strip);
+}
+
+/* ---- Nav ----------------------------------------------------------------- */
 
 .app-nav {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 1px 0 var(--rule);
 }
 
-/* Phones: brand + logout on the first row, links on a second row. */
+/* Phones: wordmark + logout on the first row, links on a second row. */
 .app-nav__inner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  row-gap: 6px;
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 10px var(--gutter) 8px;
-  row-gap: 8px;
+  padding: 12px var(--gutter) 4px;
 }
 
 .app-nav__brand {
   order: 1;
-  font-weight: 700;
-  font-size: 1.15rem;
-  text-decoration: none;
 }
 
 .app-nav__logout {
   order: 2;
   margin-left: auto;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--control);
   border-radius: var(--radius);
-  background: none;
-  color: var(--text);
-  font: inherit;
-  font-size: 0.9rem;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
-/* The 7 links scroll sideways inside the nav on narrow screens, never the page. */
+.app-nav__logout:hover {
+  border-color: var(--ink);
+}
+
+/* The 7 links scroll sideways inside the nav on narrow screens, never the page. The
+   block padding leaves room for the focus ring inside the scrolling box. */
 .app-nav__links {
   order: 3;
   flex: 0 0 100%;
   display: flex;
   gap: 4px;
   margin: 0;
-  padding: 0;
+  padding: 6px 4px 8px;
   list-style: none;
   overflow-x: auto;
   scrollbar-width: thin;
@@ -103,151 +270,198 @@ a {
 
 .app-nav__link {
   display: block;
-  padding: 6px 12px;
+  padding: 8px 12px;
   border-radius: var(--radius);
-  color: var(--muted);
-  font-weight: 600;
+  color: var(--ink-2);
   font-size: 0.95rem;
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .app-nav__link:hover {
-  color: var(--text);
+  color: var(--ink);
+  background: var(--counter);
 }
 
+/* The one current state: an ink chip. */
 .app-nav__link[aria-current="page"] {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--ink);
+  color: #ffffff;
 }
 
-/* ---- Page layout ----------------------------------------------------- */
+/* ---- Page layout --------------------------------------------------------- */
 
 .page {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 24px var(--gutter);
+  padding: 24px var(--gutter) 64px;
 }
 
 .page__title {
-  margin: 0 0 8px;
-  font-size: 1.75rem;
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 1.6rem + 1.4vw, 2.75rem);
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .page__placeholder {
+  max-width: 60ch;
   margin: 0;
-  color: var(--muted);
+  color: var(--ink-2);
 }
 
-/* ---- Buttons --------------------------------------------------------- */
+/* ---- Buttons ------------------------------------------------------------- */
 
 .btn {
-  display: inline-block;
-  padding: 12px 20px;
-  border: 1px solid var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 22px;
+  border: 1px solid var(--action);
   border-radius: var(--radius);
-  background: var(--accent);
+  background: var(--action);
   color: #ffffff;
-  font: inherit;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.1), 0 8px 18px -12px rgb(61 38 26 / 0.7);
+  transition: background-color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+}
+
+.btn:hover {
+  border-color: var(--action-hover);
+  background: var(--action-hover);
 }
 
 .btn--secondary {
-  background: var(--surface);
-  color: var(--accent);
+  border-color: var(--control);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.btn--secondary:hover {
+  border-color: var(--ink);
+  background: var(--card);
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  border-color: var(--rule);
+  background: var(--band-off);
+  color: var(--ink-2);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
-/* ---- Minimal header for public pages (scan funnel) — no app nav -------- */
+/* ---- Public header (scan funnel): the wordmark alone, no app nav ---------- */
 
 .site-header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--counter);
 }
 
 .site-header__inner {
+  display: flex;
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 12px var(--gutter);
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: var(--accent);
+  padding: 18px var(--gutter) 6px;
 }
 
-/* "Step 1 of 3" label above funnel page titles. */
+/* "Step 1 of 3" above funnel page titles (the funnel's own unit replaces it). */
 .scan-step {
   margin: 0 0 4px;
-  color: var(--muted);
+  color: var(--ink-2);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
-/* ---- Cards, empty states, status messages (/app pages) --------------- */
+/* ---- Cards: card-stock slips with a rivet hole --------------------------- */
 
 .card {
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  position: relative;
+  padding: 20px 18px 20px 36px;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--lift);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 26px;
+  left: 12px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--counter);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
 }
 
 .card__title {
   margin: 0 0 4px;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  line-height: 1.1;
 }
 
 .card__meta {
   margin: 0 0 16px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+
+.card__meta strong {
+  color: var(--ink);
 }
 
 .empty-state {
   max-width: 560px;
-  padding: 24px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  text-align: center;
+  padding: 28px 24px;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--lift);
 }
 
 .empty-state__title {
   margin: 0 0 8px;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
 }
 
 .empty-state p {
+  max-width: 48ch;
   margin: 0 0 20px;
-  color: var(--muted);
+  color: var(--ink-2);
 }
 
+/* ---- Status lines and notices ---------------------------------------------- */
+
 .status {
-  color: var(--muted);
+  color: var(--ink-2);
 }
 
 .status--error {
-  color: #8c1d18;
+  color: var(--error);
+  font-weight: 600;
 }
 
 .warning-box {
   margin: 0 0 20px;
   padding: 14px 16px;
-  background: #fff6e5;
-  border: 1px solid #f0d9a8;
+  background: var(--notice-bg);
+  border: 1px solid var(--notice-rule);
   border-radius: var(--radius);
-  color: #5c4100;
+  color: var(--notice-ink);
 }
 
 .warning-box__title {
   margin: 0 0 6px;
   font-size: 1rem;
+  font-stretch: 100%;
+  letter-spacing: 0;
 }
 
 .warning-box ul {
@@ -259,16 +473,21 @@ a {
   margin-top: 4px;
 }
 
-/* A one-line note at the top of a page (the catalog and routine pages: where the
-   ingredient lists come from). */
+/* A short note at the top of a page (the catalog and routine pages: where the ingredient
+   lists come from). A plain slip, no coloured edge. */
 .page-note {
-  max-width: 720px;
-  margin: 0 0 16px;
-  padding: 10px 14px;
-  background: var(--accent-soft);
-  border-left: 4px solid var(--accent);
+  max-width: 760px;
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 1px solid var(--rule);
   border-radius: var(--radius);
-  font-size: 0.9rem;
+  color: var(--ink-2);
+  font-size: 0.92rem;
+}
+
+.page-note strong {
+  color: var(--ink);
 }
 
 /* "Global ingredient list" (PureSkinUI.marketBadge): the product's list was copied from
@@ -277,108 +496,186 @@ a {
   display: inline-block;
   align-self: flex-start;
   margin-top: 4px;
-  padding: 1px 8px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--muted);
+  padding: 2px 8px;
+  border: 1px solid var(--control);
+  border-radius: 4px;
+  color: var(--ink-2);
   font-size: 0.75rem;
   font-weight: 600;
+  font-stretch: 87.5%;
 }
 
-/* ---- Score bars (/scan/report/, Dashboard, Skin Profile) --------------- */
+/* ---- Score strips (/scan/report/, Dashboard, Skin Profile, Progress) ------ */
 
 .scores {
+  display: grid;
+  gap: 14px;
   max-width: 560px;
-  margin: 0;
+  margin: 0 0 16px;
   padding: 0;
   list-style: none;
-}
-
-.score {
-  margin-bottom: 14px;
 }
 
 .score__label {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 4px;
-  font-weight: 600;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-weight: 700;
 }
 
-.score__track {
-  height: 10px;
-  overflow: hidden;
-  background: var(--border);
-  border-radius: 5px;
-}
-
-.score__fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 5px;
-}
-
-.scores--compact .score {
-  margin-bottom: 10px;
-}
-
-.scores--compact .score__label {
-  font-size: 0.9rem;
-}
-
-.scores--compact .score__track {
-  height: 6px;
-}
-
-/* Band name as text (never colour alone), the 1–100 number smaller. */
+/* Band name as text (never colour alone), the 1-100 number smaller. */
 .score__band {
   display: inline-flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 8px;
 }
 
 .score__value {
-  color: var(--muted);
+  color: var(--ink-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* One chip per band; ui.js sets each chip's flex-grow from its range in bands.js, so no
+   cutoff appears here. White chips on the page ground, light grey inside a card. */
+.score__strip {
+  display: flex;
+  gap: 2px;
+}
+
+.score__chip {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 4px 8px;
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink-2);
   font-size: 0.8rem;
-  font-weight: 400;
+  font-weight: 600;
+  font-stretch: 87.5%;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card .score__chip {
+  background: var(--band-off);
+  box-shadow: none;
+}
+
+.score__chip:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.score__chip:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.score__chip.score__chip--current {
+  background: var(--ink);
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.scores--compact {
+  gap: 10px;
+}
+
+.scores--compact .score__label {
+  font-size: 0.95rem;
+}
+
+.scores--compact .score__chip {
+  padding: 2px 6px;
+  font-size: 0.75rem;
 }
 
 .sensitive-indicator {
-  display: inline-block;
-  margin: 8px 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  margin: 8px 0 14px;
   padding: 6px 12px;
-  background: #fff6e5;
-  border: 1px solid #f0d9a8;
+  background: var(--card);
+  border: 1px solid var(--ink);
   border-radius: var(--radius);
-  color: #5c4100;
+  font-size: 0.92rem;
 }
 
 .skin-type-note {
-  max-width: 560px;
+  max-width: 60ch;
   margin: 4px 0 12px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: var(--ink-2);
+  font-size: 0.92rem;
 }
 
-/* ---- Wider screens: brand, links and logout on one row --------------- */
+/* ---- Media slots (landing, auth, funnel) ----------------------------------
+   A plain chip-colour block at the final aspect ratio. Its photo path is wired through
+   --media-src, so a file dropped into /static/media/ shows up with no code change; until
+   then the chip colour is all there is (a missing background image draws nothing). */
+.media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: var(--media-ratio, auto);
+  background-color: var(--media-chip, var(--chip-1));
+  background-image: var(--media-src, none);
+  background-position: center;
+  background-size: cover;
+}
 
-@media (min-width: 900px) {
+.media > video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- Wider screens: wordmark, links and logout on one row ----------------- */
+
+@media (min-width: 600px) {
+  .card {
+    padding: 24px 24px 24px 46px;
+  }
+
+  .card::before {
+    top: 30px;
+    left: 17px;
+  }
+}
+
+@media (min-width: 1024px) {
   .app-nav__inner {
     flex-wrap: nowrap;
-    gap: 16px;
-    padding-bottom: 10px;
+    gap: 24px;
+    padding-block: 10px;
   }
 
   .app-nav__links {
     order: 2;
     flex: 1 1 auto;
+    padding: 4px;
   }
 
   .app-nav__logout {
     order: 3;
   }
+}
 
-  .page__title {
-    font-size: 2rem;
+/* ---- Reduced motion: no transitions or animations anywhere ----------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

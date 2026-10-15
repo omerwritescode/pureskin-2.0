@@ -27,9 +27,10 @@
     return `<li><a class="app-nav__link" href="${item.href}"${active}>${item.label}</a></li>`;
   }).join("");
 
+  // The wordmark's lowercase and chip strip are CSS (.wordmark); the text stays "PureSkin".
   nav.innerHTML = `
     <div class="app-nav__inner">
-      <a class="app-nav__brand" href="/app/">PureSkin</a>
+      <a class="app-nav__brand wordmark" href="/app/">PureSkin</a>
       <ul class="app-nav__links">${links}</ul>
       <button type="button" class="app-nav__logout">Log out</button>
     </div>
@@ -38,4 +39,15 @@
   nav.querySelector(".app-nav__logout").addEventListener("click", () => {
     window.PureSkinAuth.logout();
   });
+
+  // Keyboard users can jump past the nav's nine stops (WCAG 2.4.1).
+  const main = document.querySelector("main");
+  if (main) {
+    if (!main.id) main.id = "main";
+    const skip = document.createElement("a");
+    skip.className = "skip-link";
+    skip.href = `#${main.id}`;
+    skip.textContent = "Skip to main content";
+    document.body.prepend(skip);
+  }
 })();

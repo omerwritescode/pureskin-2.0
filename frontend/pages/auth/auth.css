@@ -1,6 +1,7 @@
 /* Minimal, mobile-first styling for the auth page — to be polished later. */
 
 :root {
+  color-scheme: light;
   --bg: #f7f5f2;
   --surface: #ffffff;
   --text: #1f2421;

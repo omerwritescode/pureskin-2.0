@@ -24,17 +24,24 @@ const PureSkinUI = (() => {
     return node;
   }
 
-  // Labelled score bars, shared by /scan/report/, the Dashboard and the Skin Profile.
-  // The band name is the main label (as text, never colour alone); the 1–100 number is
-  // smaller. Needs /static/js/bands.js loaded first.
+  // Labelled score strips, shared by /scan/report/, the Dashboard, the Skin Profile and
+  // Progress. The band name is the main label (as text, never colour alone); the 1–100
+  // number is smaller. Under it, one chip per band from bands.js, each as wide as its
+  // range, the current one filled. Needs /static/js/bands.js loaded first.
   function scoreBars(profile, { compact = false } = {}) {
     return el("ul", { className: compact ? "scores scores--compact" : "scores" },
       ...SCORE_FIELDS.map(([key, label]) => {
         const score = profile[key];
         const band = PureSkinBands.bandFor(score);
         const bandName = band ? band.name : "Unknown";
-        const fill = el("div", { className: "score__fill" });
-        fill.style.width = `${score}%`;
+        const chips = PureSkinBands.SCORE_BANDS.map((each) => {
+          const chip = el("span", {
+            className: each === band ? "score__chip score__chip--current" : "score__chip",
+            text: each.name,
+          });
+          chip.style.flexGrow = String(each.max - each.min + 1);
+          return chip;
+        });
         return el("li", { className: "score" },
           el("div", { className: "score__label" },
             el("span", { text: label }),
@@ -42,10 +49,10 @@ const PureSkinUI = (() => {
               el("span", { className: "score__band-name", text: bandName }),
               el("span", { className: "score__value", text: `${score}/100` }))),
           el("div", {
-            className: "score__track", role: "meter", "aria-label": label,
+            className: "score__strip", role: "meter", "aria-label": label,
             "aria-valuemin": "1", "aria-valuemax": "100", "aria-valuenow": String(score),
             "aria-valuetext": `${bandName}, ${score} out of 100`,
-          }, fill));
+          }, ...chips));
       }));
   }
 
