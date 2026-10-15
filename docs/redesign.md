@@ -6,9 +6,10 @@ imagery, accessibility) lives in `PRODUCT.md`; the design-direction contract liv
 tokens, the assets, the remaining units and the working rules.
 
 **Status (2026-10-15).** Unit 1 is done: Archivo, the tokens and the shared shell
-(`ffcf85e`), plus a Skin Profile fix (`96f2c87`). Next: Unit 2, the landing page at `/`.
-Every unit stops for the user's review at 360 px and 1440 px, then waits for a separate
-commit authorisation (section 9).
+(`ffcf85e`), plus a Skin Profile fix (`96f2c87`). Unit 2 is done: the landing page at `/`
+and `test_frontend_landing.py` (commit "Frontend redesign (2): landing page at /, landing
+tests"). Next: Unit 3, auth. Every unit stops for the user's review at 360 px and 1440 px,
+then waits for a separate commit authorisation (section 9).
 
 ## 1. The direction
 
@@ -125,13 +126,13 @@ sets `color-scheme: light`.
 - **Write sizes as `font-size` declarations,** not inside the `font` shorthand. Impeccable's
   detector can't read `clamp()` in the shorthand and reports a flat hierarchy.
 
-| Role | Weight / width | Size | In `main.css` yet? |
+| Role | Weight / width | Size | Where |
 |---|---|---|---|
-| Landing headline | 850 / 112% | `clamp(2.4rem, 1.6rem + 2.4vw, 3.6rem)`, line-height 0.98, tracking −0.035em | Unit 2 |
-| Page title | 850 / 112% | `clamp(2rem, 1.6rem + 1.4vw, 2.75rem)`, line-height 1, −0.03em | yes |
-| Section heading | 800 / 112% | `clamp(1.6rem, 1.3rem + 1vw, 2.1rem)` | Unit 2 |
-| Card title (revised) | 800 / 112% | 1.5rem | yes |
-| Step heading (revised) | 800 / 106% | 1.35rem, line-height 1.15 | Unit 2 |
+| Landing headline | 850 / 112% | `clamp(2.4rem, 1.6rem + 2.4vw, 3.6rem)`, line-height 0.98, tracking −0.035em | `landing.css` (`.hero__title`; landing only) |
+| Page title | 850 / 112% | `clamp(2rem, 1.6rem + 1.4vw, 2.75rem)`, line-height 1, −0.03em | `main.css` |
+| Section heading | 800 / 112% | `clamp(1.6rem, 1.3rem + 1vw, 2.1rem)` | `landing.css` (`.landing-heading`); moves to `main.css` in Unit 4 |
+| Card title (revised) | 800 / 112% | 1.5rem | `main.css` |
+| Step heading (revised) | 800 / 106% | 1.35rem, line-height 1.15 | `landing.css` (`.step-heading`); moves to `main.css` in Unit 4 |
 | Body / lede | 400 / 100% | 1.0625rem, line-height 1.55 / 1.12rem | body yes |
 | Buttons, nav, labels | 600–700 / 100% | 0.95–1.1rem | yes |
 | Band chips, codes | 600 / 87.5%, tabular figures | 0.8rem (0.75rem compact) | yes |
@@ -140,8 +141,11 @@ sets `color-scheme: light`.
 
 **Motion:**
 - **The landing's one moment:** the deck fans open once after first paint (1.1 s,
-  `--ease-out`, 55 ms between blades). Under `prefers-reduced-motion` it is open from the
-  start.
+  `--ease-out`, 55 ms between blades), with CSS only: the `fan-open` keyframes in
+  `landing.css` run from upright to each blade's angle, with `backwards` fill and a delay of
+  `--i` × 55 ms. No script is involved, so the deck opens without JavaScript and never
+  flashes closed. Under `prefers-reduced-motion` the blades get `animation: none` and are
+  open from the start.
 - **Hover lift:** a pointer hover lifts one blade 16px along its own axis (0.35 s). Blades
   aren't focusable.
 - **State changes:** 200 ms.
@@ -155,7 +159,9 @@ the hero's one motion and a video inside a ~100px blade would be too small to re
 - **No `autoplay` attribute.** `landing.js` calls `play()` only when reduced motion isn't
   set; under reduced motion the poster is all that shows.
 - **A visible pause button** (WCAG 2.2.2): its label says what it will do ("Pause video" /
-  "Play video"), its icon matches, and it has no `aria-pressed`.
+  "Play video"), its icon matches, and it has no `aria-pressed`. It is `hidden` until the
+  video's first `playing` event, so no button shows while no file is supplied or under
+  reduced motion.
 - **`aria-hidden="true"` on the video:** the three steps beside it carry the meaning.
 - 6–8 s seamless loop, no audio track, at most 2 MB per format.
 
@@ -207,10 +213,10 @@ list and full pytest counts. Then a separate commit authorisation. Existing cont
 are never edited; new test files are added only when the user approves them. Test names
 below are from `backend/app/tests/`.
 
-**Unit 2: the landing page at `/`.**
-- **Files:** `frontend/pages/index.html`, `landing.css` and `landing.js` (fan opens once;
-  video play/pause; no URL literals). The static mount at `/` serves it with no backend
-  change.
+**Unit 2: the landing page at `/`. Done.**
+- **Files:** `frontend/pages/index.html`, `frontend/pages/landing.css` and
+  `frontend/pages/landing.js` (video play/pause only; no URL literals). The fan opens with
+  CSS only (section 4). The static mount at `/` serves the page with no backend change.
 - **Sections:**
   - hero
   - How a scan works (V1 and three steps: selfie by camera or upload, a few questions, the
@@ -224,12 +230,21 @@ below are from `backend/app/tests/`.
     Sign up
 - **Links:** "Start your free scan" → `/scan/`, Log in → `/auth/`, Sign up →
   `/auth/#signup`. No About or Pricing page.
-- **New test (approved): `test_frontend_landing.py`.** All approved checks: the landing page
-  has no testimonials, user counts or percentages, and none of "dermatologist",
-  "clinically", "proven", "verified" or before/after wording; every link targets an
-  existing route (`/scan/`, `/auth/`, `/auth/#signup`); the video has its required
-  attributes (muted, loop, playsinline, a poster, a WebM source then an MP4 one, no
-  `autoplay`); and its pause button exists.
+- **New test (approved): `test_frontend_landing.py`.** Its checks:
+  - no testimonials, user counts or percentages, and none of "dermatologist",
+    "clinically", "proven", "verified" or before/after wording (text, `aria-label`, `alt`,
+    `title` and the meta description, with entities decoded)
+  - every link targets an existing route (`/scan/`, `/auth/`, `/auth/#signup`), and
+    `landing.js` makes no links and never navigates
+  - the video has its required attributes (muted, loop, playsinline, a poster, a WebM
+    source then an MP4 one, no `autoplay`), and its pause button exists
+  - `GET /` serves the landing page
+  - the catalog note is word for word the Catalog page's
+  - the example is labelled "Example", its caption states a made-up profile in bands, and
+    the step is what the engine builds today for that profile on
+    `backend/catalog/products.json`. **A catalog or rules change that alters the example
+    fails this test, with a message naming each field that differs:** rebuild the routine
+    for `EXAMPLE_PROFILE` and copy the step again, word for word, or pick another one.
 - **Existing tests touched:**
   - `test_frontend_settings`: `test_every_page_names_any_website_it_loads_from_and_today_there_are_none`,
     `test_no_script_talks_to_another_website`
@@ -252,7 +267,16 @@ below are from `backend/app/tests/`.
 - **Questionnaire:** options become chip rows; inputs, fieldsets, legends and `aria-live`
   are untouched.
 - **Also:** restyle the dark camera box in `scan.css`. The optional G1–G3 guide goes here.
+- **Heading styles:** move the section heading (`.landing-heading`) and the step heading
+  (`.step-heading`) from `landing.css` to `main.css`, and delete them from `landing.css`.
+- **The landing's selfie sentence:** once upload is a peer of the camera, update step 1 of
+  "How a scan works" in `frontend/pages/index.html` ("Take one with your camera, or upload
+  a photo if the camera isn't available.") so it says either way works.
+- **The questionnaire's "Not sure" sentence:** `scan/questionnaire/index.html` says
+  "\"Not sure\" is always fine", but the goal, sleep and stress questions don't offer it.
+  Correct the sentence; don't add options. (No test reads that sentence today.)
 - **Tests touched:**
+  - the landing: all of `test_frontend_landing` (`index.html` changes)
   - questionnaire: `test_every_input_name_is_a_scorer_field`,
     `test_the_old_skin_type_question_is_gone`, `test_every_new_question_is_asked`,
     `test_radio_values_match_the_scorer_exactly`, `test_checkbox_values_match_the_scorer_exactly`,
@@ -330,6 +354,9 @@ below are from `backend/app/tests/`.
    this redesign marked done. The user updates the deadline line in CLAUDE.md themselves.
 6. Full `pytest`, real counts reported.
 7. Real-phone checks added to "Deferred verification" in CLAUDE.md if they can't be run.
+8. **An SVG favicon made from the wordmark chips** (`--chip-1` to `--chip-5` in their mixed
+   order, as in the wordmark: the tone rule applies), self-hosted under `/static` and linked
+   from every page. Today every page requests `/favicon.ico` and gets a 404.
 
 ## 7. Contract tests: what never changes
 
@@ -405,7 +432,10 @@ to replace with tokens in their units:
   - seeds `sessionStorage["pureskin_scan_result"]` for `/scan/report/`
 
   Headless Chrome won't lay a page out as narrow as 360px (its minimum window is wider),
-  so capture 360 px inside 360px iframes. Iframes in one page share `sessionStorage`: the
+  so capture 360 px inside 360px iframes, or (as in Unit 2) drive Chrome over the DevTools
+  protocol and set `Emulation.setDeviceMetricsOverride` to 360 px. For a full-page capture,
+  grow the viewport to the page's height and wait: `captureBeyondViewport` restarted the
+  landing deck's animation, so it showed the deck closed. Iframes in one page share `sessionStorage`: the
   Dashboard saves and clears a stored scan, and `/scan/` clears it, so capture the Skin
   Report on its own. The first harness (`harness.py`) lived in a session scratch folder
   outside the repo, so a new session won't have it.

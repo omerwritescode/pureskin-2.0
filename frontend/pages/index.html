@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>PureSkin — five skin scores and a routine with reasons</title>
+  <meta name="description" content="Take a selfie and answer a few questions to get five skin scores, then a morning and evening routine of real products, with a reason for every product it leaves out.">
+  <link rel="preload" href="/static/fonts/archivo/Archivo-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/landing.css">
+</head>
+<body>
+  <!-- Every sentence here must be true of the code today (PRODUCT.md, docs/redesign.md §6);
+       app/tests/test_frontend_landing.py checks the wording, the links and the video. -->
+  <header class="landing-header"><span class="wordmark">PureSkin</span></header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__copy">
+        <h1 id="hero-title" class="hero__title"><span>Every concern has a name.</span> <span>Every product has a reason.</span></h1>
+        <p class="hero__lede">Take a selfie and answer a few questions to get five scores, each Low, Moderate
+          or High. Save them, and you get a morning and evening routine of real products, with a
+          reason for every product it leaves out.</p>
+        <div class="hero__actions">
+          <a class="btn btn--large" href="/scan/">Start your free scan
+            <svg class="icon icon--arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <p class="account-links"><a href="/auth/">Log in</a> <a href="/auth/#signup">Sign up</a></p>
+        </div>
+        <p class="hero__privacy">Your photo is analysed in memory and never saved on our servers. The scores
+          are estimates, not a diagnosis.</p>
+      </div>
+
+      <!-- The deck: one blade per score, in the Skin Profile's order. Each photo slot shows its
+           chip colour until the file is in /static/media/ (docs/redesign.md §5). The chips
+           are decoration only and are never in light-to-dark order. -->
+      <ul class="fan" aria-label="The five scores in a Skin Profile">
+        <li class="blade" style="--i: 0; --a: -50deg"><span class="blade__name">Acne</span><span class="media blade__photo" style="--media-src: url('/static/media/m1-acne.jpg'); --media-chip: var(--chip-1)"></span></li>
+        <li class="blade" style="--i: 1; --a: -25deg"><span class="blade__name">Redness</span><span class="media blade__photo" style="--media-src: url('/static/media/m2-redness.jpg'); --media-chip: var(--chip-2)"></span></li>
+        <li class="blade" style="--i: 2; --a: 0deg"><span class="blade__name">Wrinkles</span><span class="media blade__photo" style="--media-src: url('/static/media/m3-wrinkles.jpg'); --media-chip: var(--chip-3)"></span></li>
+        <li class="blade" style="--i: 3; --a: 25deg"><span class="blade__name">Pigmentation</span><span class="media blade__photo" style="--media-src: url('/static/media/m4-pigmentation.jpg'); --media-chip: var(--chip-4)"></span></li>
+        <li class="blade" style="--i: 4; --a: 50deg"><span class="blade__name">Pores</span><span class="media blade__photo" style="--media-src: url('/static/media/m5-pores.jpg'); --media-chip: var(--chip-5)"></span></li>
+      </ul>
+    </section>
+
+    <section class="landing-section" aria-labelledby="how-title">
+      <h2 id="how-title" class="landing-heading">How a scan works</h2>
+      <div class="how">
+        <!-- V1: no autoplay attribute. landing.js plays it only without reduced motion and
+             shows the button once it is playing; the steps beside it carry the meaning. -->
+        <div class="media how__media" style="--media-chip: var(--chip-4)">
+          <video class="how__video" muted loop playsinline preload="none" poster="/static/media/v1-selfie-window-poster.jpg" aria-hidden="true">
+            <source src="/static/media/v1-selfie-window.webm" type="video/webm">
+            <source src="/static/media/v1-selfie-window.mp4" type="video/mp4">
+          </video>
+          <button type="button" class="how__toggle" hidden>
+            <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6v12M15 6v12"/></svg>
+            <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M8 5.5v13l10-6.5z"/></svg>
+            <span class="how__toggle-label">Pause video</span>
+          </button>
+        </div>
+        <ol class="how__steps">
+          <li class="how__step">
+            <span class="num-chip" aria-hidden="true">1</span>
+            <div>
+              <h3 class="step-heading">A selfie</h3>
+              <p>Take one with your camera, or upload a photo if the camera isn't available. PureSkin
+                checks it straight away and asks for another if it can't be used.</p>
+            </div>
+          </li>
+          <li class="how__step">
+            <span class="num-chip" aria-hidden="true">2</span>
+            <div>
+              <h3 class="step-heading">A few questions</h3>
+              <p>Eight short steps about how your skin feels and reacts, and what you already use.
+                Most questions have a “Not sure” answer.</p>
+            </div>
+          </li>
+          <li class="how__step">
+            <span class="num-chip" aria-hidden="true">3</span>
+            <div>
+              <h3 class="step-heading">Your Skin Report</h3>
+              <p>Five scores, each Low, Moderate or High, and your skin type. Create an account to
+                keep them and get your routine.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="landing-section example" aria-labelledby="example-title">
+      <div class="example__intro">
+        <h2 id="example-title" class="landing-heading">Why this product, and not that one</h2>
+        <p class="landing-intro">Rules decide which products from the catalog suit your skin. Every step
+          in your routine says why its product is there, and every product left out says why not.</p>
+      </div>
+
+      <!-- Copied word for word from the routine the engine builds on backend/catalog/products.json
+           for a made-up profile (dry, sensitive, acne 80, the other four scores 15, no tags):
+           the morning moisturiser step and one of the products left out. test_frontend_landing.py
+           rebuilds that routine and fails when the catalog or the rules change it. -->
+      <article class="card example-card" aria-labelledby="example-card-title">
+        <div class="example-card__head">
+          <h3 id="example-card-title" class="step-heading">Morning (AM)</h3>
+          <span class="example-card__tag">Example</span>
+        </div>
+        <p class="example-card__for">For a made-up profile: dry skin, sensitive, a High acne score and
+          the other four scores Low.</p>
+
+        <div class="example-step">
+          <span class="num-chip" aria-hidden="true">4</span>
+          <div class="example-step__body">
+            <p class="example-step__name">Moisturising Cream</p>
+            <p class="example-step__meta">Moisturiser · CeraVe <span class="market-badge">Global ingredient list</span></p>
+            <p class="example-step__note">Chosen for: rich</p>
+            <h4 class="example-card__subhead">Why this product</h4>
+            <ul class="example-step__why">
+              <li>Part of the base routine for dry skin.</li>
+              <li>Its texture is cream.</li>
+              <li>Ranked 1st of 3 eligible moisturisers: it lists Ceramide AP (10th of 24 ingredients),
+                matched for dry skin and sensitive skin; Glycerin (2nd of 24 ingredients), matched for
+                dry skin; Caprylic/Capric Triglyceride (4th of 24 ingredients), matched for dry skin.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="example-card__left-out">
+          <h4 class="example-card__subhead">Left out</h4>
+          <p><strong>True Clarity Oil &amp; Acne Control Face Wash</strong> (morning) — It contains
+            salicylic acid, a beta hydroxy acid (BHA). Strong actives are left out for sensitive skin.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="landing-section" aria-labelledby="kept-title">
+      <h2 id="kept-title" class="landing-heading">What's kept, and what isn't</h2>
+      <div class="ledger">
+        <div class="ledger__col">
+          <h3 class="step-heading">Kept, once you have an account</h3>
+          <ul class="ledger__list">
+            <li><strong>Your account.</strong> Your email address and name. Your password is stored only
+              as a hash, never as you typed it.</li>
+            <li><strong>Each scan you save.</strong> The five scores, your skin type, whether your answers
+              point to sensitive skin, and the date.</li>
+            <li><strong>A few tags.</strong> Picked from fixed lists: the kinds of products you use, the
+              ingredients you want to avoid and your main goal. Never the words you typed.</li>
+          </ul>
+          <p class="ledger__note">It's kept in a database on the computer that runs PureSkin. The full
+            list is on the Privacy page in Settings, where you can download your data or delete your
+            account.</p>
+        </div>
+        <div class="ledger__col">
+          <h3 class="step-heading">Not kept</h3>
+          <ul class="ledger__list">
+            <li><strong>Your photo.</strong> It's analysed in memory and never saved on our servers.
+              During the scan it waits in your browser tab, and it's removed when the scan finishes or
+              you close the tab.</li>
+            <li><strong>Your answers.</strong> They're scored in memory and never stored, including
+              anything you type. Only the results are saved.</li>
+            <li><strong>Your chats.</strong> The chat stores nothing: no messages, answers or history.
+              Its language model runs on the same computer as the PureSkin server, not on a cloud AI
+              service.</li>
+            <li><strong>Your routine.</strong> It's worked out again from your latest scan each time you
+              open it.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="landing-aside">No PureSkin page loads files from another website, and none has advertising
+        or analytics scripts.</p>
+    </section>
+
+    <section class="landing-section" aria-labelledby="isnt-title">
+      <h2 id="isnt-title" class="landing-heading">What PureSkin isn't</h2>
+      <ul class="isnt">
+        <li class="isnt__item">
+          <h3 class="step-heading">A diagnosis</h3>
+          <p>The five scores are estimates from your photo and your answers, to guide your routine.
+            Lighting and your camera change the photo-based scores, and they haven't been checked
+            against a doctor's assessment. Your skin type and sensitivity come from your answers,
+            not the photo.</p>
+        </li>
+        <li class="isnt__item">
+          <h3 class="step-heading">Medical advice</h3>
+          <p>The chat answers from a small set of skincare notes and your Skin Profile, and its answers
+            can be wrong or incomplete. For a skin problem or a reaction to a product, ask a doctor or
+            pharmacist.</p>
+        </li>
+        <li class="isnt__item">
+          <h3 class="step-heading">The final word on ingredients</h3>
+          <p>Ingredient lists are copied from brand pages and may differ by market or batch.
+            <strong>Global ingredient list:</strong> the list comes from the brand's non-India website;
+            the version sold in India may differ.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="landing-section closing" aria-labelledby="closing-title">
+      <div class="card closing__card">
+        <h2 id="closing-title" class="landing-heading">See your five scores</h2>
+        <p>A selfie and a few questions. You only need an account when you want to keep your
+          results.</p>
+        <a class="btn btn--large" href="/scan/">Start your free scan
+          <svg class="icon icon--arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="landing-footer">
+    <div class="landing-footer__inner">
+      <span class="wordmark">PureSkin</span>
+      <p>PureSkin is a student project (MSc Data Science, NMIMS).</p>
+      <p class="account-links"><a href="/auth/">Log in</a> <a href="/auth/#signup">Sign up</a></p>
+    </div>
+  </footer>
+
+  <script src="/landing.js"></script>
+</body>
+</html>
