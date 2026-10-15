@@ -8,57 +8,80 @@
   <!-- Leaving the scan funnel: drop any leftover photo / retake answers from the tab.
        The scan result is kept, so the Dashboard can save it after login. -->
   <script src="/static/js/scan-guard.js" data-outside-funnel></script>
+  <link rel="preload" href="/static/fonts/archivo/Archivo-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/main.css">
   <link rel="stylesheet" href="/auth/auth.css">
 </head>
 <body>
-  <main class="auth">
-    <h1 class="auth__brand">PureSkin</h1>
+  <header class="auth-header"><span class="wordmark">PureSkin</span></header>
 
-    <div class="auth__tabs" role="tablist" aria-label="Account">
-      <button type="button" role="tab" id="tab-login" aria-controls="view-login"
-              aria-selected="true" class="auth__tab" data-view="login">Log in</button>
-      <button type="button" role="tab" id="tab-signup" aria-controls="view-signup"
-              aria-selected="false" class="auth__tab" data-view="signup" tabindex="-1">Sign up</button>
+  <!-- auth.js reads .auth__tabs, .auth__tab, [data-view], the form ids, the input names and
+       .auth__error: keep them. -->
+  <main class="auth">
+    <h1 class="page__title auth__title">Log in or sign up</h1>
+
+    <div class="card auth__card">
+      <div class="auth__tabs" role="tablist" aria-label="Account">
+        <button type="button" role="tab" id="tab-login" aria-controls="view-login"
+                aria-selected="true" class="auth__tab" data-view="login">Log in</button>
+        <button type="button" role="tab" id="tab-signup" aria-controls="view-signup"
+                aria-selected="false" class="auth__tab" data-view="signup" tabindex="-1">Sign up</button>
+      </div>
+
+      <section id="view-login" role="tabpanel" aria-labelledby="tab-login">
+        <form id="login-form" class="auth__form" novalidate>
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" spellcheck="false" required>
+
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password"
+                 autocomplete="current-password" required>
+
+          <p class="auth__error" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn auth__submit">Log in</button>
+        </form>
+        <p class="auth__switch">New to PureSkin? <a href="#signup" data-view="signup">Create an account</a></p>
+      </section>
+
+      <section id="view-signup" role="tabpanel" aria-labelledby="tab-signup" hidden>
+        <form id="signup-form" class="auth__form" novalidate>
+          <label for="signup-name">Full name</label>
+          <input id="signup-name" name="full_name" type="text" autocomplete="name" spellcheck="false" required>
+
+          <label for="signup-email">Email</label>
+          <input id="signup-email" name="email" type="email" autocomplete="email" spellcheck="false" required>
+
+          <label for="signup-password">Password</label>
+          <input id="signup-password" name="password" type="password"
+                 autocomplete="new-password" minlength="8" required
+                 aria-describedby="signup-password-hint">
+          <small id="signup-password-hint" class="auth__hint">At least 8 characters.</small>
+
+          <label for="signup-confirm">Confirm password</label>
+          <input id="signup-confirm" name="confirm_password" type="password"
+                 autocomplete="new-password" required>
+
+          <p class="auth__error" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn auth__submit">Create account</button>
+        </form>
+        <p class="auth__switch">Already have an account? <a href="#login" data-view="login">Log in</a></p>
+      </section>
     </div>
 
-    <section id="view-login" role="tabpanel" aria-labelledby="tab-login">
-      <form id="login-form" class="auth__form" novalidate>
-        <label for="login-email">Email</label>
-        <input id="login-email" name="email" type="email" autocomplete="email" required>
-
-        <label for="login-password">Password</label>
-        <input id="login-password" name="password" type="password"
-               autocomplete="current-password" required>
-
-        <p class="auth__error" role="alert" aria-live="polite"></p>
-        <button type="submit" class="auth__submit">Log in</button>
-      </form>
-      <p class="auth__switch">New to PureSkin? <a href="#signup" data-view="signup">Create an account</a></p>
-    </section>
-
-    <section id="view-signup" role="tabpanel" aria-labelledby="tab-signup" hidden>
-      <form id="signup-form" class="auth__form" novalidate>
-        <label for="signup-name">Full name</label>
-        <input id="signup-name" name="full_name" type="text" autocomplete="name" required>
-
-        <label for="signup-email">Email</label>
-        <input id="signup-email" name="email" type="email" autocomplete="email" required>
-
-        <label for="signup-password">Password</label>
-        <input id="signup-password" name="password" type="password"
-               autocomplete="new-password" minlength="8" required
-               aria-describedby="signup-password-hint">
-        <small id="signup-password-hint" class="auth__hint">At least 8 characters.</small>
-
-        <label for="signup-confirm">Confirm password</label>
-        <input id="signup-confirm" name="confirm_password" type="password"
-               autocomplete="new-password" required>
-
-        <p class="auth__error" role="alert" aria-live="polite"></p>
-        <button type="submit" class="auth__submit">Create account</button>
-      </form>
-      <p class="auth__switch">Already have an account? <a href="#login" data-view="login">Log in</a></p>
-    </section>
+    <!-- From 900px: the deck closed into one strip card (the landing's phone strip), one
+         swatch per score in the Skin Profile's order. Each photo slot shows its chip colour
+         until the file is in /static/media/ (docs/redesign.md §5). The chips are decoration
+         only and are never in light-to-dark order. -->
+    <aside class="auth-strip" aria-labelledby="auth-strip-caption">
+      <ul class="auth-strip__card">
+        <li class="auth-strip__row"><span class="auth-strip__name">Acne</span><span class="media auth-strip__photo" style="--media-src: url('/static/media/m1-acne.jpg'); --media-chip: var(--chip-1)"></span></li>
+        <li class="auth-strip__row"><span class="auth-strip__name">Redness</span><span class="media auth-strip__photo" style="--media-src: url('/static/media/m2-redness.jpg'); --media-chip: var(--chip-2)"></span></li>
+        <li class="auth-strip__row"><span class="auth-strip__name">Wrinkles</span><span class="media auth-strip__photo" style="--media-src: url('/static/media/m3-wrinkles.jpg'); --media-chip: var(--chip-3)"></span></li>
+        <li class="auth-strip__row"><span class="auth-strip__name">Pigmentation</span><span class="media auth-strip__photo" style="--media-src: url('/static/media/m4-pigmentation.jpg'); --media-chip: var(--chip-4)"></span></li>
+        <li class="auth-strip__row"><span class="auth-strip__name">Pores</span><span class="media auth-strip__photo" style="--media-src: url('/static/media/m5-pores.jpg'); --media-chip: var(--chip-5)"></span></li>
+      </ul>
+      <p id="auth-strip-caption" class="auth-strip__caption">The five scores in a Skin Profile</p>
+    </aside>
   </main>
 
   <script src="/auth/auth.js"></script>

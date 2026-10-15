@@ -8,8 +8,9 @@ tokens, the assets, the remaining units and the working rules.
 **Status (2026-10-15).** Unit 1 is done: Archivo, the tokens and the shared shell
 (`ffcf85e`), plus a Skin Profile fix (`96f2c87`). Unit 2 is done: the landing page at `/`
 and `test_frontend_landing.py` (commit "Frontend redesign (2): landing page at /, landing
-tests"). Next: Unit 3, auth. Every unit stops for the user's review at 360 px and 1440 px,
-then waits for a separate commit authorisation (section 9).
+tests"). Unit 3 is done: the auth page (commit "Frontend redesign (3): auth page"). Next:
+Unit 4, the scan funnel. Every unit stops for the user's review at 360 px and 1440 px, then
+waits for a separate commit authorisation (section 9).
 
 ## 1. The direction
 
@@ -251,12 +252,45 @@ below are from `backend/app/tests/`.
   - `test_frontend_contract`: `test_nothing_calls_the_removed_mock_endpoint`,
     `test_storage_keys_are_defined_only_in_scan_guard`, `test_no_answer_text_lives_in_the_frontend`
 
-**Unit 3: auth.**
+**Unit 3: auth. Done.**
 - **Files:** `auth/index.html` and `auth.css` move onto `main.css`; delete auth.css's own
   `:root` copies of the old tokens. Tabs become chips; add the wordmark and, on desktop, the
   closed M1–M5 strip beside the form. `auth.js` is unchanged, so `#signup` keeps working.
 - **Tests touched:** `test_pages_after_the_photo_steps_drop_the_photo[pages/auth/index.html]`
   and the two outside-host tests.
+- **As built, where it differs from the plan above or adds to it:**
+  - **The h1 is now "Log in or sign up"** (the page's `<title>` without the site name), set in
+    the page-title style. It used to be "PureSkin"; the wordmark in the header now carries the
+    name.
+  - **The wordmark is a `<span>`, not a link to `/`,** like the landing and funnel headers.
+    The link is decided in Unit 7 (item 10).
+  - **The tabs are two separate chips** (6px apart, `--radius` corners, ring offset 2px), not
+    joined like a score strip's 2px-apart chips: the 3px ring at its usual 3px offset covered
+    the other chip's edge. The current tab is an ink chip; the other is white with a
+    `--control` edge.
+  - **The form sits on one `.card` slip** with the tabs inside it; the rivet is moved down
+    (36px, 40px from 600px) to sit level with the tab row.
+  - **The strip shows from 900px only** (hidden below). It is an `<aside>` labelled by a
+    visible caption, "The five scores in a Skin Profile" (the words of the landing deck's
+    `aria-label`; no new claim). Its rules are the landing's phone strip copied into
+    `auth.css` as `.auth-strip*` (rows 64px tall instead of 56px), because `landing.css`
+    belongs to Unit 2. Unit 7 merges the two copies into `main.css` (item 9).
+  - **The error line takes no room until it has a message** (`:empty`), so at rest the
+    button sits under the last field; when a message appears, the button moves down by
+    one line. The line stays in the DOM (it is the live region). The old `min-height`
+    reserve is gone.
+  - **A field the message names gets a 2px `--error` edge** (border plus a 1px inset
+    shadow). The submit button is `.btn` (action brown, full width), with a progress cursor
+    while `auth.js` has it disabled. Chrome's autofill blue is replaced with `--band-off`.
+  - **`spellcheck="false"` on the two email fields and Full name.** The browser's red
+    squiggle under an address read as a second error beside the error styling, and an
+    English spellchecker flags many Indian names.
+  - **Errors, as `auth.js` handles them today:** each form's `.auth__error` is a live region
+    present from page load, so every message is announced, and a client-side error sets
+    `aria-invalid="true"` on the field it names. What is missing needs an `auth.js` change
+    and is in Unit 7 (item 11).
+  - **No test was added or edited.** auth.css uses no legacy alias, no `:root` and no
+    colour literal except `#ffffff` for white on ink, the same literal `main.css` uses.
 
 **Unit 4: the scan funnel (selfie, questionnaire, report).**
 - **Step rail:** three chips replace the "Step 1 of 3" label above headings, which the craft
@@ -357,6 +391,22 @@ below are from `backend/app/tests/`.
 8. **An SVG favicon made from the wordmark chips** (`--chip-1` to `--chip-5` in their mixed
    order, as in the wordmark: the tone rule applies), self-hosted under `/static` and linked
    from every page. Today every page requests `/favicon.ico` and gets a 404.
+9. **One closed-strip definition.** The phone strip is defined twice: `.fan`/`.blade` in
+   `landing.css` (below 900px) and `.auth-strip*` in `auth/auth.css` (from 900px). Move it
+   into one definition in `main.css` and delete both copies.
+10. **Decide the wordmark link.** Today it is a `<span>` on the landing, auth and funnel
+    pages. The user's preference: it links home (`/`) on the landing and auth pages; in the
+    funnel only if the visitor's answers are kept when they leave.
+11. **Auth errors, in `auth.js`:**
+    - Tie each message to its field: give each `.auth__error` an id, and have `setError` add
+      that id to the `aria-describedby` of each field it marks invalid (keeping
+      `signup-password-hint` on the password) and remove it otherwise. Today no field
+      references the message, so a screen reader announces it once and then reads only
+      "invalid" on the field.
+    - Mark the field for server errors that name one: the 409 "An account with this email
+      already exists" (the email field), and a 422 whose `loc` names a field. The 401 stays
+      unmarked on purpose (it mustn't say which field was wrong).
+    - Optional: move focus to the first invalid field after a client-side error.
 
 ## 7. Contract tests: what never changes
 
@@ -376,21 +426,20 @@ heuristics, not clinical; the catalog is not "verified"; the chat is not medical
 
 `main.css` maps the old token names onto B's tokens, so pages not yet restyled keep working.
 Each goes when the last stylesheet using it is restyled; Unit 7's check (section 6) enforces
-that. Usage as of `96f2c87` (paths under `frontend/pages/`):
+that. Usage as of Unit 3 (paths under `frontend/pages/`):
 
 | Alias | Maps to | Still used in |
 |---|---|---|
-| `--bg` | `--counter` | `app/chat/chat.css`, `app/settings/settings.css`, `auth/auth.css` |
-| `--surface` | `--card` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/settings/settings.css`, `auth/auth.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
-| `--text` | `--ink` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/routine/routine.css`, `app/settings/settings.css`, `auth/auth.css` |
-| `--muted` | `--ink-2` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `auth/auth.css`, `scan/questionnaire/questionnaire.css`, `scan/report/report.css`, `scan/scan.css` |
-| `--border` | `--rule` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `auth/auth.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
-| `--accent` | `--ink` | `app/catalog/catalog.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `auth/auth.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
+| `--bg` | `--counter` | `app/chat/chat.css`, `app/settings/settings.css` |
+| `--surface` | `--card` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
+| `--text` | `--ink` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/routine/routine.css`, `app/settings/settings.css` |
+| `--muted` | `--ink-2` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/report/report.css`, `scan/scan.css` |
+| `--border` | `--rule` | `app/catalog/catalog.css`, `app/chat/chat.css`, `app/dashboard.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
+| `--accent` | `--ink` | `app/catalog/catalog.css`, `app/dashboard.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `app/settings/settings.css`, `scan/questionnaire/questionnaire.css`, `scan/scan.css` |
 | `--accent-soft` | `--band-off` | `app/chat/chat.css`, `app/profile/profile.css`, `app/progress/progress.css`, `app/routine/routine.css`, `scan/questionnaire/questionnaire.css`, `scan/report/report.css` |
 
-`auth/auth.css` doesn't load `main.css` yet. Its own `:root` defines the old values
-(`--bg`, `--surface`, `--text`, `--muted`, `--border`, `--accent`, `--accent-text`,
-`--error`, `--radius`) in the old sage-green palette, until Unit 3.
+Since Unit 3, `auth/auth.css` loads after `main.css` and uses none of these aliases; its own
+`:root` with the old sage-green values is gone.
 
 **Hard-coded colours from the old palette** (amber notices, dark reds, the dark camera box),
 to replace with tokens in their units:

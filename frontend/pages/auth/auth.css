@@ -1,135 +1,248 @@
-/* Minimal, mobile-first styling for the auth page — to be polished later. */
+/* Auth page (/auth/). Log in and Sign up are two chip tabs on one card slip; from 900px
+   the deck, closed into one strip card (the landing's phone strip), stands beside it.
+   Loads after main.css, which holds the tokens, .wordmark, .page__title, .card, .btn,
+   .media and the focus ring. */
 
-:root {
-  color-scheme: light;
-  --bg: #f7f5f2;
-  --surface: #ffffff;
-  --text: #1f2421;
-  --muted: #5f6763;
-  --border: #d6d3cd;
-  --accent: #2f6f5e;
-  --accent-text: #ffffff;
-  --error: #b3261e;
-  --radius: 8px;
+.auth-header,
+.auth {
+  max-width: calc(440px + 2 * var(--gutter));
+  margin: 0 auto;
+  padding-inline: var(--gutter);
 }
 
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+.auth-header {
+  padding-top: 20px;
 }
 
 .auth {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 32px 16px;
+  padding-block: 28px 64px;
 }
 
-.auth__brand {
-  margin: 0 0 24px;
-  font-size: 1.75rem;
-  text-align: center;
-  color: var(--accent);
+.auth__title {
+  margin-bottom: 20px;
 }
+
+/* The rivet sits level with the tab row. */
+.auth__card::before {
+  top: 36px;
+}
+
+/* ---- Tabs: two chips, the current one ink (as the current band) ------------- */
 
 .auth__tabs {
   display: flex;
-  margin-bottom: 20px;
-  border-bottom: 1px solid var(--border);
+  gap: 6px;
+  margin: 0 0 22px;
 }
 
 .auth__tab {
-  flex: 1;
-  padding: 12px;
+  flex: 1 1 0;
+  min-height: 44px;
+  padding: 10px 12px;
   border: 0;
-  border-bottom: 2px solid transparent;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  font-weight: 600;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--control);
+  color: var(--ink-2);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
   cursor: pointer;
+  transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+}
+
+/* The ring stays inside the 6px gap, clear of the other chip. */
+.auth__tab:focus-visible {
+  outline-offset: 2px;
+}
+
+.auth__tab:hover {
+  box-shadow: inset 0 0 0 1px var(--ink);
+  color: var(--ink);
 }
 
 .auth__tab[aria-selected="true"] {
-  border-bottom-color: var(--accent);
-  color: var(--text);
+  background: var(--ink);
+  box-shadow: none;
+  color: #ffffff;
+  cursor: default;
 }
+
+/* ---- Forms -------------------------------------------------------------------- */
 
 .auth__form {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
 }
 
 .auth__form label {
-  margin-top: 8px;
+  margin-top: 10px;
+  font-size: 0.95rem;
   font-weight: 600;
-  font-size: 0.9rem;
+}
+
+.auth__form label:first-child {
+  margin-top: 0;
 }
 
 .auth__form input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
+  min-height: 48px;
+  padding: 11px 12px;
+  border: 1px solid var(--control);
   border-radius: var(--radius);
-  font: inherit;
+  background: var(--card);
+  color: var(--ink);
+  transition: border-color 0.2s var(--ease-out);
 }
 
-.auth__form input:focus-visible,
-.auth__tab:focus-visible,
-.auth__submit:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+.auth__form input:hover {
+  border-color: var(--ink);
 }
 
+/* The field the message names: a 2px error edge as well as the words. */
 .auth__form input[aria-invalid="true"] {
   border-color: var(--error);
+  box-shadow: inset 0 0 0 1px var(--error);
+}
+
+.auth__form input:autofill {
+  box-shadow: inset 0 0 0 100px var(--band-off);
+  -webkit-text-fill-color: var(--ink);
+}
+
+.auth__form input[aria-invalid="true"]:autofill {
+  box-shadow: inset 0 0 0 1px var(--error), inset 0 0 0 100px var(--band-off);
 }
 
 .auth__hint {
-  color: var(--muted);
-}
-
-.auth__error {
-  min-height: 1.5em;
-  margin: 8px 0 0;
-  color: var(--error);
+  color: var(--ink-2);
   font-size: 0.9rem;
 }
 
-.auth__submit {
-  margin-top: 8px;
-  padding: 12px;
-  border: 0;
-  border-radius: var(--radius);
-  background: var(--accent);
-  color: var(--accent-text);
-  font: inherit;
+/* Stays in the DOM (it is the live region); takes no room until it has a message. */
+.auth__error {
+  margin: 8px 0 0;
+  color: var(--error);
+  font-size: 0.95rem;
   font-weight: 600;
-  cursor: pointer;
+}
+
+.auth__error:empty {
+  margin: 0;
+}
+
+.auth__submit {
+  width: 100%;
+  margin-top: 14px;
 }
 
 .auth__submit:disabled {
-  opacity: 0.6;
-  cursor: wait;
+  cursor: progress;
 }
 
 .auth__switch {
-  text-align: center;
-  color: var(--muted);
+  margin: 20px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-2);
+  font-size: 0.95rem;
 }
 
 .auth__switch a {
-  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ---- The closed strip (laptops only) -------------------------------------------- */
+
+.auth-strip {
+  display: none;
+}
+
+.auth-strip__card {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 10px 44px;
+  list-style: none;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--lift);
+}
+
+/* The rivet at the foot, as on every blade of the landing's deck. */
+.auth-strip__card::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 7px);
+  bottom: 15px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--counter);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
+}
+
+.auth-strip__row {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.auth-strip__name {
+  font-weight: 700;
+}
+
+.auth-strip__photo {
+  order: -1;
+  height: 64px;
+  border-radius: 3px;
+}
+
+.auth-strip__caption {
+  margin: 14px 0 0;
+  color: var(--ink-2);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  .auth__card::before {
+    top: 40px;
+  }
+}
+
+@media (min-width: 900px) {
+  .auth-header,
+  .auth {
+    max-width: calc(880px + 2 * var(--gutter));
+  }
+
+  .auth {
+    display: grid;
+    grid-template-columns: minmax(0, 480px) minmax(0, 300px);
+    justify-content: space-between;
+    align-items: start;
+    column-gap: 48px;
+    padding-top: 48px;
+  }
+
+  .auth__title {
+    grid-column: 1;
+  }
+
+  .auth__card {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .auth-strip {
+    display: block;
+    grid-column: 2;
+    grid-row: 2;
+  }
 }
