@@ -5,7 +5,9 @@ and JS are parsed as text.
 - No testimonials, user counts or percentages, and none of "dermatologist", "clinically",
   "proven", "verified" or before/after wording, in the page's text or in any attribute a
   screen reader or a search result shows.
-- Every link targets an existing route: /scan/, /auth/ or /auth/#signup.
+- Every link targets an existing route: /scan/, /auth/, /auth/#signup, /app/, /about/ or
+  /contact/. Without a saved token (or without JavaScript) a visitor sees Log in and Sign up;
+  "Go to your dashboard" (/app/) shows only when account-state.js finds a token.
 - The "How a scan works" video is muted, loops, plays inline and has a poster, a WebM
   source then an MP4 one, and no autoplay attribute; its pause button exists.
 - GET / serves this page; the catalog note is word for word the Catalog page's.
@@ -30,7 +32,8 @@ from app.tests.test_frontend_contract import FRONTEND, LISTS_NOTE, MARKET_NOTE, 
 
 LANDING = "pages/index.html"
 LANDING_JS = "pages/landing.js"
-LINK_TARGETS = {"/scan/", "/auth/", "/auth/#signup"}
+ACCOUNT_STATE_JS = "static/js/account-state.js"
+LINK_TARGETS = {"/scan/", "/auth/", "/auth/#signup", "/app/", "/about/", "/contact/"}
 
 
 class _Tags(HTMLParser):
@@ -42,6 +45,28 @@ class _Tags(HTMLParser):
         self.tags.append((tag, dict(attrs)))
 
     handle_startendtag = handle_starttag
+
+
+class _MarkedLinks(HTMLParser):
+    """Each link's href with the classes on it and on the <li> it sits in, if any (the
+    footer marks whole list items .if-guest / .if-member)."""
+
+    def __init__(self):
+        super().__init__()
+        self.links: list[tuple[str, set[str]]] = []
+        self._li: list[set[str]] = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        classes = set((attrs.get("class") or "").split())
+        if tag == "li":
+            self._li.append(classes)
+        elif tag == "a":
+            self.links.append((attrs.get("href"), classes | (self._li[-1] if self._li else set())))
+
+    def handle_endtag(self, tag):
+        if tag == "li" and self._li:
+            self._li.pop()
 
 
 def landing_tags() -> list[tuple[str, dict]]:
@@ -111,9 +136,19 @@ def test_every_link_targets_an_existing_route():
         assert response.status_code == 200 and response.headers["content-type"].startswith("text/html"), target
     # /auth/#signup opens the sign-up view.
     assert 'location.hash === "#signup" ? "signup"' in page("pages/auth/auth.js")
-    # The script makes no links of its own and never navigates.
-    script = page(LANDING_JS)
-    assert "href" not in script and "location" not in script and "window.open" not in script
+    # The scripts make no links of their own and never navigate (the dashboard link is in the
+    # HTML; account-state.js only marks the page when a token exists).
+    for path in (LANDING_JS, ACCOUNT_STATE_JS):
+        script = page(path)
+        assert "href" not in script and "location" not in script and "window.open" not in script, path
+    # With no token, or no JavaScript, a visitor sees Log in and Sign up, never the dashboard link.
+    parser = _MarkedLinks()
+    parser.feed(page(LANDING))
+    for href, classes in parser.links:
+        if href == "/app/":
+            assert "if-member" in classes, href
+        if href in {"/auth/", "/auth/#signup"}:
+            assert "if-guest" in classes, href
 
 
 # --------------------------------------------------------------------------------------

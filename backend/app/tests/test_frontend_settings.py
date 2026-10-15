@@ -9,11 +9,14 @@ Privacy page claims nothing the code doesn't do. No JS runtime needed (parsed as
   (compliance, on-device analysis, encryption beyond the two "not encrypted" sentences)
   are absent.
 - No page loads anything from another website (and a page that ever does must name the
-  site), and no script talks to one.
+  site), and no script talks to one. A link to another website (<a href>) loads nothing until
+  it is clicked: it opens in a new tab without a referrer, names its site, and the Privacy
+  page says so.
 """
 
 import logging
 import re
+from html.parser import HTMLParser
 
 import pytest
 from sqlalchemy.exc import SQLAlchemyError
@@ -201,12 +204,41 @@ def test_the_logging_sentences_are_backed_by_the_code():
 # --------------------------------------------------------------------------------------
 
 EXTERNAL = re.compile(r"^(?:[a-z][a-z0-9+.-]*:)?//([^/\"'\s)]+)", re.IGNORECASE)
-LOADING_ATTRS = re.compile(r'\b(?:src|href|srcset|poster|data|action)\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)
+LOADING_ATTRS = {"src", "href", "srcset", "poster", "data", "action"}
 CSS_URLS = re.compile(r"(?:url\(\s*[\"']?|@import\s+[\"'])([^\"')\s]+)", re.IGNORECASE)
 
 
+class _Tags(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.tags: list[tuple[str, dict]] = []
+
+    def handle_starttag(self, tag, attrs):
+        self.tags.append((tag, {name: value or "" for name, value in attrs}))
+
+    handle_startendtag = handle_starttag
+
+
+def html_tags(html: str) -> list[tuple[str, dict]]:
+    parser = _Tags()
+    parser.feed(html)
+    return parser.tags
+
+
+def hosts_of(values) -> set[str]:
+    return {m.group(1).lower() for value in values if (m := EXTERNAL.match(value.strip()))}
+
+
 def external_hosts(text: str, pattern: re.Pattern) -> set[str]:
-    return {m.group(1).lower() for value in pattern.findall(text) if (m := EXTERNAL.match(value.strip()))}
+    return hosts_of(pattern.findall(text))
+
+
+def loaded_hosts(html: str) -> set[str]:
+    """The hosts a page loads files from: every src, href, srcset, poster, data or action
+    value except a link's href (<a href> loads nothing until it is clicked), and CSS urls."""
+    values = [value for tag, attrs in html_tags(html) for name, value in attrs.items()
+              if name in LOADING_ATTRS and not (tag == "a" and name == "href")]
+    return hosts_of(values) | external_hosts(html, CSS_URLS)
 
 
 def test_every_page_names_any_website_it_loads_from_and_today_there_are_none():
@@ -217,7 +249,7 @@ def test_every_page_names_any_website_it_loads_from_and_today_there_are_none():
     for path in sorted(FRONTEND.rglob("*")):
         if path.suffix == ".html":
             html = path.read_text(encoding="utf-8")
-            hosts = external_hosts(html, LOADING_ATTRS) | external_hosts(html, CSS_URLS)
+            hosts = loaded_hosts(html)
             for host in hosts:
                 assert host in visible_text(html).lower(), (path.name, host)
         elif path.suffix == ".css":
@@ -245,6 +277,33 @@ def test_no_script_talks_to_another_website():
                 found.add((rel, snippet))
     assert found == ALLOWED_URL_LITERALS
     assert "No PureSkin page sends your account or skin data to another website." in privacy_text()
+
+
+# The one link to another website in the pages' HTML: the Contact page's link to the code.
+OUTGOING_LINKS = {("pages/contact/index.html", "github.com")}
+OUTGOING_SENTENCE = ("The Contact page's link to PureSkin's code on GitHub opens only when you click it, in a new "
+                     "tab, without telling GitHub which page you came from.")
+
+
+def test_links_to_other_websites_open_in_a_new_tab_without_a_referrer_and_name_their_site():
+    """A link to another website must say where it goes, open in a new tab with
+    rel="noopener noreferrer", and be one the Privacy page describes: a new one fails here
+    until the Privacy page's sentences change."""
+    found = set()
+    for path in sorted(FRONTEND.rglob("*.html")):
+        html = path.read_text(encoding="utf-8")
+        rel = str(path.relative_to(FRONTEND)).replace("\\", "/")
+        for tag, attrs in html_tags(html):
+            match = EXTERNAL.match(attrs.get("href", "").strip()) if tag == "a" else None
+            if not match:
+                continue
+            host = match.group(1).lower()
+            assert attrs.get("target") == "_blank", (rel, host)
+            assert {"noopener", "noreferrer"} <= set(attrs.get("rel", "").split()), (rel, host)
+            assert host in visible_text(html).lower(), (rel, host)
+            found.add((rel, host))
+    assert found == OUTGOING_LINKS
+    assert OUTGOING_SENTENCE in privacy_text()
 
 
 def test_the_chat_opens_source_links_without_a_referrer():

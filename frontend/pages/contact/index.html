@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Contact — PureSkin</title>
+  <meta name="description" content="How to reach the two people who made PureSkin, a student project at NMIMS NSoMASA, Mumbai.">
+  <!-- Before the stylesheets: marks the page when a login token is saved (presence only). -->
+  <script src="/static/js/account-state.js"></script>
+  <link rel="preload" href="/static/fonts/archivo/Archivo-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/public.css">
+</head>
+<body>
+  <!-- Plain contact details and no form, so nothing a visitor writes is stored (docs/spec.md §5
+       and addendum 14). app/tests/test_frontend_public_pages.py checks the details and links. -->
+  <header class="public-header">
+    <div class="public-header__inner">
+      <a class="wordmark public-header__brand" href="/">PureSkin</a>
+      <nav class="public-header__pages" aria-label="Site">
+        <a class="public-header__link" href="/about/">About</a>
+        <a class="public-header__link" href="/contact/" aria-current="page">Contact</a>
+      </nav>
+      <p class="public-header__account">
+        <a class="public-header__chip if-guest" href="/auth/">Log in</a>
+        <a class="public-header__chip if-member" href="/app/">Go to your dashboard</a>
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- The header band: the A1 photo once it is processed (docs/redesign.md §5); until then a
+         plain chip-colour block. The panel under the title is its only overlay. -->
+    <div class="band">
+      <div class="band__inner">
+        <div class="band__panel">
+          <h1 class="page__title">Contact</h1>
+          <p class="band__lede">Questions about PureSkin, the project or its code: write to us.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="public-page split">
+      <section class="card" aria-labelledby="write-title">
+        <h2 id="write-title" class="card__title">Write to us</h2>
+        <p>There's no form on this page. To reach us, send an email.</p>
+        <ul class="contact-people">
+          <li><span class="contact-people__name">Omer Raza</span>
+            <a href="mailto:omer.raza116@nmims.in">omer.raza116@nmims.in</a></li>
+          <li><span class="contact-people__name">Arfeen Khan</span>
+            <a href="mailto:arfeen.khan114@nmims.in">arfeen.khan114@nmims.in</a></li>
+        </ul>
+        <p>MSc Data Science, NMIMS NSoMASA, Mumbai.</p>
+      </section>
+
+      <div class="contact-side">
+        <section class="warning-box" aria-labelledby="skin-title">
+          <h2 id="skin-title" class="warning-box__title">Questions about your skin</h2>
+          <p>We can't answer questions about your skin or a product you use. For a skin problem or a
+            reaction to a product, ask a doctor or pharmacist. In an emergency, call 112.</p>
+        </section>
+        <section class="card" aria-labelledby="code-title">
+          <h2 id="code-title" class="card__title">The code</h2>
+          <p>PureSkin's code is on GitHub, at
+            <a href="https://github.com/omerwritescode/pureskin-2.0" target="_blank" rel="noopener noreferrer">github.com/omerwritescode/pureskin-2.0</a>.
+            The link opens in a new tab.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <span class="wordmark">PureSkin</span>
+      <p class="site-footer__note">PureSkin is a student project (MSc Data Science, NMIMS).</p>
+      <ul class="site-footer__links">
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li class="if-guest"><a href="/auth/">Log in</a></li>
+        <li class="if-guest"><a href="/auth/#signup">Sign up</a></li>
+        <li class="if-member"><a href="/app/">Go to your dashboard</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

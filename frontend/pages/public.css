@@ -1,0 +1,273 @@
+/* About (/about/) and Contact (/contact/). Read pages in direction B: a header band, then
+   a prose column at --measure with a narrower column beside it from 1024px (.split).
+   Loads after main.css, which holds the tokens, the public header, the site footer,
+   .card, .btn, .warning-box and the section and step headings. */
+
+/* ---- The header band ---------------------------------------------------------
+   Full width under the public header. It will show the A1 photo as it is (docs/redesign.md
+   §5); until that photo is processed it is a plain chip-colour block. The title sits on a
+   panel of the ground at 90%, the band's only overlay: even over a black pixel ink measures
+   11.94:1 on it and ink-2 4.96:1 (test_frontend_public_pages.py). */
+.band {
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(240px, 28vw, 400px);
+  background-color: var(--chip-1);
+}
+
+.band__inner {
+  width: 100%;
+  max-width: var(--frame);
+  margin: 0 auto;
+  padding: var(--space-7) var(--gutter) var(--space-5);
+}
+
+.band__panel {
+  max-width: 34rem;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--ground) 90%, transparent);
+}
+
+.band__panel .page__title {
+  margin: 0 0 var(--space-2);
+}
+
+.band__lede {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--ink-2);
+}
+
+/* ---- The page under the band ---------------------------------------------- */
+
+.public-page {
+  max-width: var(--frame);
+  margin: 0 auto;
+  padding: var(--section-y) var(--gutter) var(--space-8);
+}
+
+.public-page .card > p {
+  margin: 0 0 var(--space-4);
+  color: var(--ink-2);
+}
+
+.public-page .card > p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- About: the prose column ---------------------------------------------- */
+
+.about__section + .about__section {
+  margin-top: var(--space-8);
+}
+
+.about p,
+.about li {
+  max-width: var(--measure);
+}
+
+.about__section > p {
+  margin: 0 0 var(--space-4);
+}
+
+.about__intro {
+  margin-top: -6px;
+  color: var(--ink-2);
+}
+
+/* The three steps of a scan, each numbered by an ink chip as on the landing page. */
+.about-steps {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.about-steps li {
+  position: relative;
+  min-height: 34px;
+  padding-left: 50px;
+  counter-increment: step;
+}
+
+.about-steps li::before {
+  content: counter(step);
+  position: absolute;
+  top: -3px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  background: var(--ink);
+  color: #ffffff;
+  font-weight: 800;
+  font-stretch: 87.5%;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* What each part does and its limits: one slip, a ruled row per part. */
+.methods {
+  margin: 0;
+}
+
+.methods__row + .methods__row {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--rule);
+}
+
+/* A <dt> doesn't get the heading weight an <h3> does. */
+.methods dt {
+  margin: 0 0 var(--space-2);
+  font-weight: 800;
+}
+
+.methods dd {
+  margin: 0;
+}
+
+.methods dd p {
+  margin: 0;
+  color: var(--ink);
+}
+
+.methods dd p + p {
+  margin-top: var(--space-2);
+}
+
+.public-page .methods .methods__limit {
+  color: var(--ink-2);
+}
+
+.methods__limit strong {
+  color: var(--ink);
+}
+
+/* What PureSkin isn't: the landing's three items, each under an ink rule. */
+.about-isnt {
+  display: grid;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-isnt li {
+  padding-top: 14px;
+  border-top: 2px solid var(--ink);
+}
+
+.about-isnt .step-heading {
+  margin-bottom: var(--space-2);
+}
+
+.about-isnt p {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.about-isnt strong {
+  color: var(--ink);
+}
+
+.about-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: 20px;
+}
+
+.about-list li::marker {
+  color: var(--control);
+}
+
+/* ---- About: the column beside it ------------------------------------------ */
+
+.about-aside {
+  display: grid;
+  gap: var(--stack);
+}
+
+/* ---- Contact ---------------------------------------------------------------- */
+
+.contact-people {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  list-style: none;
+}
+
+.contact-people li {
+  display: grid;
+  gap: 2px;
+}
+
+.contact-people__name {
+  font-weight: 700;
+}
+
+.contact-people a {
+  font-size: 1.12rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.contact-side {
+  display: grid;
+  gap: var(--stack);
+}
+
+.contact-side .warning-box {
+  margin: 0;
+}
+
+.contact-side .warning-box p {
+  margin: 0;
+}
+
+.contact-side a {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 600px) {
+  .methods__row {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    column-gap: var(--space-5);
+  }
+
+  .methods dt {
+    margin: 0;
+  }
+
+  .contact-people li {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--space-4);
+  }
+}
+
+@media (min-width: 900px) {
+  .band__inner {
+    padding-bottom: var(--space-6);
+  }
+
+  .band__panel {
+    padding: var(--space-5) var(--space-6) var(--space-6);
+  }
+}
+
+/* The column beside the prose stays in view while the prose scrolls. */
+@media (min-width: 1024px) {
+  .about-aside {
+    position: sticky;
+    top: var(--space-5);
+  }
+}

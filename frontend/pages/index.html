@@ -6,6 +6,8 @@
   <meta name="color-scheme" content="light">
   <title>PureSkin — five skin scores and a routine with reasons</title>
   <meta name="description" content="Take a selfie and answer a few questions to get five skin scores, then a morning and evening routine of real products, with a reason for every product it leaves out.">
+  <!-- Before the stylesheets: marks the page when a login token is saved (presence only). -->
+  <script src="/static/js/account-state.js"></script>
   <link rel="preload" href="/static/fonts/archivo/Archivo-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/static/css/main.css">
   <link rel="stylesheet" href="/landing.css">
@@ -13,7 +15,19 @@
 <body>
   <!-- Every sentence here must be true of the code today (PRODUCT.md, docs/redesign.md §6);
        app/tests/test_frontend_landing.py checks the wording, the links and the video. -->
-  <header class="landing-header"><span class="wordmark">PureSkin</span></header>
+  <header class="public-header">
+    <div class="public-header__inner">
+      <span class="wordmark public-header__brand">PureSkin</span>
+      <nav class="public-header__pages" aria-label="Site">
+        <a class="public-header__link" href="/about/">About</a>
+        <a class="public-header__link" href="/contact/">Contact</a>
+      </nav>
+      <p class="public-header__account">
+        <a class="public-header__chip if-guest" href="/auth/">Log in</a>
+        <a class="public-header__chip if-member" href="/app/">Go to your dashboard</a>
+      </p>
+    </div>
+  </header>
 
   <main>
     <section class="hero" aria-labelledby="hero-title">
@@ -25,7 +39,8 @@
         <div class="hero__actions">
           <a class="btn btn--large" href="/scan/">Start your free scan
             <svg class="icon icon--arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          <p class="account-links"><a href="/auth/">Log in</a> <a href="/auth/#signup">Sign up</a></p>
+          <p class="account-links"><a class="if-guest" href="/auth/">Log in</a> <a class="if-guest" href="/auth/#signup">Sign up</a>
+            <a class="if-member" href="/app/">Go to your dashboard</a></p>
         </div>
         <p class="hero__privacy">Your photo is analysed in memory and never saved on our servers. The scores
           are estimates, not a diagnosis.</p>
@@ -205,11 +220,17 @@
     </section>
   </main>
 
-  <footer class="landing-footer">
-    <div class="landing-footer__inner">
+  <footer class="site-footer">
+    <div class="site-footer__inner">
       <span class="wordmark">PureSkin</span>
-      <p>PureSkin is a student project (MSc Data Science, NMIMS).</p>
-      <p class="account-links"><a href="/auth/">Log in</a> <a href="/auth/#signup">Sign up</a></p>
+      <p class="site-footer__note">PureSkin is a student project (MSc Data Science, NMIMS).</p>
+      <ul class="site-footer__links">
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li class="if-guest"><a href="/auth/">Log in</a></li>
+        <li class="if-guest"><a href="/auth/#signup">Sign up</a></li>
+        <li class="if-member"><a href="/app/">Go to your dashboard</a></li>
+      </ul>
     </div>
   </footer>
 

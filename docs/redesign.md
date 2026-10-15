@@ -14,8 +14,10 @@ tests"). Unit 3 is done: the auth page (commit "Frontend redesign (3): auth page
 page, About and Contact pages, photo backgrounds and more Dashboard and Settings content
 (section 6). The approved order of the remaining units is **1b → 1c → 4 → 4b → 5a → 5b → 5c
 → 6 → 1d → 7**; 1d (the hero video) is on hold (section 4). Unit 1b (the shell revision) is
-built and waiting for the user's review; next: Unit 1c. Every unit stops for the user's
-review at 360 px and 1440 px, then waits for a separate commit authorisation (section 9).
+done (`07b7565`); Unit 1c (the public header, About and Contact, the way home) is done (its
+commit: "Frontend redesign (1c): public header, About and Contact, the way home"). Next: Unit
+4, when the user says so. Every unit stops for the user's review at 360 px and 1440 px, then
+waits for a separate commit authorisation (section 9).
 
 ## 1. The direction
 
@@ -484,6 +486,35 @@ feels cold.
     `auth.js` and `account-state.js`; an emergency number on these pages is
     `chat_config.EMERGENCY_NUMBER`; "37" is the catalog's length and "24" the knowledge
     base's note count; ink and ink-2 on the band's text panel measured at 4.5:1 or more.
+- **As built (2026-10-15), where it differs from the plan or adds to it:**
+  - **Files:** `frontend/static/js/account-state.js` and `frontend/pages/public.css` (About
+    and Contact) are new, with `frontend/pages/about/index.html` and `contact/index.html`.
+    `main.css` gains the public header (`.public-header*`), the `.if-member` / `.if-guest`
+    switch and the site footer (`.site-footer*`, shared by the landing, About, Contact and
+    the app); the landing's own header and footer rules are gone from `landing.css`.
+  - **Pulled forward from Unit 4:** the section and step headings (`.landing-heading`,
+    `.step-heading`) moved from `landing.css` to `main.css` now, because About uses them.
+  - **The footer stays at the foot of a short page:** on a page whose `<body>` has a
+    `.site-footer`, the body is a flex column and `<main>` grows (`body:has(> .site-footer)`).
+  - **The account switch:** `account-state.js` also checks again on a page restored by Back
+    (`pageshow`). The footer hides whole list items (`<li class="if-guest">`), so the tests
+    read a link's class together with its `<li>`'s.
+  - **Contact:** both names, each with their NMIMS address as a `mailto:` link; "Questions
+    about your skin" is a notice (`.warning-box`); the GitHub link's address is its text.
+  - **About:** a prose column (`--measure`) with the methods as one ruled slip, and beside it
+    from 1024px a sticky column with "See your five scores" and "Who made it". The skin-type
+    limit compares the model's 0.309 with the README's 0.31 majority baseline (always picking
+    the most common type), not with the 0.25 of random guessing, which flattered it. Copy
+    avoids substrings the landing's testimonial check catches ("preview" holds "review";
+    "generated", "separated" and "calibrated" hold "rated").
+  - **The band:** the A1 photo isn't processed (the Canva licence check comes first), so the
+    band is a plain `--chip-1` block with no image path wired yet. The panel is
+    `color-mix(in srgb, var(--ground) 90%, transparent)`: even over a black pixel, ink 11.94:1
+    and ink-2 4.96:1.
+  - **Spacing:** the landing hero's top padding from 900px is `--space-6` (was 12px), so
+    the deck clears the solid header.
+  - **Detector:** the only findings left are "cream/beige palette" on each page with the
+    ground (`#f2ede6`), the user's choice in Unit 1b.
 
 **Unit 4: the scan funnel (selfie, questionnaire, report).**
 - **Step rail:** three chips replace the "Step 1 of 3" label above headings, which the craft
@@ -494,11 +525,12 @@ feels cold.
 - **Questionnaire:** options become chip rows; inputs, fieldsets, legends and `aria-live`
   are untouched.
 - **Also:** restyle the dark camera box in `scan.css`. The optional G1–G3 guide goes here.
-- **Heading styles:** move the section heading (`.landing-heading`) and the step heading
-  (`.step-heading`) from `landing.css` to `main.css`, and delete them from `landing.css`.
+- **Heading styles:** done in Unit 1c (`.landing-heading` and `.step-heading` are in
+  `main.css`).
 - **The landing's selfie sentence:** once upload is a peer of the camera, update step 1 of
   "How a scan works" in `frontend/pages/index.html` ("Take one with your camera, or upload
-  a photo if the camera isn't available.") so it says either way works.
+  a photo if the camera isn't available.") so it says either way works. About's "How a scan
+  works" (`frontend/pages/about/index.html`) has the same sentence: change both.
 - **The questionnaire's "Not sure" sentence:** `scan/questionnaire/index.html` says
   "\"Not sure\" is always fine", but the goal, sleep and stress questions don't offer it.
   Correct the sentence; don't add options. (No test reads that sentence today.)

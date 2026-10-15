@@ -28,9 +28,10 @@
   }).join("");
 
   // The wordmark's lowercase and chip strip are CSS (.wordmark); the text stays "PureSkin".
+  // It links to the landing page (/), which offers "Go to your dashboard" when logged in.
   nav.innerHTML = `
     <div class="app-nav__inner">
-      <a class="app-nav__brand wordmark" href="/app/">PureSkin</a>
+      <a class="app-nav__brand wordmark" href="/">PureSkin</a>
       <ul class="app-nav__links">${links}</ul>
       <button type="button" class="app-nav__logout">Log out</button>
     </div>
@@ -40,8 +41,24 @@
     window.PureSkinAuth.logout();
   });
 
-  // Keyboard users can jump past the nav's nine stops (WCAG 2.4.1).
   const main = document.querySelector("main");
+
+  // The footer: the way to About and Contact from every /app page (docs/spec.md §5).
+  const footer = document.createElement("footer");
+  footer.className = "site-footer";
+  footer.innerHTML = `
+    <div class="site-footer__inner">
+      <p class="site-footer__note">PureSkin is a student project (MSc Data Science, NMIMS).</p>
+      <ul class="site-footer__links">
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </div>
+  `;
+  if (main) main.after(footer);
+  else document.body.append(footer);
+
+  // Keyboard users can jump past the nav's nine stops (WCAG 2.4.1).
   if (main) {
     if (!main.id) main.id = "main";
     const skip = document.createElement("a");

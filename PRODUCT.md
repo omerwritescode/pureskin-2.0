@@ -86,8 +86,9 @@ questionnaire, the routine is rule-based, and the ranker uses hand-set weights, 
   browser, and the emergency number (India's 112) comes only from `chat_config.EMERGENCY_NUMBER`.
 - Light theme only. Every page declares `<meta name="color-scheme" content="light">` and
   `color-scheme: light` in CSS, so browsers don't apply their own dark mode.
-- Being built: the landing page at `/` (nothing is served there yet).
-- Not built: the About and Pricing pages, subscription and checkout, notifications, the
+- Public pages: the landing page at `/`, About at `/about/` and Contact at `/contact/` (plain
+  contact details, no form).
+- Not built: the Pricing page, subscription and checkout, notifications, the
   generative before/after preview (roadmap step 7e, pending), the scan detail page, and
   on-device analysis.
 - Terms in use: Skin Profile, Skin Report (the pre-signup result), Routine (AM and PM steps),

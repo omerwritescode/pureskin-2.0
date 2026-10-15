@@ -315,6 +315,107 @@ video {
   color: #ffffff;
 }
 
+/* ---- Public header (/, /about/, /contact/) ---------------------------------
+   Solid like the app nav. Phones: the wordmark centred on the first row; About and Contact
+   on the left of the second, the account link on its right. From 760px, one row: About and
+   Contact, the wordmark centred, the account link. The wordmark comes first in the DOM. */
+.public-header {
+  background: var(--card);
+  box-shadow: 0 1px 0 var(--rule);
+}
+
+.public-header__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "brand brand"
+    "pages account";
+  align-items: center;
+  row-gap: var(--space-1);
+  max-width: var(--frame);
+  margin: 0 auto;
+  padding: var(--space-2) var(--gutter);
+}
+
+.public-header__brand {
+  grid-area: brand;
+  justify-self: center;
+  padding-block: var(--space-2);
+}
+
+/* Each link keeps a 44px target; the row is pulled left so the first word lines up with
+   the page's edge. */
+.public-header__pages {
+  grid-area: pages;
+  display: flex;
+  margin-left: calc(-1 * var(--space-3));
+}
+
+.public-header__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.public-header__link:hover {
+  color: var(--ink);
+  background: var(--ground);
+}
+
+/* The page you're on: the one ink chip, as in the app nav. */
+.public-header__link[aria-current="page"] {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+/* Log in, or "Go to your dashboard": an outlined chip in the place the app nav keeps Log out. */
+.public-header__account {
+  grid-area: account;
+  justify-self: end;
+  margin: 0;
+}
+
+.public-header__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: var(--space-2) 14px;
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.public-header__chip:hover {
+  border-color: var(--ink);
+}
+
+@media (min-width: 760px) {
+  .public-header__inner {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas: "pages brand account";
+    padding-block: var(--space-3);
+  }
+}
+
+/* account-state.js marks <html data-account="member"> when this browser holds a login
+   token. Without that mark (or without JavaScript) visitors see Log in and Sign up. */
+html:not([data-account="member"]) .if-member,
+html[data-account="member"] .if-guest {
+  display: none !important;
+}
+
 /* ---- Page layout --------------------------------------------------------- */
 
 .page {
@@ -335,6 +436,23 @@ video {
   max-width: 60ch;
   margin: 0;
   color: var(--ink-2);
+}
+
+/* A section heading and a step heading (the landing, About; from Unit 4 the funnel). */
+.landing-heading {
+  margin: 0 0 20px;
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.step-heading {
+  margin: 0 0 4px;
+  font-size: 1.35rem;
+  font-stretch: 106%;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 /* Page grids. One column on phones and tablets; from 1024px, .split puts a lead column
@@ -661,6 +779,63 @@ video {
   margin: 4px 0 12px;
   color: var(--ink-2);
   font-size: 0.92rem;
+}
+
+/* ---- Site footer (/, /about/, /contact/; nav.js adds it to every /app page) ----
+   On a short page the footer still sits at the foot of the window. */
+body:has(> .site-footer) {
+  display: flex;
+  flex-direction: column;
+}
+
+body:has(> .site-footer) > main {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+.site-footer {
+  margin-top: var(--space-5);
+  background: var(--card);
+  box-shadow: 0 -1px 0 var(--rule);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) 28px;
+  max-width: var(--frame);
+  margin: 0 auto;
+  padding: 28px var(--gutter) 36px;
+}
+
+.site-footer__note {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.95rem;
+}
+
+/* Each link a 44px target; the list is pulled left so its first word lines up. */
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 0 calc(-1 * var(--space-3));
+  padding: 0;
+  list-style: none;
+  font-weight: 600;
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+}
+
+@media (min-width: 600px) {
+  .site-footer__links {
+    margin: 0 calc(-1 * var(--space-3)) 0 auto;
+  }
 }
 
 /* ---- Media slots (landing, auth, funnel) ----------------------------------

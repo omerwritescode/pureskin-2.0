@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>About — PureSkin</title>
+  <meta name="description" content="What PureSkin is, how a scan works, the methods behind it and their limits, and who made it.">
+  <!-- Before the stylesheets: marks the page when a login token is saved (presence only). -->
+  <script src="/static/js/account-state.js"></script>
+  <link rel="preload" href="/static/fonts/archivo/Archivo-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/public.css">
+</head>
+<body>
+  <!-- Every sentence here must be true of the code today (PRODUCT.md, docs/spec.md's addendum,
+       the service READMEs). app/tests/test_frontend_public_pages.py checks the wording, the
+       links and the numbers. -->
+  <header class="public-header">
+    <div class="public-header__inner">
+      <a class="wordmark public-header__brand" href="/">PureSkin</a>
+      <nav class="public-header__pages" aria-label="Site">
+        <a class="public-header__link" href="/about/" aria-current="page">About</a>
+        <a class="public-header__link" href="/contact/">Contact</a>
+      </nav>
+      <p class="public-header__account">
+        <a class="public-header__chip if-guest" href="/auth/">Log in</a>
+        <a class="public-header__chip if-member" href="/app/">Go to your dashboard</a>
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- The header band: the A1 photo once it is processed (docs/redesign.md §5); until then a
+         plain chip-colour block. The panel under the title is its only overlay. -->
+    <div class="band">
+      <div class="band__inner">
+        <div class="band__panel">
+          <h1 class="page__title">About PureSkin</h1>
+          <p class="band__lede">What it is, how a scan works, the methods behind it and their limits,
+            and who made it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="public-page split">
+      <div class="about">
+        <section class="about__section" aria-labelledby="what-title">
+          <h2 id="what-title" class="landing-heading">What PureSkin is</h2>
+          <p>PureSkin turns a selfie and a short questionnaire into a Skin Profile: five scores (acne,
+            redness, wrinkles, pigmentation and pore visibility), each shown as Low, Moderate or High,
+            plus your skin type and whether your answers point to sensitive skin.</p>
+          <p>With an account, your profile builds a morning and evening routine from a catalog of real
+            products. Conflicting active ingredients are never in the same morning or evening, and every
+            product left out says why. A chat answers skincare questions from a small set of notes and
+            your profile.</p>
+        </section>
+
+        <section class="about__section" aria-labelledby="how-title">
+          <h2 id="how-title" class="landing-heading">How a scan works</h2>
+          <ol class="about-steps">
+            <li><strong>A selfie.</strong> Take one with your camera, or upload a photo if the camera isn't
+              available. PureSkin checks it straight away and asks for another if it can't be used.</li>
+            <li><strong>A few questions.</strong> Eight short steps about how your skin feels and reacts,
+              and what you already use.</li>
+            <li><strong>Your Skin Report.</strong> Five scores, each Low, Moderate or High, and your skin
+              type. Create an account to keep them and get your routine.</li>
+          </ol>
+          <p>Your photo is analysed in memory and never saved on our servers. Your answers are scored in
+            memory and never stored; PureSkin saves only the results, and only to an account.</p>
+        </section>
+
+        <section class="about__section" aria-labelledby="methods-title">
+          <h2 id="methods-title" class="landing-heading">How it works, and its limits</h2>
+          <p class="about__intro">What each part does, and what it can't do.</p>
+          <dl class="methods card">
+            <div class="methods__row">
+              <dt class="step-heading">Photo scores</dt>
+              <dd>
+                <p>Face landmarks (MediaPipe) and measurements written by hand (OpenCV and NumPy), taken on
+                  a 720 px copy of your photo once checks show it is sharp, bright enough, and has your face
+                  close enough and turned towards the camera.</p>
+                <p class="methods__limit"><strong>Limits.</strong> Lighting and your camera change these
+                  scores. The acne score leans on your answers, because the photo's acne measurement wasn't
+                  reliable.</p>
+              </dd>
+            </div>
+            <div class="methods__row">
+              <dt class="step-heading">Skin type and sensitivity</dt>
+              <dd>
+                <p>From your answers, by written rules and a small word list for anything you type.</p>
+                <p class="methods__limit"><strong>Limits.</strong> A model that guessed skin type from photos
+                  was trained, but on test photos kept apart from its training set it did no better than
+                  always picking the most common skin type (an accuracy of 0.309, against 0.31), so PureSkin
+                  doesn't use it.</p>
+              </dd>
+            </div>
+            <div class="methods__row">
+              <dt class="step-heading">Your routine</dt>
+              <dd>
+                <p>Rules decide which catalog products suit your skin: conflicting active ingredients are
+                  never in the same morning or evening, sensitive skin gets no strong actives or fragrance,
+                  and your avoid list and current products are respected. A ranker then puts the products the
+                  rules allow in order, by the ingredients they list.</p>
+                <p class="methods__limit"><strong>Limits.</strong> The ranker's weights were set by hand and
+                  never tuned. PureSkin has no data on how any product worked for anyone, so nothing was
+                  trained on results.</p>
+              </dd>
+            </div>
+            <div class="methods__row">
+              <dt class="step-heading">The catalog</dt>
+              <dd>
+                <p>37 real products, each with the brand or shop page its ingredient list was copied
+                  from.</p>
+                <p class="methods__limit"><strong>Limits.</strong> It isn't a full market: the products were
+                  chosen to fill the routine's steps, and a few steps have no product yet.</p>
+              </dd>
+            </div>
+            <div class="methods__row">
+              <dt class="step-heading">The chat</dt>
+              <dd>
+                <p>Answers from 24 notes written from public health pages (mostly MedlinePlus and the NIH)
+                  and PureSkin's own documents, together with your Skin Profile. Its language model runs on
+                  the same computer as the PureSkin server, and the chat stores nothing. Questions about
+                  warning signs, such as a possible allergic reaction, get a fixed reply that never reaches
+                  the model: it points you to a doctor or pharmacist, and in an emergency to 112.</p>
+                <p class="methods__limit"><strong>Limits.</strong> No one has measured how often its answers
+                  match its notes.</p>
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="about__section" aria-labelledby="isnt-title">
+          <h2 id="isnt-title" class="landing-heading">What PureSkin isn't</h2>
+          <!-- Word for word the landing page's three items (test_frontend_public_pages.py). -->
+          <ul class="about-isnt">
+            <li>
+              <h3 class="step-heading">A diagnosis</h3>
+              <p>The five scores are estimates from your photo and your answers, to guide your routine.
+                Lighting and your camera change the photo-based scores, and they haven't been checked
+                against a doctor's assessment. Your skin type and sensitivity come from your answers,
+                not the photo.</p>
+            </li>
+            <li>
+              <h3 class="step-heading">Medical advice</h3>
+              <p>The chat answers from a small set of skincare notes and your Skin Profile, and its answers
+                can be wrong or incomplete. For a skin problem or a reaction to a product, ask a doctor or
+                pharmacist.</p>
+            </li>
+            <li>
+              <h3 class="step-heading">The final word on ingredients</h3>
+              <p>Ingredient lists are copied from brand pages and may differ by market or batch.
+                <strong>Global ingredient list:</strong> the list comes from the brand's non-India website;
+                the version sold in India may differ.</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="about__section" aria-labelledby="unbuilt-title">
+          <h2 id="unbuilt-title" class="landing-heading">What isn't built</h2>
+          <p>PureSkin is a student project, and parts of its plan aren't built yet:</p>
+          <ul class="about-list">
+            <li>paid plans: there's no Pricing page and no subscription;</li>
+            <li>reminders and notifications;</li>
+            <li>the planned skin visualiser;</li>
+            <li>a page for each saved scan, and a form to change your password;</li>
+            <li>analysis on your phone: the photo always goes to the PureSkin server, which analyses it
+              in memory;</li>
+            <li>deployment: PureSkin runs on one computer, which serves the pages and runs the database and
+              the chat's language model.</li>
+          </ul>
+        </section>
+      </div>
+
+      <aside class="about-aside" aria-label="Start a scan, and who made PureSkin">
+        <section class="card" aria-labelledby="scan-title">
+          <h2 id="scan-title" class="card__title">See your five scores</h2>
+          <p>A selfie and a few questions. You only need an account when you want to keep your
+            results.</p>
+          <a class="btn" href="/scan/">Start your free scan</a>
+        </section>
+        <section class="card" aria-labelledby="team-title">
+          <h2 id="team-title" class="card__title">Who made it</h2>
+          <p>Omer Raza and Arfeen Khan built PureSkin as their MSc Data Science project at NMIMS NSoMASA,
+            Mumbai.</p>
+          <p><a href="/contact/">Write to us</a></p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <span class="wordmark">PureSkin</span>
+      <p class="site-footer__note">PureSkin is a student project (MSc Data Science, NMIMS).</p>
+      <ul class="site-footer__links">
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li class="if-guest"><a href="/auth/">Log in</a></li>
+        <li class="if-guest"><a href="/auth/#signup">Sign up</a></li>
+        <li class="if-member"><a href="/app/">Go to your dashboard</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

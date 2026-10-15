@@ -1,8 +1,8 @@
 /* Landing page (/). Direction B, "shade card": the five scores are the blades of one fan
    deck pinned at its rivet. Phones get the copy first, then the deck closed into one upright
    strip card; from 900px the deck sits above the copy and fans open once, by CSS alone.
-   Loads after main.css, which holds the tokens, .btn, .card, .wordmark, .media and
-   .market-badge. */
+   Loads after main.css, which holds the tokens, .btn, .card, .wordmark, .media,
+   .market-badge, the section and step headings, the public header and the site footer. */
 
 /* ---- Shared pieces ---------------------------------------------------------- */
 
@@ -31,11 +31,14 @@
   transform: translateX(3px);
 }
 
-/* Log in and Sign up: plain links beside the one action, each a 44px target. */
+/* Log in and Sign up, or "Go to your dashboard": plain links beside the one action, each a
+   44px target. The row is pulled out by the links' padding, so whichever links show, the
+   first word lines up with the button's edge. */
 .account-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
-  margin: 0;
+  margin: 0 -10px;
   font-weight: 600;
 }
 
@@ -44,10 +47,6 @@
   align-items: center;
   min-height: 44px;
   padding: 0 10px;
-}
-
-.account-links a:first-child {
-  padding-left: 0;
 }
 
 /* Numbered steps: an ink chip, as on the Routine page. */
@@ -72,34 +71,10 @@
   padding: var(--section-y) var(--gutter);
 }
 
-.landing-heading {
-  margin: 0 0 20px;
-  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.025em;
-}
-
 .landing-intro {
   max-width: 58ch;
   margin: -6px 0 0;
   color: var(--ink-2);
-}
-
-.step-heading {
-  margin: 0 0 4px;
-  font-size: 1.35rem;
-  font-stretch: 106%;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
-/* ---- Header: the wordmark alone ------------------------------------------- */
-
-.landing-header {
-  max-width: var(--frame);
-  margin: 0 auto;
-  padding: 20px var(--gutter) 0;
 }
 
 /* ---- Hero ------------------------------------------------------------------- */
@@ -454,42 +429,13 @@
   color: var(--ink-2);
 }
 
-/* ---- Footer ---------------------------------------------------------------- */
-
-.landing-footer {
-  margin-top: 24px;
-  background: var(--card);
-  box-shadow: 0 -1px 0 var(--rule);
-}
-
-.landing-footer__inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 28px;
-  max-width: var(--frame);
-  margin: 0 auto;
-  padding: 28px var(--gutter) 36px;
-}
-
-.landing-footer__inner > p:not(.account-links) {
-  margin: 0;
-  color: var(--ink-2);
-  font-size: 0.95rem;
-}
-
-@media (min-width: 600px) {
-  .landing-footer .account-links {
-    margin-left: auto;
-  }
-}
-
 /* ---- Laptops: the deck fans open above the copy ------------------------------ */
 
 @media (min-width: 900px) {
+  /* 32px between the solid header and the deck's tallest blade. */
   .hero {
     align-items: center;
-    padding-top: 12px;
+    padding-top: var(--space-6);
     padding-bottom: 56px;
     text-align: center;
   }

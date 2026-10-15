@@ -75,6 +75,7 @@ logged-in app. Deepest page (Checkout) is 3 clicks from Dashboard.
 ### Tier 0 — Public (no login)
 - `/` Landing Page → links to Free Scan, About, Pricing, Login
 - `/about` About/How It Works
+- `/contact` Contact (plain contact details, no form; added October 2026, see addendum 14)
 - `/pricing` Pricing → links to Free Scan, Signup/Checkout
 
 ### Onboarding funnel (linear, pre-account)
@@ -159,7 +160,8 @@ drift-monitoring alerts.
 
 ## Addendum (October 2026, after roadmap steps 7b-i and 7b-ii): deviations from this spec
 
-The sections above are the original specification and are left unchanged. As built:
+The sections above are the original specification and are left unchanged, except §5, which
+also lists `/contact` (item 14). As built:
 
 1. **Image analysis is classical computer vision.** It uses MediaPipe face landmarks plus
    documented, hand-designed measurements (OpenCV, NumPy), not a fine-tuned
@@ -218,6 +220,13 @@ The sections above are the original specification and are left unchanged. As bui
     chart library, so no page loads anything from another website. The data export is a JSON
     download (`GET /api/account/export`), and deleting the account (`DELETE /api/account`)
     needs the password and removes every row that belongs to it (ON DELETE CASCADE).
+14. **Public pages: About and Contact** (added in the frontend redesign, Unit 1c). `/about`
+    describes what PureSkin is, how a scan works, its methods and their limits, and the team.
+    `/contact` is new: plain contact details and no form, so nothing a visitor writes is
+    stored. The landing page links to the free scan, About, Contact and Log in, and shows "Go to
+    your dashboard" instead of Log in / Sign up when this browser holds a login token (it checks
+    only that one exists). There is no Pricing page (see 11). Every /app page has a footer with
+    About and Contact, and the app nav's wordmark links to `/`.
 
 **Not built** (step 8 was trimmed for the 15 October deadline): notifications,
 subscription/checkout, deployment, containerisation of the app (Docker runs PostgreSQL only),
