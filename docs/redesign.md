@@ -16,10 +16,9 @@ page, About and Contact pages, photo backgrounds and more Dashboard and Settings
 → 6 → 1d → 7**; on the user's word (2026-10-15) 1d (the hero film) went ahead before 4b.
 Unit 1b (the shell revision) is done (`07b7565`); Unit 1c (the public header, About and
 Contact, the way home) is done (`a2fe7ee`); Unit 4 (the scan funnel) is done (`368d9a4`);
-Unit 1d (the hero film) is done (`8d79643`, follow-up `504d85d`). The taupe tint and Unit 4b
-are done (their commit: "Frontend redesign (4b): photo pages and the taupe bars"). Next: the
-hero film's edit (the user chooses a variant; Dove has since cleared cropping and editing),
-then Units 5a-7. Every unit
+Unit 1d (the hero film) is done (`8d79643`, follow-up `504d85d`), then cut into the hero strip
+("Frontend redesign (1d-b): hero strip, edited loop, smaller files"). The taupe tint and
+Unit 4b are done (`4c0b08c`). Next: Unit 5a. Every unit
 stops for the user's review at 360 px and 1440 px, then waits for a separate commit
 authorisation (section 9).
 
@@ -215,14 +214,18 @@ filling the window below the header (Unit 1d, section 6).
 - **Decided (the user, 2026-10-15):** first the hero was put on hold, because "as is" rules
   out trimming the logo, the captions and those shots. Then the user accepted the film as
   is on the hero, the logo, the captions and every shot included.
-- **The rules it's shown under:** the original file, served unchanged (no trim, crop,
-  re-encode or extracted poster unless the user confirms the permission covers a format
-  conversion); edge to edge below the header with `object-fit: cover` at every size (the
-  display crops it, the logo partly too: accepted by the user, 2026-10-15); no poster, and
-  under reduced motion it stays paused on its first frame; over it only the scroll arrow and
-  an icon-only pause/play button; the visible credit "Video: Dove, used with permission.
-  PureSkin isn't affiliated with Dove." just below the film (seen after scrolling); no
-  PureSkin wording that suggests Dove endorses or partners with PureSkin.
+- **As served now (Unit 1d-b, 2026-10-15):** the hero strip, a 9.77 s loop (244 frames) cut
+  from the film under Dove's second email: frames 0-72, 110-156, 299-343, 393-432 and 459-497 at 25000/1001 fps (0.00-2.92, 4.40-6.29, 11.97-13.77, 15.74-17.34 and 18.38-19.94 s: the eyelid and the gardenia, a leaf and wet skin, an aerial river, mushrooms, a tree trunk and the forest before its caption). Out: the captioned shots (2.92-4.40,
+  6.29-9.77, from 19.95 on), the scar (9.77-11.97), the stretch marks (13.77-15.74) and the navel
+  (17.34-18.38). Desktop: the 1920×600 middle band (y 240-840), which leaves the logo out; phone:
+  a 996×1080 centre crop scaled to 720×780. WebM (VP9) then MP4 (H.264, fast start) for each, no
+  audio, metadata stripped; a first-frame JPEG poster for each size. The original isn't served.
+- **The rules it's shown under:** an edge-to-edge strip under the header, `max(280px, 50svh)`
+  tall, `object-fit: cover`, centred; no `autoplay` attribute, and under reduced motion only its
+  first frame; over it only the scroll arrow and an icon-only pause/play button; the visible
+  credit "Video: Dove, used with permission. PureSkin isn't affiliated with Dove." just below it;
+  no PureSkin wording that suggests Dove endorses or partners with PureSkin. (Before: the
+  original file as is, first letterboxed with `contain`, then edge to edge with `cover`.)
 
 ## 5. Assets
 
@@ -747,6 +750,22 @@ detail, img2 on Settings, Account, Privacy, About and Contact).
   text after the film.
 - **Weight:** 12.6 MB, read as it plays (the MP4 is fragmented, so it streams); under
   reduced motion or data saving only enough for the first frame. The binary is in git.
+- **Unit 1d-b, the hero strip (2026-10-15; the user chose variant B and the loop):**
+  - **Files (sizes as encoded):** `hero-strip.webm` 1.84 MB, `hero-strip.mp4` 2.43 MB (desktop,
+    1920×600); `hero-strip-phone.webm` 1.31 MB, `hero-strip-phone.mp4` 1.64 MB (phone, 720×780);
+    posters 37 KB and 32 KB. ffmpeg 9.0.2 (Gyan's build, installed with winget on the user's
+    approval) cut them frame-exact (trim by frame, concat) and stripped the metadata (a stream
+    copy removed the encoder tags; the formats' required fields remain).
+  - **Markup:** the desktop sources first with `media="(min-width: 600px)"`, then the phone pair
+    (a browser that ignores `media` gets the desktop pair); each size's poster is a layer under the video
+    (`.reel::before`), mobile-first, so only that size's image loads.
+  - **Layout:** the strip is `max(280px, 50svh)` tall, `object-fit: cover`, centred; the landing
+    content starts below it. The controls and the credit are as in the follow-up.
+  - **Removed:** `frontend/static/media/hero-video.mp4` (`git rm`; the original stays in
+    `media_originals/`, outside git).
+  - **Tests:** `test_frontend_landing.py` now checks the six files' sizes and SHA-256 against
+    CREDITS.md, the four sources in order with their `media`, the posters on the layer under the video,
+    and that the original isn't served.
 
 **In every unit 3–6:**
 - Switch that page's input borders from `var(--border)` (a faint hairline) to `--control`.

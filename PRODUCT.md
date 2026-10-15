@@ -119,11 +119,11 @@ questionnaire, the routine is rule-based, and the ranker uses hand-set weights, 
 - One licensed film: Dove (Unilever), "Your skin. Our planet.", used with written permission for
   this project (granted 15 October 2026 by email; academic project only; the emails are kept
   outside the repository). The first permission was for use as is; a second email the same day
-  cleared cropping and editing it as the team likes. It is the landing page's first screen;
-  today the file is served as received (an edited version waits for the user's choice). Below it
-  the page says "Video: Dove, used with permission. PureSkin isn't affiliated with Dove.", a
-  credit that stays whatever the edit, and no PureSkin wording may suggest that Dove endorses or
-  partners with PureSkin.
+  cleared cropping and editing it as the team likes. The landing page's first screen is a 9.77 s
+  loop cut and cropped from it: no captions, no logo, no scar or stretch-mark shots (the segments
+  are in the credits file); the original file isn't served. Below it the page says "Video: Dove,
+  used with permission. PureSkin isn't affiliated with Dove.", and no PureSkin wording may suggest
+  that Dove endorses or partners with PureSkin.
 - Photo backgrounds sit behind solid cards. Only large ink text or an ink link sits on a photo,
   and readability comes only from CSS layers over the image (overlays of the page ground) and the
   cards, never from changing the file or a CSS filter on it: ink measures at least 4.5:1 at the

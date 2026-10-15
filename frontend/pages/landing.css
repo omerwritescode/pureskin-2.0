@@ -77,21 +77,33 @@
   color: var(--ink-2);
 }
 
-/* ---- The hero film -----------------------------------------------------------
-   The film fills the whole area below the public header, edge to edge: object-fit: cover
-   at every size (the display crops it; the file is unchanged). Over it only two small
-   controls, the scroll arrow and the icon-only pause/play button: white discs with a 1px
-   ink edge, and a focus ring of white inside ink, so each stays at least 4.17:1 against any
-   colour the film shows (white and ink tie at 4.17 on a mid-tone). The credit sits just
-   below the film. --header-h is the public header's height (main.css: two rows on phones,
-   one from 760px). */
+/* ---- The hero strip -----------------------------------------------------------
+   An edge-to-edge strip about half the window tall (at least 280px) under the public header,
+   the loop shown with object-fit: cover, centred. Its first frame is the strip's background
+   (the poster for each size, so only that size's image loads) before playback and under
+   reduced motion. Over it only two small controls, the scroll arrow and the icon-only
+   pause/play button: white discs with a 1px ink edge, and a focus ring of white inside ink,
+   so each stays at least 4.17:1 against any colour the loop shows (white and ink tie at 4.17
+   on a mid-tone). The credit sits just below the strip. */
 .reel {
-  --header-h: 101px;
   position: relative;
-  height: calc(100vh - var(--header-h));
-  height: calc(100svh - var(--header-h));
-  min-height: 320px;
+  height: max(280px, 50vh);
+  height: max(280px, 50svh);
   overflow: hidden;
+}
+
+/* The poster: a layer under the video (painted first), so the strip itself stays clear. */
+.reel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--band-off) url("/static/media/hero-strip-phone-poster.jpg") center / cover no-repeat;
+}
+
+@media (min-width: 600px) {
+  .reel::before {
+    background-image: url("/static/media/hero-strip-poster.jpg");
+  }
 }
 
 .reel__video {
@@ -100,6 +112,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .reel .reel__control {
@@ -142,12 +155,6 @@
   padding: var(--space-3) var(--gutter);
   color: var(--ink-2);
   font-size: 0.85rem;
-}
-
-@media (min-width: 760px) {
-  .reel {
-    --header-h: 68px;
-  }
 }
 
 /* ---- Hero ------------------------------------------------------------------- */

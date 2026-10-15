@@ -10,10 +10,12 @@ and JS are parsed as text.
   "Go to your dashboard" (/app/) shows only when account-state.js finds a token.
 - Both videos are muted, loop, play inline, are hidden from screen readers and have no
   autoplay attribute; each has a pause button, and the script starts one only without
-  reduced motion and data saving. The hero film is Dove's file served unchanged (its size
-  and SHA-256 are checked), one MP4 with no poster, with its credit right under it; the
-  "How a scan works" video has a poster and a WebM source then an MP4 one. The scroll cue
-  links to the first screen after the film.
+  reduced motion and data saving. The hero strip is the loop edited from Dove's film: its
+  six files (a desktop and a phone WebM and MP4, and a first-frame poster for each size)
+  are the ones CREDITS.md records (sizes and SHA-256), the desktop sources first for 600px
+  and up, the posters as the strip's CSS background, the original film no longer served,
+  and its credit right under it; the "How a scan works" video has a poster and a WebM
+  source then an MP4 one. The scroll cue links to the first screen after the film.
 - GET / serves this page; the catalog note is word for word the Catalog page's.
 - The example routine step is what the engine builds today for the card's made-up profile,
   on the shipped catalog: a catalog or rules change that alters it fails here.
@@ -41,9 +43,20 @@ ACCOUNT_STATE_JS = "static/js/account-state.js"
 LINK_TARGETS = {"/scan/", "/auth/", "/auth/#signup", "/app/", "/about/", "/contact/", "#intro"}
 # The hero film, Dove's "Your skin. Our planet.": permitted as is only, so the served file is
 # the one received (frontend/static/CREDITS.md records the same size and hash).
-HERO_FILM = "static/media/hero-video.mp4"
-HERO_FILM_BYTES = 12_559_666
-HERO_FILM_SHA256 = "48579925b6ae43f66740004de37825f39f45cf15faafd2e4ec80688eb0d0874d"
+HERO_FILES = {  # path under frontend/: (bytes, SHA-256), as CREDITS.md records them
+    "static/media/hero-strip.webm": (1_838_155, "e4c29e9e159081b2d4bd5d2f871de0b0eaabd8288adfd5c9678f90d73ad8382c"),
+    "static/media/hero-strip.mp4": (2_434_844, "38f592d38f12e813272b65e90cca97d3f835150c8610dce5d8bd011858540ba4"),
+    "static/media/hero-strip-phone.webm": (1_306_872, "cbd99654065b555fcb044436eff12b4a610d6aea9023b4942006e3717d3d3424"),
+    "static/media/hero-strip-phone.mp4": (1_639_155, "29453fa01f2c3d06ef5578ac92a6088c383fb36055e7c3577ad462d0b64176cb"),
+    "static/media/hero-strip-poster.jpg": (36_830, "7389d33791dbb00a95e11313d3fd08f3866ab7ed67322ef71c4cb8abc47dd534"),
+    "static/media/hero-strip-phone-poster.jpg": (32_460, "273e381c54510817176b37ca6973205157e2a48f83c33e0b4764e91391e61a5d"),
+}
+HERO_SOURCES = [  # (src, type, media), in order: the desktop pair first, for 600px and up
+    ("/static/media/hero-strip.webm", "video/webm", "(min-width: 600px)"),
+    ("/static/media/hero-strip.mp4", "video/mp4", "(min-width: 600px)"),
+    ("/static/media/hero-strip-phone.webm", "video/webm", None),
+    ("/static/media/hero-strip-phone.mp4", "video/mp4", None),
+]
 HERO_CREDIT = "Video: Dove, used with permission. PureSkin isn't affiliated with Dove."
 
 
@@ -204,9 +217,10 @@ def test_both_videos_have_their_required_attributes():
             assert flag in attrs, flag
         assert "autoplay" not in attrs and attrs.get("aria-hidden") == "true"
     (film, film_sources), (swatch, swatch_sources) = videos
-    # The film is served as is: one MP4 and no poster; under reduced motion its first frame shows.
+    # The strip: the desktop pair for 600px and up, then the phone pair; its posters are CSS
+    # backgrounds (one per size), so the video has no poster attribute.
     assert "poster" not in film and film.get("preload") == "metadata"
-    assert [(s.get("src", "").split("#")[0], s.get("type")) for s in film_sources] == [(f"/{HERO_FILM}", "video/mp4")]
+    assert [(s.get("src", "").split("#")[0], s.get("type"), s.get("media")) for s in film_sources] == HERO_SOURCES
     # The swatch: a poster, a WebM source then an MP4 one.
     assert swatch.get("poster", "").startswith("/static/media/") and swatch["poster"].endswith(".jpg")
     assert [s.get("type") for s in swatch_sources] == ["video/webm", "video/mp4"]
@@ -233,10 +247,20 @@ def test_each_video_has_a_pause_button():
     assert '"Pause video"' in script and '"Play video"' in script and "aria-pressed" not in script
 
 
-def test_the_hero_film_is_the_original_file_unchanged_and_credited():
-    data = (FRONTEND / HERO_FILM).read_bytes()
-    assert len(data) == HERO_FILM_BYTES and hashlib.sha256(data).hexdigest() == HERO_FILM_SHA256
-    assert HERO_FILM_SHA256 in page("static/CREDITS.md")
+def test_the_hero_strip_files_are_the_recorded_ones_and_credited():
+    credits = page("static/CREDITS.md")
+    for path, (size, sha256) in HERO_FILES.items():
+        data = (FRONTEND / path).read_bytes()
+        assert len(data) == size and hashlib.sha256(data).hexdigest() == sha256, path
+        assert sha256 in credits, f"CREDITS.md doesn't record {path}"
+    # Only the edited loop is served: the original film isn't in /static.
+    assert not (FRONTEND / "static/media/hero-video.mp4").exists()
+    # Each size's first-frame poster is the layer under the video: the phone one first, the
+    # desktop one from 600px (the same width as the desktop sources).
+    css = page("pages/landing.css")
+    reel = css[css.index(".reel {"):css.index(".reel__video {")]
+    assert 'url("/static/media/hero-strip-phone-poster.jpg")' in reel
+    assert re.search(r'@media \(min-width: 600px\) \{\s*\.reel::before \{\s*background-image: url\("/static/media/hero-strip-poster\.jpg"\);', reel)
     # The credit is visible text in the film's box, after the film (never over it).
     html = page(LANDING)
     reel = html[html.index('<div class="reel"'):html.index('<section class="hero"')]
