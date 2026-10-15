@@ -11,6 +11,7 @@ Selfie + questionnaire → Skin Profile → adaptive routine, ingredient-conflic
 a generative before/after preview, and a Skin-Profile-grounded chatbot.
 
 Full spec: `docs/spec.md`
+Frontend redesign in progress (Units 2-7): read `docs/redesign.md` before changing `frontend/`.
 
 ## Hard constraints — do not deviate without being asked
 
