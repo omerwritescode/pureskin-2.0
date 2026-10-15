@@ -78,24 +78,20 @@
 }
 
 /* ---- The hero film -----------------------------------------------------------
-   The window below the public header: the film fills its screen without cropping
-   (object-fit: contain, letterboxed on the page ground where the shapes differ, as on
-   phones), and a bar under it carries the credit, the scroll cue and the pause button, so
-   nothing sits over the film. --header-h is the public header's height (main.css: two rows
-   on phones, one from 760px). */
+   The film fills the whole area below the public header, edge to edge: object-fit: cover
+   at every size (the display crops it; the file is unchanged). Over it only two small
+   controls, the scroll arrow and the icon-only pause/play button: white discs with a 1px
+   ink edge, and a focus ring of white inside ink, so each stays at least 4.17:1 against any
+   colour the film shows (white and ink tie at 4.17 on a mid-tone). The credit sits just
+   below the film. --header-h is the public header's height (main.css: two rows on phones,
+   one from 760px). */
 .reel {
   --header-h: 101px;
-  display: flex;
-  flex-direction: column;
+  position: relative;
   height: calc(100vh - var(--header-h));
   height: calc(100svh - var(--header-h));
   min-height: 320px;
-}
-
-.reel__screen {
-  position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
+  overflow: hidden;
 }
 
 .reel__video {
@@ -103,63 +99,54 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
-/* Phones: the credit across the top, then the cue on the left and the button on the right.
-   From 760px one row: credit, the cue centred, button. */
-.reel__bar {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas:
-    "credit credit credit"
-    "cue . toggle";
-  align-items: center;
-  gap: var(--space-2) var(--space-4);
-  width: 100%;
-  max-width: var(--frame);
-  margin: 0 auto;
-  padding: var(--space-3) var(--gutter);
-}
-
-.reel__credit {
-  grid-area: credit;
-  margin: 0;
-  color: var(--ink-2);
-  font-size: 0.85rem;
-}
-
-.reel__cue {
-  grid-area: cue;
+.reel .reel__control {
+  position: absolute;
+  bottom: var(--space-4);
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--control);
+  padding: 0;
+  border: 1px solid var(--ink);
   border-radius: 50%;
   background: var(--card);
   color: var(--ink);
-  transition: border-color 0.2s var(--ease-out);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 6px 16px -6px rgb(0 0 0 / 0.55);
+  cursor: pointer;
 }
 
-.reel__cue:hover {
-  border-color: var(--ink);
+.reel .reel__control:hover {
+  border-width: 2px;
+}
+
+.reel .reel__control:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px #ffffff;
+}
+
+.reel__cue {
+  left: calc(50% - 22px);
 }
 
 .reel__toggle {
-  grid-area: toggle;
-  justify-self: end;
-  white-space: nowrap;
+  right: var(--gutter);
+}
+
+.reel__credit {
+  max-width: var(--frame);
+  margin: 0 auto;
+  padding: var(--space-3) var(--gutter);
+  color: var(--ink-2);
+  font-size: 0.85rem;
 }
 
 @media (min-width: 760px) {
   .reel {
     --header-h: 68px;
-  }
-
-  .reel__bar {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    grid-template-areas: "credit cue toggle";
   }
 }
 

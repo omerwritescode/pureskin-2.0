@@ -16,10 +16,12 @@ page, About and Contact pages, photo backgrounds and more Dashboard and Settings
 → 6 → 1d → 7**; on the user's word (2026-10-15) 1d (the hero film) went ahead before 4b.
 Unit 1b (the shell revision) is done (`07b7565`); Unit 1c (the public header, About and
 Contact, the way home) is done (`a2fe7ee`); Unit 4 (the scan funnel) is done (`368d9a4`);
-Unit 1d (the hero film, Dove's, as is) is done (its commit: "Frontend redesign (1d): the
-hero film"). Next: Unit 4b, re-planned without changes to the photos (section 6), when the
-user approves the proposal. Every unit stops for the user's review at 360 px and 1440 px,
-then waits for a separate commit authorisation (section 9).
+Unit 1d (the hero film, Dove's, as is) is done (`8d79643`), with a follow-up: the film edge
+to edge, two small controls over it, the credit below it (its commit: "Frontend redesign
+(1d follow-up): the hero film edge to edge"). Next: a soft warm tint for the headers and
+footers (the user chooses from swatches), then that tint and Unit 4b together. Every unit
+stops for the user's review at 360 px and 1440 px, then waits for a separate commit
+authorisation (section 9).
 
 ## 1. The direction
 
@@ -209,11 +211,12 @@ filling the window below the header (Unit 1d, section 6).
   is on the hero, the logo, the captions and every shot included.
 - **The rules it's shown under:** the original file, served unchanged (no trim, crop,
   re-encode or extracted poster unless the user confirms the permission covers a format
-  conversion); `object-fit: contain`, letterboxed on the page ground where the window's shape
-  differs; no poster, and under reduced motion it stays paused on its first frame; the
-  visible credit "Video: Dove, used with permission. PureSkin isn't affiliated with Dove."
-  right under it, and no PureSkin wording that suggests Dove endorses or partners with
-  PureSkin.
+  conversion); edge to edge below the header with `object-fit: cover` at every size (the
+  display crops it, the logo partly too: accepted by the user, 2026-10-15); no poster, and
+  under reduced motion it stays paused on its first frame; over it only the scroll arrow and
+  an icon-only pause/play button; the visible credit "Video: Dove, used with permission.
+  PureSkin isn't affiliated with Dove." just below the film (seen after scrolling); no
+  PureSkin wording that suggests Dove endorses or partners with PureSkin.
 
 ## 5. Assets
 
@@ -672,16 +675,21 @@ feels cold.
   (12,559,666 bytes, SHA-256 `48579925…0874d`). No WebM, phone cut or poster: those would be
   edits. ffmpeg isn't needed (not installed).
 - **Markup (`index.html`):** `<div class="reel" data-video-box>` before the current hero,
-  which becomes the scroll cue's target (`id="intro"`). `<video muted loop playsinline
+  holding the film and its two controls; the credit (`<p class="reel__credit" id="intro">`)
+  follows it and is the scroll arrow's target. `<video muted loop playsinline
   preload="metadata" aria-hidden="true">` with one MP4 `<source>`
   (`/static/media/hero-video.mp4#t=0.001`: the fragment makes Safari draw the first frame
   without playing), no poster and no `autoplay`.
-- **Layout (`landing.css`):** the reel fills the window below the public header
-  (`calc(100svh - var(--header-h))`; 101px on phones, 68px from 760px). The film fills its
-  screen with `object-fit: contain`, letterboxed on the page ground where the shapes differ:
-  a thin margin on a laptop, a band above and below the film on a phone. A bar under the
-  film holds the credit, the scroll cue (an icon-only link, "Skip the video") and the
-  pause/play button, so nothing sits over the film.
+- **Layout (`landing.css`), revised on the user's word (2026-10-15):** the reel fills the
+  window below the public header (`calc(100svh - var(--header-h))`; 101px on phones, 68px
+  from 760px), the film edge to edge with `object-fit: cover` at every size (display
+  cropping accepted, the logo partly clipped included). Over it only two 44px controls: the
+  scroll arrow (an icon-only link, "Skip the video") at the bottom centre and the icon-only
+  pause/play button ("Pause video" / "Play video" as its visually hidden label) at the bottom
+  right. Each is a white disc with a 1px ink edge and a focus ring of white inside ink, which
+  keeps at least 4.17:1 against any colour (white and ink tie on a mid-tone). The credit sits
+  just below the film, so it shows after scrolling. (First built letterboxed with
+  `object-fit: contain` and a bar under the film; replaced.)
 - **Script (`landing.js`):** both videos (each a `[data-video-box]` with its button). A
   video starts only without reduced motion and data saving; under reduced motion it stays
   paused on its first frame and never starts; while data saving holds it back, its button
@@ -692,7 +700,7 @@ feels cold.
   with no poster and `preload="metadata"`, V1 a poster with WebM then MP4; the only automatic
   `play()` comes after both settings are read; the cue's target exists; the served film's
   size and SHA-256 are the received file's, recorded in CREDITS.md; the credit is visible
-  text under the film.
+  text after the film.
 - **Weight:** 12.6 MB, read as it plays (the MP4 is fragmented, so it streams); under
   reduced motion or data saving only enough for the first frame. The binary is in git.
 

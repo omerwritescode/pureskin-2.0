@@ -35,28 +35,27 @@
          unchanged: one MP4, no poster, no audio track. No autoplay attribute: landing.js
          plays it only without reduced motion and data saving; under reduced motion it stays
          paused on its first frame (preload="metadata"; "#t=0.001" makes Safari draw it).
-         The credit, the scroll cue and the button sit under the film, never over it. -->
+         The film fills the area below the header edge to edge (object-fit: cover; the
+         display crops it, the file is unchanged). Over it only two small controls: the
+         scroll arrow and the icon-only pause/play button. The credit is just below the film,
+         and the scroll arrow lands on it. -->
     <div class="reel" data-video-box>
-      <div class="reel__screen">
-        <video class="reel__video" muted loop playsinline preload="metadata" aria-hidden="true">
-          <source src="/static/media/hero-video.mp4#t=0.001" type="video/mp4">
-        </video>
-      </div>
-      <div class="reel__bar">
-        <p class="reel__credit">Video: Dove, used with permission. PureSkin isn't affiliated with Dove.</p>
-        <a class="reel__cue" href="#intro">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
-          <span class="visually-hidden">Skip the video</span>
-        </a>
-        <button type="button" class="video-toggle reel__toggle" hidden>
-          <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6v12M15 6v12"/></svg>
-          <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M8 5.5v13l10-6.5z"/></svg>
-          <span class="video-toggle__label">Pause video</span>
-        </button>
-      </div>
+      <video class="reel__video" muted loop playsinline preload="metadata" aria-hidden="true">
+        <source src="/static/media/hero-video.mp4#t=0.001" type="video/mp4">
+      </video>
+      <a class="reel__control reel__cue" href="#intro">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="visually-hidden">Skip the video</span>
+      </a>
+      <button type="button" class="video-toggle reel__control reel__toggle" hidden>
+        <svg class="icon icon--pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6v12M15 6v12"/></svg>
+        <svg class="icon icon--play" viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M8 5.5v13l10-6.5z"/></svg>
+        <span class="video-toggle__label visually-hidden">Pause video</span>
+      </button>
     </div>
+    <p class="reel__credit" id="intro">Video: Dove, used with permission. PureSkin isn't affiliated with Dove.</p>
 
-    <section class="hero" id="intro" aria-labelledby="hero-title">
+    <section class="hero" aria-labelledby="hero-title">
       <div class="hero__copy">
         <h1 id="hero-title" class="hero__title"><span>Every concern has a name.</span> <span>Every product has a reason.</span></h1>
         <p class="hero__lede">Take a selfie and answer a few questions to get five scores, each Low, Moderate
