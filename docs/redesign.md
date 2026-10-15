@@ -17,7 +17,8 @@ page, About and Contact pages, photo backgrounds and more Dashboard and Settings
 Unit 1b (the shell revision) is done (`07b7565`); Unit 1c (the public header, About and
 Contact, the way home) is done (`a2fe7ee`); Unit 4 (the scan funnel) is done (`368d9a4`);
 Unit 1d (the hero film) is done (`8d79643`, follow-up `504d85d`), then cut into the hero strip
-("Frontend redesign (1d-b): hero strip, edited loop, smaller files"). The taupe tint and
+(`4140528`), which now plays the full film ("Frontend redesign (1d-c): full film in the hero
+strip"). The taupe tint and
 Unit 4b are done (`4c0b08c`). Next: Unit 5a. Every unit
 stops for the user's review at 360 px and 1440 px, then waits for a separate commit
 authorisation (section 9).
@@ -214,12 +215,15 @@ filling the window below the header (Unit 1d, section 6).
 - **Decided (the user, 2026-10-15):** first the hero was put on hold, because "as is" rules
   out trimming the logo, the captions and those shots. Then the user accepted the film as
   is on the hero, the logo, the captions and every shot included.
-- **As served now (Unit 1d-b, 2026-10-15):** the hero strip, a 9.77 s loop (244 frames) cut
-  from the film under Dove's second email: frames 0-72, 110-156, 299-343, 393-432 and 459-497 at 25000/1001 fps (0.00-2.92, 4.40-6.29, 11.97-13.77, 15.74-17.34 and 18.38-19.94 s: the eyelid and the gardenia, a leaf and wet skin, an aerial river, mushrooms, a tree trunk and the forest before its caption). Out: the captioned shots (2.92-4.40,
-  6.29-9.77, from 19.95 on), the scar (9.77-11.97), the stretch marks (13.77-15.74) and the navel
-  (17.34-18.38). Desktop: the 1920×600 middle band (y 240-840), which leaves the logo out; phone:
-  a 996×1080 centre crop scaled to 720×780. WebM (VP9) then MP4 (H.264, fast start) for each, no
-  audio, metadata stripped; a first-frame JPEG poster for each size. The original isn't served.
+- **As served now (Unit 1d-c, 2026-10-15):** the hero strip plays the whole film, start to end
+  in its original order and length (749 frames, 29.99 s), cropped under Dove's second email:
+  desktop, the 1920×600 middle band (y 240-840); phone, a 996×1080 centre crop scaled to
+  720×780. WebM (VP9) then MP4 (H.264, fast start) for each, no audio, metadata stripped; each
+  size's frame 0 as a JPEG poster. The original isn't served. (It replaced Unit 1d-b's edited
+  loop.)
+- **Some captions are cut on phone and tablet sizes, by choice** (the user, 2026-10-15; desktop
+  is the focus): the Rimba Collective line by the phone crop and on upright tablets, the
+  Dove.com line at some phone heights. No crop or CSS change for them.
 - **The rules it's shown under:** an edge-to-edge strip under the header, `max(280px, 50svh)`
   tall, `object-fit: cover`, centred; no `autoplay` attribute, and under reduced motion only its
   first frame; over it only the scroll arrow and an icon-only pause/play button; the visible
@@ -240,7 +244,8 @@ local only (in `.git/info/exclude`), never committed and never served. Processed
   pixel in each is mid-grey, L 0.38). The only metadata is an XMP "CreatorTool: Canva" tag; no
   location data (checked 2026-10-15). They are served byte for byte (no crop, resize, blur,
   wash, re-export or metadata stripping).
-- **hero-video:** Dove's film, served as is as `media/hero-video.mp4` (section 4).
+- **hero-video:** Dove's film, served as the hero strip: the whole film, cropped
+  (`media/hero-strip*`, section 4). The original isn't served.
 - M1–M5, V1 and G1–G3 are still not supplied.
 
 **Rules for team-shot photos and video:**
@@ -256,7 +261,7 @@ photos and the Dove film. The source and licence or permission go in CREDITS.md;
 
 **Rules for every file:**
 - Team-shot files: GPS and other metadata stripped on export. A licensed file whose
-  permission allows no changes (the Dove film, the two Canva photos) is served byte for
+  permission allows no changes (the two Canva photos) is served byte for
   byte, checked for location data instead, with its size and SHA-256 in CREDITS.md.
 - Each file gets a row in `frontend/static/CREDITS.md`: what it shows, who made it, the date
   and the licence or permission.
@@ -766,6 +771,14 @@ detail, img2 on Settings, Account, Privacy, About and Contact).
   - **Tests:** `test_frontend_landing.py` now checks the six files' sizes and SHA-256 against
     CREDITS.md, the four sources in order with their `media`, the posters on the layer under the video,
     and that the original isn't served.
+- **Unit 1d-c, the full film (2026-10-15, on the user's word):** the strip plays Dove's whole
+  film, start to end, in place of the 1d-b loop. The crops, encode settings, file names,
+  markup, script and CSS are 1d-b's; only the four video files, the records and the comment
+  over the strip in `index.html` changed.
+  - **Files (sizes as encoded):** `hero-strip.webm` 8.54 MB, `hero-strip.mp4` 9.86 MB (desktop);
+    `hero-strip-phone.webm` 7.21 MB, `hero-strip-phone.mp4` 7.53 MB (phone). The posters
+    are byte-identical to 1d-b's (frame 0 is the same frame), so unchanged.
+  - **Tests:** the six sizes and SHA-256 in `test_frontend_landing.py` and CREDITS.md.
 
 **In every unit 3–6:**
 - Switch that page's input borders from `var(--border)` (a faint hairline) to `--control`.

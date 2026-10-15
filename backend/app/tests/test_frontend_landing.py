@@ -10,7 +10,7 @@ and JS are parsed as text.
   "Go to your dashboard" (/app/) shows only when account-state.js finds a token.
 - Both videos are muted, loop, play inline, are hidden from screen readers and have no
   autoplay attribute; each has a pause button, and the script starts one only without
-  reduced motion and data saving. The hero strip is the loop edited from Dove's film: its
+  reduced motion and data saving. The hero strip is Dove's whole film, cropped: its
   six files (a desktop and a phone WebM and MP4, and a first-frame poster for each size)
   are the ones CREDITS.md records (sizes and SHA-256), the desktop sources first for 600px
   and up, the posters as the strip's CSS background, the original film no longer served,
@@ -41,13 +41,13 @@ LANDING = "pages/index.html"
 LANDING_JS = "pages/landing.js"
 ACCOUNT_STATE_JS = "static/js/account-state.js"
 LINK_TARGETS = {"/scan/", "/auth/", "/auth/#signup", "/app/", "/about/", "/contact/", "#intro"}
-# The hero film, Dove's "Your skin. Our planet.": permitted as is only, so the served file is
-# the one received (frontend/static/CREDITS.md records the same size and hash).
+# The hero strip, Dove's "Your skin. Our planet." in full, cropped under Dove's second
+# permission: the served files are the ones frontend/static/CREDITS.md records.
 HERO_FILES = {  # path under frontend/: (bytes, SHA-256), as CREDITS.md records them
-    "static/media/hero-strip.webm": (1_838_155, "e4c29e9e159081b2d4bd5d2f871de0b0eaabd8288adfd5c9678f90d73ad8382c"),
-    "static/media/hero-strip.mp4": (2_434_844, "38f592d38f12e813272b65e90cca97d3f835150c8610dce5d8bd011858540ba4"),
-    "static/media/hero-strip-phone.webm": (1_306_872, "cbd99654065b555fcb044436eff12b4a610d6aea9023b4942006e3717d3d3424"),
-    "static/media/hero-strip-phone.mp4": (1_639_155, "29453fa01f2c3d06ef5578ac92a6088c383fb36055e7c3577ad462d0b64176cb"),
+    "static/media/hero-strip.webm": (8_542_369, "90869ba783df535192f40d6968cb2def722ffb13c1a4514d56b352b96ba32036"),
+    "static/media/hero-strip.mp4": (9_861_722, "86cca8b2617a9c8e4c75fc5e6b71fe3f31ce3cebd847a55a763182e8742c8c2c"),
+    "static/media/hero-strip-phone.webm": (7_213_824, "35ee1a74f040af29da631c69b49e54acfe9a7c7455ffb539073ffcbbacad555f"),
+    "static/media/hero-strip-phone.mp4": (7_527_163, "b7345968609a4d112e7dbc30726b867fee1a50f555d6b7e6df85046063c52f87"),
     "static/media/hero-strip-poster.jpg": (36_830, "7389d33791dbb00a95e11313d3fd08f3866ab7ed67322ef71c4cb8abc47dd534"),
     "static/media/hero-strip-phone-poster.jpg": (32_460, "273e381c54510817176b37ca6973205157e2a48f83c33e0b4764e91391e61a5d"),
 }
@@ -253,7 +253,7 @@ def test_the_hero_strip_files_are_the_recorded_ones_and_credited():
         data = (FRONTEND / path).read_bytes()
         assert len(data) == size and hashlib.sha256(data).hexdigest() == sha256, path
         assert sha256 in credits, f"CREDITS.md doesn't record {path}"
-    # Only the edited loop is served: the original film isn't in /static.
+    # Only the cropped files are served: the original film isn't in /static.
     assert not (FRONTEND / "static/media/hero-video.mp4").exists()
     # Each size's first-frame poster is the layer under the video: the phone one first, the
     # desktop one from 600px (the same width as the desktop sources).
