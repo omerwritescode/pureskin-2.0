@@ -13,12 +13,13 @@ tests"). Unit 3 is done: the auth page (commit "Frontend redesign (3): auth page
 **Plan revised (2026-10-15).** The user added a shell revision, a way back to the landing
 page, About and Contact pages, photo backgrounds and more Dashboard and Settings content
 (section 6). The approved order of the remaining units is **1b → 1c → 4 → 4b → 5a → 5b → 5c
-→ 6 → 1d → 7**; 1d (the hero video) is on hold (section 4). Unit 1b (the shell revision) is
-done (`07b7565`); Unit 1c (the public header, About and Contact, the way home) is done
-(`a2fe7ee`); Unit 4 (the scan funnel) is done (its commit: "Frontend redesign (4): scan
-funnel"). Next: Unit 4b, when the user says so (it waits for the Canva licence check).
-Every unit stops for the user's review at 360 px and 1440 px, then waits for a separate
-commit authorisation (section 9).
+→ 6 → 1d → 7**; on the user's word (2026-10-15) 1d (the hero film) went ahead before 4b.
+Unit 1b (the shell revision) is done (`07b7565`); Unit 1c (the public header, About and
+Contact, the way home) is done (`a2fe7ee`); Unit 4 (the scan funnel) is done (`368d9a4`);
+Unit 1d (the hero film, Dove's, as is) is done (its commit: "Frontend redesign (1d): the
+hero film"). Next: Unit 4b, re-planned without changes to the photos (section 6), when the
+user approves the proposal. Every unit stops for the user's review at 360 px and 1440 px,
+then waits for a separate commit authorisation (section 9).
 
 ## 1. The direction
 
@@ -177,7 +178,7 @@ sets `color-scheme: light`.
 - **Hover lift:** a pointer hover lifts one blade 16px along its own axis (0.35 s). Blades
   aren't focusable.
 - **State changes:** 200 ms.
-- **No scroll reveals,** and nothing loops except the V1 video.
+- **No scroll reveals,** and nothing loops except the two videos (the hero film and V1).
 - **Reduced motion:** `main.css` cuts every animation and transition to near zero.
 
 **Video: V1 only, in the landing's "How a scan works" section.** It is the swatch of one
@@ -193,28 +194,26 @@ the hero's one motion and a video inside a ~100px blade would be too small to re
 - **`aria-hidden="true"` on the video:** the three steps beside it carry the meaning.
 - 6–8 s seamless loop, no audio track, at most 2 MB per format.
 
-**Hero video (Unit 1d): on hold.** The plan for the landing page's first screen is a
-video covering the viewport below the header, with no text over it (Unit 1d, section 6). The
-only footage supplied can't be used for it:
-- **The file:** `media_originals/hero-video.mp4` (local only) is Dove's film "Your skin. Our
-  planet." (30 s, 1920×1080, no audio track). The Dove logo is in the top-left corner of
-  every shot up to 26 s, and the film carries on-screen captions, among them "Dove is
-  partnering with the Rimba Collective in Southeast Asia" and "Discover our actions at
-  Dove.com". It also has scar and stretch-mark close-ups.
+**The hero film (Unit 1d): Dove's, as is.** The landing page's first screen is a film
+filling the window below the header (Unit 1d, section 6).
+- **The film:** Dove's "Your skin. Our planet." (30 s, 1920×1080, 25 fps, H.264, no audio
+  track; 12,559,666 bytes). The Dove logo is in the top-left corner of every shot up to 26 s,
+  and the film carries on-screen captions, among them "Dove is partnering with the Rimba
+  Collective in Southeast Asia" and "Discover our actions at Dove.com". It also has scar and
+  stretch-mark close-ups.
 - **The permission:** written permission from Dove (Unilever), granted 15 October 2026 by
   email (kept outside the repository). Scope: this academic project only. Edits: none (use
   as is only). Credit: none requested.
-- **Why it's on hold:** "as is" rules out trimming the film to a loop without the logo,
-  captions and the scar and stretch-mark shots, and cropping it for phones; as it stands, the
-  film puts text over the hero and names a Dove partnership, while nothing on the page may
-  suggest Dove endorses or partners with PureSkin. The user rethinks the hero.
-- **If the film is ever used:** a small visible credit "Video: Dove, used with permission"
-  (in the footer or beside the pause button), never wording that suggests endorsement or
-  partnership, and its CREDITS.md row (already there), never "own work".
-- **Decided (the user, 2026-10-15):** 1d stays on hold and the landing keeps its current
-  first screen (the centred-wordmark header still comes in 1c). If the team shoots its own
-  footage later, 1d resumes with it. The Dove film stays unused; its CREDITS.md row stays
-  "not served".
+- **Decided (the user, 2026-10-15):** first the hero was put on hold, because "as is" rules
+  out trimming the logo, the captions and those shots. Then the user accepted the film as
+  is on the hero, the logo, the captions and every shot included.
+- **The rules it's shown under:** the original file, served unchanged (no trim, crop,
+  re-encode or extracted poster unless the user confirms the permission covers a format
+  conversion); `object-fit: contain`, letterboxed on the page ground where the window's shape
+  differs; no poster, and under reduced motion it stays paused on its first frame; the
+  visible credit "Video: Dove, used with permission. PureSkin isn't affiliated with Dove."
+  right under it, and no PureSkin wording that suggests Dove endorses or partners with
+  PureSkin.
 
 ## 5. Assets
 
@@ -227,7 +226,7 @@ local only (in `.git/info/exclude`), never committed and never served. Processed
   skin, cream on the cheek, a grey wall behind. Both were darkened before export: the
   brightest pixel in each is mid-grey (L 0.38). The only metadata is an XMP "CreatorTool:
   Canva" tag, stripped on export.
-- **hero-video:** Dove's film, on hold (section 4).
+- **hero-video:** Dove's film, served as is as `media/hero-video.mp4` (section 4).
 - M1–M5, V1 and G1–G3 are still not supplied.
 
 **Rules for team-shot photos and video:**
@@ -668,22 +667,34 @@ feels cold.
 - **Detector finding to clear:** the 4px coloured side border in `chat.css`.
 - **Layout:** no backdrop. From 1024px the disclaimer sits in a sticky right-hand column.
 
-**Unit 1d: the landing's hero video. On hold** (section 4: the only footage is Dove's film,
-which may be used as is only). If the hero goes ahead with usable footage:
-- A `<section class="reel">` before the current hero: `<video muted loop playsinline
-  preload="metadata" aria-hidden="true">` with a poster and no `autoplay`; phone sources
-  (WebM then MP4, `media="(max-width: 767px) and (orientation: portrait)"`) before the
-  desktop ones; the pause/play button as V1's; a scroll cue (an icon-only link to the intro,
-  named "Skip the video"); height `calc(100svh - var(--header-h))`. `landing.js` handles both
-  videos and never starts one under reduced motion or Save-Data (the poster only). The fan
-  deck then opens out of view on page load; it stays unchanged.
-- Encodes: desktop 1920×1080 and phone 720×1280, an 8–10 s loop, VP9 (CRF 34, two-pass,
-  ≤3.5 MB / ≤1.5 MB) and H.264 (CRF 24, `+faststart`, ≤5 MB / ≤2 MB), `-an
-  -map_metadata -1`; the poster is the loop's first frame, 1920×1080 JPEG ≤180 KB.
-- ffmpeg is approved: `winget install --id Gyan.FFmpeg -e --source winget`, run when 1d
-  starts.
-- Test edits (approved): two videos, each with the required attributes; WebM before MP4 for
-  each size; both settings read before any automatic `play()`; the cue's target exists.
+**Unit 1d: the landing's hero film** (section 4: Dove's film, as is).
+- **The file:** `frontend/static/media/hero-video.mp4`, the file as received, byte for byte
+  (12,559,666 bytes, SHA-256 `48579925…0874d`). No WebM, phone cut or poster: those would be
+  edits. ffmpeg isn't needed (not installed).
+- **Markup (`index.html`):** `<div class="reel" data-video-box>` before the current hero,
+  which becomes the scroll cue's target (`id="intro"`). `<video muted loop playsinline
+  preload="metadata" aria-hidden="true">` with one MP4 `<source>`
+  (`/static/media/hero-video.mp4#t=0.001`: the fragment makes Safari draw the first frame
+  without playing), no poster and no `autoplay`.
+- **Layout (`landing.css`):** the reel fills the window below the public header
+  (`calc(100svh - var(--header-h))`; 101px on phones, 68px from 760px). The film fills its
+  screen with `object-fit: contain`, letterboxed on the page ground where the shapes differ:
+  a thin margin on a laptop, a band above and below the film on a phone. A bar under the
+  film holds the credit, the scroll cue (an icon-only link, "Skip the video") and the
+  pause/play button, so nothing sits over the film.
+- **Script (`landing.js`):** both videos (each a `[data-video-box]` with its button). A
+  video starts only without reduced motion and data saving; under reduced motion it stays
+  paused on its first frame and never starts; while data saving holds it back, its button
+  offers "Play video" once the first frame is in. The fan deck opens out of view on page
+  load; it stays unchanged.
+- **Tests (approved edits to `test_frontend_landing.py`):** two videos, each muted, looping,
+  inline, `aria-hidden`, without `autoplay`, each with its pause button; the film one MP4
+  with no poster and `preload="metadata"`, V1 a poster with WebM then MP4; the only automatic
+  `play()` comes after both settings are read; the cue's target exists; the served film's
+  size and SHA-256 are the received file's, recorded in CREDITS.md; the credit is visible
+  text under the film.
+- **Weight:** 12.6 MB, read as it plays (the MP4 is fragmented, so it streams); under
+  reduced motion or data saving only enough for the first frame. The binary is in git.
 
 **In every unit 3–6:**
 - Switch that page's input borders from `var(--border)` (a faint hairline) to `--control`.

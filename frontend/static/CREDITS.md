@@ -34,8 +34,9 @@ tabular figures).
 
 ## Photos and video
 
-None is served yet. Each slot is wired to the path below and shows a plain chip-colour
-block until its file is dropped into `frontend/static/media/`.
+One file is served: the hero film (the last row). Each other slot is wired to the path
+below and shows a plain chip-colour block until its file is dropped into
+`frontend/static/media/`.
 
 Rules for team-shot photos and video:
 
@@ -50,7 +51,9 @@ licence or permission, never "own work".
 
 Rules for every file:
 
-- GPS and other metadata stripped on export.
+- Team-shot files: GPS and other metadata stripped on export. A licensed file whose
+  permission allows no changes is served byte for byte, so it is checked for location data
+  instead (and its size and SHA-256 recorded here).
 - One row per file below: what it shows, who made it, the date, and the licence or
   permission.
 
@@ -66,4 +69,4 @@ Rules for every file:
 | B1 photo background (Dashboard, Skin Profile, Routine, Catalog, product detail) | `media/backdrop-1-desktop.{webp,jpg}`, `media/backdrop-1-phone.{webp,jpg}` | supplied, not processed yet (Unit 4b) | Canva library: a close-up of a cream being applied under a closed eye (stock) | Open-To-Use, as recorded by the team |
 | B2 photo background (Settings hub, Account, Privacy) | `media/backdrop-2-desktop.{webp,jpg}`, `media/backdrop-2-phone.{webp,jpg}` | supplied, not processed yet (Unit 4b) | Canva library: a close-up of a cream being applied to a cheek (stock) | Open-To-Use, as recorded by the team |
 | A1 header band (About, Contact) | `media/band-desktop.{webp,jpg}`, `media/band-phone.{webp,jpg}` | supplied, not processed yet (Unit 1c) | the B2 photo, a clear crop | as B2 |
-| Hero video | none | not served: the permission is for use as is only, so the planned hero is on hold (`docs/redesign.md` §4) | Dove (Unilever) | Film: Dove (Unilever), 'Your skin. Our planet.' Used with written permission for this project, granted 15th October, 2026. |
+| Hero video (the landing page's first screen) | `media/hero-video.mp4`: the file as received, unchanged (12,559,666 bytes; SHA-256 `48579925b6ae43f66740004de37825f39f45cf15faafd2e4ec80688eb0d0874d`). H.264, 1920×1080, 25 fps, 30 s, no audio track; no location data or other metadata box (checked 2026-10-15). | served as is, with the credit "Video: Dove, used with permission. PureSkin isn't affiliated with Dove." under it | Dove (Unilever): the film "Your skin. Our planet.", with Dove's logo and captions | Film: Dove (Unilever), 'Your skin. Our planet.' Used with written permission for this project, granted 15th October, 2026. Scope: this academic project only; as is only (no trim, crop, re-encode or extracted poster); the email is kept outside the repository. |

@@ -8,13 +8,18 @@ and JS are parsed as text.
 - Every link targets an existing route: /scan/, /auth/, /auth/#signup, /app/, /about/ or
   /contact/. Without a saved token (or without JavaScript) a visitor sees Log in and Sign up;
   "Go to your dashboard" (/app/) shows only when account-state.js finds a token.
-- The "How a scan works" video is muted, loops, plays inline and has a poster, a WebM
-  source then an MP4 one, and no autoplay attribute; its pause button exists.
+- Both videos are muted, loop, play inline, are hidden from screen readers and have no
+  autoplay attribute; each has a pause button, and the script starts one only without
+  reduced motion and data saving. The hero film is Dove's file served unchanged (its size
+  and SHA-256 are checked), one MP4 with no poster, with its credit right under it; the
+  "How a scan works" video has a poster and a WebM source then an MP4 one. The scroll cue
+  links to the first screen after the film.
 - GET / serves this page; the catalog note is word for word the Catalog page's.
 - The example routine step is what the engine builds today for the card's made-up profile,
   on the shipped catalog: a catalog or rules change that alters it fails here.
 """
 
+import hashlib
 import html as html_lib
 import re
 from html.parser import HTMLParser
@@ -33,7 +38,13 @@ from app.tests.test_frontend_contract import FRONTEND, LISTS_NOTE, MARKET_NOTE, 
 LANDING = "pages/index.html"
 LANDING_JS = "pages/landing.js"
 ACCOUNT_STATE_JS = "static/js/account-state.js"
-LINK_TARGETS = {"/scan/", "/auth/", "/auth/#signup", "/app/", "/about/", "/contact/"}
+LINK_TARGETS = {"/scan/", "/auth/", "/auth/#signup", "/app/", "/about/", "/contact/", "#intro"}
+# The hero film, Dove's "Your skin. Our planet.": permitted as is only, so the served file is
+# the one received (frontend/static/CREDITS.md records the same size and hash).
+HERO_FILM = "static/media/hero-video.mp4"
+HERO_FILM_BYTES = 12_559_666
+HERO_FILM_SHA256 = "48579925b6ae43f66740004de37825f39f45cf15faafd2e4ec80688eb0d0874d"
+HERO_CREDIT = "Video: Dove, used with permission. PureSkin isn't affiliated with Dove."
 
 
 class _Tags(HTMLParser):
@@ -130,6 +141,9 @@ def test_every_link_targets_an_existing_route():
     assert hrefs and set(hrefs) == LINK_TARGETS, hrefs
     client = TestClient(app)  # no `with`: static pages need no startup (models, chat probe)
     for target in LINK_TARGETS:
+        if target.startswith("#"):  # a link within the page: its target exists
+            assert any(attrs.get("id") == target[1:] for _, attrs in landing_tags()), target
+            continue
         path = target.split("#")[0]
         assert (FRONTEND / "pages" / path.strip("/") / "index.html").is_file(), target
         response = client.get(path)
@@ -152,38 +166,82 @@ def test_every_link_targets_an_existing_route():
 
 
 # --------------------------------------------------------------------------------------
-# The "How a scan works" video (docs/redesign.md §4)
+# The two videos: the hero film and "How a scan works" (docs/redesign.md §4)
 # --------------------------------------------------------------------------------------
 
 
-def test_the_video_has_its_required_attributes():
-    tags = landing_tags()
-    videos = [attrs for tag, attrs in tags if tag == "video"]
-    assert len(videos) == 1
-    video = videos[0]
-    for flag in ("muted", "loop", "playsinline"):
-        assert flag in video, flag
-    assert "autoplay" not in video
-    assert video.get("poster", "").startswith("/static/media/") and video["poster"].endswith(".jpg")
-    sources = [attrs for tag, attrs in tags if tag == "source"]
-    assert [s.get("type") for s in sources] == ["video/webm", "video/mp4"]
-    assert sources[0]["src"].endswith(".webm") and sources[1]["src"].endswith(".mp4")
-    assert all(s["src"].startswith("/static/media/") for s in sources)
-    # Nothing calls play() under reduced motion: the script checks the setting first.
+class _Videos(HTMLParser):
+    """Each <video>'s attributes with its <source>s, in page order."""
+
+    def __init__(self):
+        super().__init__()
+        self.videos: list[tuple[dict, list[dict]]] = []
+        self._open = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "video":
+            self.videos.append((dict(attrs), []))
+            self._open = True
+        elif tag == "source" and self._open:
+            self.videos[-1][1].append(dict(attrs))
+
+    def handle_endtag(self, tag):
+        if tag == "video":
+            self._open = False
+
+
+def landing_videos() -> list[tuple[dict, list[dict]]]:
+    parser = _Videos()
+    parser.feed(page(LANDING))
+    return parser.videos
+
+
+def test_both_videos_have_their_required_attributes():
+    videos = landing_videos()
+    assert len(videos) == 2  # the hero film, then "How a scan works"
+    for attrs, _ in videos:
+        for flag in ("muted", "loop", "playsinline"):
+            assert flag in attrs, flag
+        assert "autoplay" not in attrs and attrs.get("aria-hidden") == "true"
+    (film, film_sources), (swatch, swatch_sources) = videos
+    # The film is served as is: one MP4 and no poster; under reduced motion its first frame shows.
+    assert "poster" not in film and film.get("preload") == "metadata"
+    assert [(s.get("src", "").split("#")[0], s.get("type")) for s in film_sources] == [(f"/{HERO_FILM}", "video/mp4")]
+    # The swatch: a poster, a WebM source then an MP4 one.
+    assert swatch.get("poster", "").startswith("/static/media/") and swatch["poster"].endswith(".jpg")
+    assert [s.get("type") for s in swatch_sources] == ["video/webm", "video/mp4"]
+    assert swatch_sources[0]["src"].endswith(".webm") and swatch_sources[1]["src"].endswith(".mp4")
+    assert all(s["src"].startswith("/static/media/") for s in swatch_sources)
+    # The script starts a video only without reduced motion and data saving; the only other
+    # play() is the button's.
     script = page(LANDING_JS)
     assert ".autoplay" not in script and '"autoplay"' not in script
-    assert "prefers-reduced-motion: reduce" in script and "if (!reducedMotion.matches) play();" in script
+    assert "prefers-reduced-motion: reduce" in script and "navigator.connection.saveData" in script
+    calls = [line.strip() for line in script.splitlines() if re.search(r"\bplay\(\);", line)]
+    assert calls == ["if (video.paused) play();", "if (!reducedMotion.matches && !saveData) play();"], calls
 
 
-def test_the_video_has_a_pause_button():
-    buttons = re.findall(r"<button\b([^>]*)>(.*?)</button>", page(LANDING), flags=re.DOTALL)
-    labels = {visible_text(inner): attrs for attrs, inner in buttons}
-    assert "Pause video" in labels
-    attrs = labels["Pause video"]
-    assert 'type="button"' in attrs and "aria-pressed" not in attrs
+def test_each_video_has_a_pause_button():
+    boxes = re.findall(r"<div[^>]*data-video-box[^>]*>.*?</button>", page(LANDING), flags=re.DOTALL)
+    assert len(boxes) == 2
+    for box in boxes:
+        attrs, inner = re.search(r"<button\b([^>]*)>(.*?)</button>", box, flags=re.DOTALL).groups()
+        assert visible_text(inner) == "Pause video"
+        assert 'type="button"' in attrs and "aria-pressed" not in attrs
     # The label says what the button will do next.
     script = page(LANDING_JS)
     assert '"Pause video"' in script and '"Play video"' in script and "aria-pressed" not in script
+
+
+def test_the_hero_film_is_the_original_file_unchanged_and_credited():
+    data = (FRONTEND / HERO_FILM).read_bytes()
+    assert len(data) == HERO_FILM_BYTES and hashlib.sha256(data).hexdigest() == HERO_FILM_SHA256
+    assert HERO_FILM_SHA256 in page("static/CREDITS.md")
+    # The credit is visible text in the film's box, after the film (never over it).
+    html = page(LANDING)
+    reel = html[html.index('<div class="reel"'):html.index('<section class="hero"')]
+    assert HERO_CREDIT in html_lib.unescape(visible_text(reel))
+    assert reel.index("<video") < reel.index("reel__credit")
 
 
 # --------------------------------------------------------------------------------------

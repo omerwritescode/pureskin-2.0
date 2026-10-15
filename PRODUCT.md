@@ -116,9 +116,10 @@ questionnaire, the routine is rule-based, and the ranker uses hand-set weights, 
   retouched isn't known. No other stock models posing with products.
 - One licensed film: Dove (Unilever), "Your skin. Our planet.", used with written permission for
   this project (granted 15 October 2026; academic project only; use as is only; the email is kept
-  outside the repository). Wherever it appears it carries the visible credit "Video: Dove, used
-  with permission", and no wording may suggest that Dove endorses or partners with PureSkin. It
-  isn't used today: "as is" rules out the planned hero (`docs/redesign.md` §4).
+  outside the repository). It is the landing page's first screen, shown as is, Dove's logo,
+  captions and every shot included: the file is served unchanged (no trim, crop, re-encode or
+  poster). Under it the page says "Video: Dove, used with permission. PureSkin isn't affiliated
+  with Dove.", and no PureSkin wording may suggest that Dove endorses or partners with PureSkin.
 - Full-page photo backgrounds sit behind solid cards. Only large ink text or an ink link sits on
   a photo, and each photo is cropped, blurred and washed with the page ground until ink measures
   at least 4.5:1 at its darkest point.

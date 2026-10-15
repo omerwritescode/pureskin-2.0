@@ -77,6 +77,92 @@
   color: var(--ink-2);
 }
 
+/* ---- The hero film -----------------------------------------------------------
+   The window below the public header: the film fills its screen without cropping
+   (object-fit: contain, letterboxed on the page ground where the shapes differ, as on
+   phones), and a bar under it carries the credit, the scroll cue and the pause button, so
+   nothing sits over the film. --header-h is the public header's height (main.css: two rows
+   on phones, one from 760px). */
+.reel {
+  --header-h: 101px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--header-h));
+  height: calc(100svh - var(--header-h));
+  min-height: 320px;
+}
+
+.reel__screen {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.reel__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Phones: the credit across the top, then the cue on the left and the button on the right.
+   From 760px one row: credit, the cue centred, button. */
+.reel__bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "credit credit credit"
+    "cue . toggle";
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  width: 100%;
+  max-width: var(--frame);
+  margin: 0 auto;
+  padding: var(--space-3) var(--gutter);
+}
+
+.reel__credit {
+  grid-area: credit;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.85rem;
+}
+
+.reel__cue {
+  grid-area: cue;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--control);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink);
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.reel__cue:hover {
+  border-color: var(--ink);
+}
+
+.reel__toggle {
+  grid-area: toggle;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+@media (min-width: 760px) {
+  .reel {
+    --header-h: 68px;
+  }
+
+  .reel__bar {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas: "credit cue toggle";
+  }
+}
+
 /* ---- Hero ------------------------------------------------------------------- */
 
 .hero {
@@ -184,10 +270,8 @@
   aspect-ratio: 4 / 5;
 }
 
-.how__toggle {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
+/* A video's pause/play button (both videos): a white chip. */
+.video-toggle {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -205,8 +289,15 @@
   transition: border-color 0.2s var(--ease-out);
 }
 
-.how__toggle:hover {
+.video-toggle:hover {
   border-color: var(--ink);
+}
+
+/* The swatch's button sits over its corner. */
+.how__toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
 }
 
 .how__steps {
