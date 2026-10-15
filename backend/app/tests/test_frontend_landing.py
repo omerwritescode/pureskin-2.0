@@ -16,6 +16,8 @@ and JS are parsed as text.
   and up, the posters as the strip's CSS background, the original film no longer served,
   and its credit right under it; the "How a scan works" video has a poster and a WebM
   source then an MP4 one. The scroll cue links to the first screen after the film.
+- PureSkin's values line, word for word, sits between the credit and the headline: a plain
+  paragraph of its own (not part of the credit, not a quote, not attributed).
 - GET / serves this page; the catalog note is word for word the Catalog page's.
 - The example routine step is what the engine builds today for the card's made-up profile,
   on the shipped catalog: a catalog or rules change that alters it fails here.
@@ -44,11 +46,11 @@ LINK_TARGETS = {"/scan/", "/auth/", "/auth/#signup", "/app/", "/about/", "/conta
 # The hero strip, Dove's "Your skin. Our planet." in full, cropped under Dove's second
 # permission: the served files are the ones frontend/static/CREDITS.md records.
 HERO_FILES = {  # path under frontend/: (bytes, SHA-256), as CREDITS.md records them
-    "static/media/hero-strip.webm": (8_542_369, "90869ba783df535192f40d6968cb2def722ffb13c1a4514d56b352b96ba32036"),
-    "static/media/hero-strip.mp4": (9_861_722, "86cca8b2617a9c8e4c75fc5e6b71fe3f31ce3cebd847a55a763182e8742c8c2c"),
+    "static/media/hero-strip.webm": (12_495_267, "48aeb78908f1a816bae66d41bea914e89bb6fb632bf1d59d9df5018058b889ed"),
+    "static/media/hero-strip.mp4": (14_682_958, "3d34644b627acc7e2cbb02b4b37bf9756d0adb384227af5416cbb363fe948b9c"),
     "static/media/hero-strip-phone.webm": (7_213_824, "35ee1a74f040af29da631c69b49e54acfe9a7c7455ffb539073ffcbbacad555f"),
     "static/media/hero-strip-phone.mp4": (7_527_163, "b7345968609a4d112e7dbc30726b867fee1a50f555d6b7e6df85046063c52f87"),
-    "static/media/hero-strip-poster.jpg": (36_830, "7389d33791dbb00a95e11313d3fd08f3866ab7ed67322ef71c4cb8abc47dd534"),
+    "static/media/hero-strip-poster.jpg": (48_207, "68466886297132d23afac5b768b0672d7e94f4ec3aba7c922aefad9ba072b034"),
     "static/media/hero-strip-phone-poster.jpg": (32_460, "273e381c54510817176b37ca6973205157e2a48f83c33e0b4764e91391e61a5d"),
 }
 HERO_SOURCES = [  # (src, type, media), in order: the desktop pair first, for 600px and up
@@ -58,6 +60,9 @@ HERO_SOURCES = [  # (src, type, media), in order: the desktop pair first, for 60
     ("/static/media/hero-strip-phone.mp4", "video/mp4", None),
 ]
 HERO_CREDIT = "Video: Dove, used with permission. PureSkin isn't affiliated with Dove."
+# PureSkin's own values line under the credit (PRODUCT.md, Brand Commitments): a value, not a
+# feature; PureSkin has no environmental features and the line claims none.
+VALUES_LINE = "Skin is where you meet the world. We think both deserve care."
 
 
 class _Tags(HTMLParser):
@@ -266,6 +271,23 @@ def test_the_hero_strip_files_are_the_recorded_ones_and_credited():
     reel = html[html.index('<div class="reel"'):html.index('<section class="hero"')]
     assert HERO_CREDIT in html_lib.unescape(visible_text(reel))
     assert reel.index("<video") < reel.index("reel__credit")
+
+
+def test_the_values_line_is_pureskins_own_words_between_the_credit_and_the_headline():
+    html = page(LANDING)
+    lines = re.findall(r'<p class="values-line">(.*?)</p>', html, flags=re.DOTALL)
+    assert [html_lib.unescape(visible_text(line)) for line in lines] == [VALUES_LINE]
+    # Its own paragraph after the credit's and before the hero: never inside the credit,
+    # never a quote and never attributed.
+    start = html.index('<p class="values-line">')
+    credit_end = html.index("</p>", html.index('<p class="reel__credit"')) + len("</p>")
+    assert credit_end <= start < html.index('<section class="hero"')
+    between = html[credit_end:start]
+    assert visible_text(re.sub(r"<!--.*?-->", "", between, flags=re.DOTALL)).strip() == ""
+    rule = page("pages/landing.css")
+    rule = rule[rule.index(".values-line {"):]
+    rule = rule[:rule.index("}")]
+    assert "italic" not in rule and "quotes" not in rule and "content:" not in rule
 
 
 # --------------------------------------------------------------------------------------

@@ -101,6 +101,12 @@ questionnaire, the routine is rule-based, and the ranker uses hand-set weights, 
 - Voice: calm and reassuring for beginners; never clinical, never salesy. As shipped it is plain,
   short sentences that say exactly what is and isn't true (the Privacy page, the score notes, the
   reasons on the Routine page).
+- Copy, the values line (the landing page, between the hero film's credit and the headline):
+  "Skin is where you meet the world. We think both deserve care." A value in PureSkin's own
+  voice, not a feature: PureSkin has no environmental features, and no wording may claim that
+  the app or its catalog does anything for the environment. It is set apart from Dove's credit and never styled as a quote or attributed,
+  so it can't read as Dove's words or a joint campaign. `test_frontend_landing.py` pins it word
+  for word.
 
 ## Imagery
 

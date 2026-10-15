@@ -78,8 +78,10 @@
 }
 
 /* ---- The hero strip -----------------------------------------------------------
-   An edge-to-edge strip about half the window tall (at least 280px) under the public header,
-   the loop shown with object-fit: cover, centred. Its first frame is the strip's background
+   An edge-to-edge strip under the public header, at least 280px tall: half the window on
+   phones, about two thirds from 600px, where the 1920x772 desktop file is shaped for laptop
+   screens (cover trims at most a few per cent of it there). The film is shown with
+   object-fit: cover, centred. Its first frame is the strip's background
    (the poster for each size, so only that size's image loads) before playback and under
    reduced motion. Over it only two small controls, the scroll arrow and the icon-only
    pause/play button: white discs with a 1px ink edge, and a focus ring of white inside ink,
@@ -103,6 +105,11 @@
 @media (min-width: 600px) {
   .reel::before {
     background-image: url("/static/media/hero-strip-poster.jpg");
+  }
+
+  .reel {
+    height: max(280px, 65vh);
+    height: max(280px, 65svh);
   }
 }
 
@@ -155,6 +162,28 @@
   padding: var(--space-3) var(--gutter);
   color: var(--ink-2);
   font-size: 0.85rem;
+}
+
+/* PureSkin's values line: our own words, set apart from Dove's credit above it (ink, larger,
+   a clear gap) and plain: a sentence, never a quote or an attributed line. Centred with the
+   deck and the headline from 900px. */
+.values-line {
+  max-width: var(--frame);
+  margin: 0 auto;
+  padding: var(--space-5) var(--gutter) 0;
+  color: var(--ink);
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+@media (min-width: 900px) {
+  .values-line {
+    padding-top: var(--space-6);
+    text-align: center;
+  }
 }
 
 /* ---- Hero ------------------------------------------------------------------- */
