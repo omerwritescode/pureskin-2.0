@@ -8,7 +8,9 @@ const content = document.getElementById("content");
 
 function renderProfile(profile) {
   const skinType = skinTypeText(profile);
-  content.replaceChildren(
+  // replaceChildren() would print a null as the text "null": the optional parts (the
+  // assumed-type note, the Sensitive indicator) are dropped instead, as el() does.
+  content.replaceChildren(...[
     el("div", { className: "profile-type" },
       el("span", { className: "profile-type__label", text: "Skin type" }),
       el("span", { className: "profile-type__value", text: skinType.text })),
@@ -23,7 +25,8 @@ function renderProfile(profile) {
       }),
       scoreBars(profile)),
     el("p", { className: "profile-rescan" },
-      "Want to update it? ", el("a", { href: "/scan/", text: "Take a new scan" })));
+      "Want to update it? ", el("a", { href: "/scan/", text: "Take a new scan" })),
+  ].filter(Boolean));
 }
 
 async function init() {
